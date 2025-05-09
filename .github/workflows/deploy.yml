@@ -29,7 +29,7 @@ jobs:
       - name: Build React app
         working-directory: ./frontend
         run: |
-          echo "Starting React build..."
+          echo "Starting React build."
           npm run build
 
       - name: Debug - list contents of build directory
