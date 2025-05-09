@@ -33,7 +33,7 @@ jobs:
           npm run build || (echo "Build failed" && exit 1)
 
       - name: Debug - list contents of build directory
-        run: ls -al ./frontend/build
+        run: ls -al ./frontend/dist
 
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
