@@ -22,9 +22,15 @@ jobs:
         working-directory: ./frontend
         run: npm install
 
+      - name: Show installed npm packages
+        working-directory: ./frontend
+        run: npm list --depth=0
+
       - name: Build React app
         working-directory: ./frontend
-        run: npm run build
+        run: |
+          echo "Starting React build..."
+          npm run build || (echo "Build failed" && exit 1)
 
       - name: Debug - list contents of build directory
         run: ls -al ./frontend/build
