@@ -28,13 +28,13 @@ const userSchema = mongoose.Schema({
         enum: ['reader', 'author', 'admin'],
         default: 'reader'
     },
-    address: {
+    privillage: {
         type: String,
-        required: false,
-        default: ''
+        enum: ['read', 'write', 'review', 'edit'],
+        default: 'read'
     },
     subscription: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: [mongoose.Schema.Types.ObjectId],
         ref: 'Subsription',
         required: false
     }

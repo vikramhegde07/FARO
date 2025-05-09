@@ -57,13 +57,12 @@ router.get('/getOne/:userId', async(req, res) => {
 
 //register a new user
 router.post('/register', async(req, res) => {
-    const { username, email, password, user_type } = req.body;
+    const { username, email, password } = req.body;
     try {
 
         if (!username ||
             !email ||
-            !password ||
-            !user_type
+            !password
         ) {
             return res.status(404).json({
                 error: 'Send all required fields'
@@ -79,8 +78,7 @@ router.post('/register', async(req, res) => {
         const newUser = new User({
             username,
             email,
-            password: passwordHash,
-            user_type
+            password: passwordHash
         });
 
         await newUser.save();

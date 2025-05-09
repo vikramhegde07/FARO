@@ -1,1 +1,213 @@
-@import "tailwindcss";
+:root {
+    --white: #fff;
+    --primary: #007BFF;
+    --secondary: #E63946;
+    --contrast: #ffffff;
+    --dark: #434343;
+    --cream: #FAEBD7;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-acenter {
+    display: flex;
+    align-items: center;
+}
+
+.flex-jcenter {
+    display: flex;
+    justify-content: center;
+}
+
+.flex-jend {
+    display: flex;
+    justify-content: end;
+}
+
+.flex-jbetween {
+    display: flex;
+    justify-content: space-between;
+}
+
+.w-fit {
+    width: fit-content;
+}
+
+.bg-hero {
+    background: url('../public/assets/img/home.jpg') !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+}
+
+.bg-dark {
+    background: var(--dark) !important;
+}
+
+.bg-gradient-dark {
+    background: linear-gradient(60deg, #29323c 0%, #485563 100%);
+}
+
+.bg-dark-2 {
+    background: #111 !important;
+}
+
+.bg-mask {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.bg-primary {
+    background: var(--primary) !important;
+}
+
+.bg-cream {
+    background: var(--cream) !important;
+}
+
+.bg-glass {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.text-secondary {
+    color: var(--secondary) !important;
+}
+
+.text-gradient-secondary {
+    background: linear-gradient(90deg, var(--white), var(--secondary)) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    color: transparent !important;
+}
+
+.text-gradient-primary {
+    background: linear-gradient(90deg, var(--white), var(--primary)) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    color: transparent !important;
+}
+
+.fs-large {
+    font-size: 68px;
+}
+
+.fs-small {
+    font-size: 16px;
+}
+
+.fs-xsmall {
+    font-size: 14px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.about-frame img {
+    border: 10px solid #fff;
+}
+
+.about-frame {
+    position: relative;
+    z-index: 1;
+}
+
+.about-frame::before {
+    content: "";
+    position: absolute;
+    left: -45px;
+    top: 34px;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    border: 7px solid var(--secondary);
+}
+
+.hover-zoom {
+    transform: scale(1.0);
+    transition: all 0.5s;
+}
+
+.hover-zoom:hover {
+    transform: scale(1.02);
+    transition: all 0.5s;
+}
+
+.hover-shadow-colored {
+    box-shadow: none;
+    transition: all 0.5s;
+}
+
+.hover-shadow-colored:hover {
+    box-shadow: blue 0px 0px 0px 2px inset, rgb(255, 255, 255) 10px -10px 0px -3px, rgb(31, 193, 27) 10px -10px, rgb(255, 255, 255) 20px -20px 0px -3px, rgb(255, 217, 19) 20px -20px, rgb(255, 255, 255) 30px -30px 0px -3px, rgb(255, 156, 85) 30px -30px, rgb(255, 255, 255) 40px -40px 0px -3px, rgb(255, 85, 85) 40px -40px;
+    transition: all 0.5s;
+}
+
+.swiper {
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+.swiper-slide {
+    font-size: 18px;
+    color: #fff;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 40px 60px;
+}
+
+.parallax-bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 130%;
+    height: 100%;
+    -webkit-background-size: cover;
+    background-size: cover;
+    background-position: center;
+}
+
+.swiper-slide .title {
+    font-size: 41px;
+    font-weight: 300;
+}
+
+.swiper-slide .subtitle {
+    font-size: 21px;
+}
+
+.swiper-slide .text {
+    font-size: 14px;
+    max-width: 400px;
+    line-height: 1.3;
+}
+
+.sidebar-pos {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transition: all 0.5s;
+}
+
+@media screen and (max-width:720px) {
+    .sidebar-pos {
+        left: -200px;
+    }
+    .sidebar-pos.change {
+        left: 0;
+    }
+    .main-content {
+        left: 0 !important;
+        width: 100%;
+    }
+    .main-content.change {
+        left: 200px !important;
+        width: calc(100vw - 200px);
+    }
+}

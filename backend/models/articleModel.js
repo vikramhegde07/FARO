@@ -12,6 +12,28 @@ const contentBlockSchema = new mongoose.Schema({
     },
 });
 
+const relatedLinksBlockSchema = new mongoose.Schema({
+    linkText: {
+        type: String,
+        required: true
+    },
+    linkAddr: {
+        type: String,
+        required: true
+    }
+});
+
+const relatedFilesBlockSchema = new mongoose.Schema({
+    fileName: {
+        type: String,
+        required: true
+    },
+    linkToFile: {
+        type: String,
+        required: true
+    }
+});
+
 const articleSchema = mongoose.Schema({
     title: {
         type: String,
@@ -41,6 +63,14 @@ const articleSchema = mongoose.Schema({
         type: [contentBlockSchema],
         default: []
     },
+    relatedLinks: {
+        type: [relatedLinksBlockSchema],
+        default: []
+    },
+    relatedFiles: {
+        type: [relatedFilesBlockSchema],
+        default: []
+    }
 }, {
     timestamps: true
 });

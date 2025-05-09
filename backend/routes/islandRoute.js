@@ -14,7 +14,22 @@ router.get('/', async(req, res) => {
         return res.status(200).json(islands);
     } catch (err) {
         console.log('Server error : ' + err.message);
-        res.status(500).send({ message: err.message });
+        res.status(500).json({ error: err.message });
+    }
+});
+
+//Get Island by id
+router.get('/:id', async(req, res) => {
+    const islandId = req.params.id;
+    try {
+        const islandData = await Island.findByID(islandId);
+        if (!islandData)
+            return res.status(400).json({ error: "No islands found!" });
+
+        return res.status(200).json(islandData);
+    } catch (err) {
+        console.log('Server error : ' + err.message);
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -44,12 +59,25 @@ router.post('/create', async(req, res) => {
         });
     } catch (err) {
         console.log('Server error : ' + err.message);
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ error: err.message });
     }
 });
 
+//Remove and Island
+router.get('/delete/:id', async(req, res) => {
+    const islandId = req.params.id;
+    try {
 
+        await Island.findByIdAndDelete(islandId);
 
+        return res.status(200).json({ message: 'Island Removed' });
+    } catch (err) {
+        console.log('Server error : ' + err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+//Check Access of islands for the user
 router.get('/checkAccess/:id', auth, async(req, res) => {
     try {
         const userId = req.userId;
@@ -65,7 +93,7 @@ router.get('/checkAccess/:id', auth, async(req, res) => {
         });
     } catch (err) {
         console.log('Server error : ' + err.message);
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ error: err.message });
     }
 });
 export default router;
