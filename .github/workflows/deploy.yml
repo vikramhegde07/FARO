@@ -3,7 +3,7 @@ name: Build and Deploy React App
 on:
   push:
     branches:
-      - main  # change to your default branch if not 'main'
+      - main
 
 jobs:
   build-and-deploy:
@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18  # or whatever your project uses
+          node-version: 18
 
       - name: Install dependencies
         working-directory: ./frontend
@@ -26,6 +26,9 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
+      - name: Debug - list contents of build directory
+        run: ls -al ./frontend/build
+
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -33,4 +36,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./frontend/build/
-          server-dir: public_html/  # adjust this to your actual remote path
+          server-dir: public_html/
