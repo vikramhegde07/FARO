@@ -33,11 +33,10 @@ function LoginForm({ changeForm, refresh }) {
         axios
             .post(`${API_BASE}/user/login`, formData)
             .then((response) => {
-                console.log(response.data);
                 if (response.status === 200) {
                     const token = response.data.token;
                     localStorage.setItem('faro-user', token);
-                    localStorage.setItem('faro-user-type', response.data.User.user_type);
+                    localStorage.setItem('faro-user-info', JSON.stringify(response.data.User));
                     toast.success("Logged in successfully!");
                     refresh();
                     if (response.data.User.user_type == 'admin')

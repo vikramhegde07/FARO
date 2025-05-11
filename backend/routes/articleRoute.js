@@ -2,20 +2,51 @@ import express from 'express';
 import auth from '../middlewares/auth.js';
 import upload from '../middlewares/upload.js';
 import { Article } from '../models/articleModel.js';
-import { Subsription } from '../models/subsriptionModel.js';
+import { uploadImageToS3 } from '../controllers/uploadController.js';
 
 const router = express.Router();
 
 // 📝 Create Article (with optional image upload)
-router.post('/create/parser', auth, upload.single('image'), async(req, res) => {
+router.post('/create/parser', auth, upload.array('images'), async(req, res) => {
     try {
-        const { title, island, tier, approval, content } = req.body;
-
+        const { title, island, tier, approval } = req.body;
+        let { content } = req.body;
         if (!title || !island || !content) {
             return res.status(404).json({
                 error: 'Send All fields'
             });
         }
+
+        if (typeof content === 'string') {
+            content = JSON.parse(content);
+        }
+
+        if (!Array.isArray(content)) {
+            return res.status(400).json({ message: 'Invalid content format' });
+        }
+
+        // Process images in content blocks
+        const uploadedImages = [];
+
+        for (const file of req.files) {
+            const { url } = await uploadImageToS3(
+                file.buffer,
+                'articles',
+                file.originalname,
+                file.mimetype
+            );
+            uploadedImages.push(url);
+        }
+
+        // Replace placeholders in content
+        let imageIndex = 0;
+        content = content.map((block) => {
+            if (block.type === 'image' && block.value === 'upload') {
+                const url = uploadedImages[imageIndex++];
+                return {...block, value: url };
+            }
+            return block;
+        });
 
         const article = new Article({
             title,
@@ -65,7 +96,7 @@ router.post('/upload', upload.single('image'), (req, res) => {
     return res.json({ url: imagePath });
 });
 
-// 📥 Get All Articles
+//Get All Articles
 router.get('/', async(req, res) => {
     try {
         const articles = await Article.find().populate('author').populate('island');
@@ -75,7 +106,7 @@ router.get('/', async(req, res) => {
     }
 });
 
-// 📥 Get Article by ID
+//Get Article by ID
 router.get('/:id', async(req, res) => {
     try {
         const article = await Article.findById(req.params.id).populate('author').populate('island');
@@ -87,7 +118,7 @@ router.get('/:id', async(req, res) => {
     }
 });
 
-// 🛠 Update Article
+//Update Article
 router.put('/:id', auth, upload.single('image'), async(req, res) => {
     try {
         const updatedFields = {
@@ -103,7 +134,7 @@ router.put('/:id', auth, upload.single('image'), async(req, res) => {
     }
 });
 
-// 🗑 Delete Article
+//Delete Article
 router.delete('/:id', auth, async(req, res) => {
     try {
         const deleted = await Article.findByIdAndDelete(req.params.id);

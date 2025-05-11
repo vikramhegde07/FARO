@@ -112,6 +112,13 @@ const ArticleBuilder = () => {
             })
     };
 
+    function handleCancel() {
+        localStorage.removeItem('faro-title');
+        localStorage.removeItem('faro-island');
+        localStorage.removeItem('faro-tier');
+        navigator('/account');
+    };
+
     useEffect(() => {
         setTitle(localStorage.getItem('faro-title'));
         setIsland(localStorage.getItem('faro-island'));
@@ -275,12 +282,12 @@ const ArticleBuilder = () => {
                     <hr className='mt-4' />
                     <div className="col-md-12 flex-center pb-4 gap-2">
                         <button
-                            className="btn btn-danger mt-3"
-                            onClick={() => { }}
+                            className="btn btn-danger px-4 rounded-0 mt-3"
+                            onClick={handleCancel}
                         >Cancel
                         </button>
                         <button
-                            className="btn btn-success mt-3"
+                            className="btn btn-success px-4 rounded-0 mt-3"
                             onClick={handleSubmitArticle}
                             disabled={!title || !island || articleStructure.length === 0}
                         >
