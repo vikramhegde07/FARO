@@ -8,6 +8,8 @@ const auth = (req, res, next) => {
     const decodedData = jwt.verify(token, process.env.JWT_SECRET);
     //Modify req and set userId with decoded user id
     req.userId = decodedData.id;
+    //Modify req and set password with decoded user password
+    req.password = decodedData.password;
     //Modify req and set email with decoded user email
     req.email = decodedData.email;
     //proceed to the next function

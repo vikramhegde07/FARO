@@ -11,6 +11,10 @@ import path from 'path';
  * @returns {Object} - { url, key }
  */
 export const uploadImageToS3 = async(buffer, folder, originalName, mimetype) => {
+    if (!originalName || typeof originalName !== 'string') {
+        throw new Error('originalName is required and must be a string');
+    }
+
     const extension = path.extname(originalName);
     const filename = `${Date.now()}-${uuidv4()}${extension}`;
     const key = `${folder}/${filename}`;

@@ -46,11 +46,7 @@ function Island({ logged }) {
     return (
         <>
 
-            <div className="container-fluid px-5 flex-jbetween my-2">
-                <Link className="btn btn-primary flex-center gap-2" to={'/'}>
-                    <ion-icon name="arrow-back-outline"></ion-icon>
-                    <ion-icon name="home-outline"></ion-icon>
-                </Link>
+            <div className="container-fluid px-5 flex-jend my-2">
                 <div className="d-flex flex-md-row flex-sm-column gap-2" style={{ width: "fit-content" }}>
                     <input
                         type="text"

@@ -10,6 +10,7 @@ function Account({ refresh }) {
 
     function handleLogout() {
         localStorage.removeItem('faro-user');
+        localStorage.removeItem('faro-user-info');
         refresh();
         navigator('/');
     }

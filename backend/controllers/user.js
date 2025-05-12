@@ -83,7 +83,8 @@ export const registerUser = async(req, res) => {
         const payload = {
             id: newUser._id,
             username: newUser.username,
-            email: newUser.email
+            email: newUser.email,
+            password: newUser.password
         }
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24hr' });
         // return user information and token  
@@ -124,7 +125,8 @@ export const loginUser = async(req, res) => {
         const payload = {
             id: userData._id,
             email: userData.email,
-            username: userData.username
+            username: userData.username,
+            password: userData.password
         }
 
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24hr' });
@@ -140,6 +142,43 @@ export const loginUser = async(req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+//method to check user login on app load
+export const checkUserLogin = async(req, res) => {
+    const email = req.email;
+    const password = req.password;
+    try {
+        const userData = await User.findOne({ email: email });
+
+        if (!userData)
+            return res.status(403).json({ error: 'No user found with email' });
+
+        const isPassword = await bcrypt.compare(password, userData.password);
+
+        if (!isPassword)
+            return res.status(404).json({ error: 'Invalid Password' });
+
+        const payload = {
+            id: userData._id,
+            email: userData.email,
+            username: userData.username,
+            password: userData.password
+        }
+
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24hr' });
+
+        //return userdata and token
+        return res.status(200).json({
+            message: 'Login Successfull',
+            User: userData,
+            token: token
+        });
+    } catch (err) {
+        console.log('Server error : ' + err.message);
+        res.status(500).json({ message: err.message });
+    }
+
+}
 
 //method to update the user profile
 export const updateUserProfile = async(req, res) => {
