@@ -29,9 +29,9 @@ const userSchema = mongoose.Schema({
         default: 'reader'
     },
     privillage: {
-        type: String,
+        type: [String],
         enum: ['read', 'write', 'review', 'edit'],
-        default: 'read'
+        default: ['read']
     },
     subscription: {
         type: [mongoose.Schema.Types.ObjectId],

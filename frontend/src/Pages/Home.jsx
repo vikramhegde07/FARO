@@ -87,31 +87,22 @@ function Home() {
                 <div className="container py-5">
                     <h1 className="text-center fw-bold fs-2">Why FARO?</h1>
                     <p className="text-center text-muted mb-5">Everything you need to learn, share, and grow in one platform.</p>
-                    <div className="flex-center gap-3 flex-column flex-md-row">
-                        <div class="card py-4 hover-shadow-colored">
+                    <div className="flex-jcenter gap-5 flex-column flex-md-row">
+                        <div class="card py-4 hover-shadow-colored col-md-4">
                             <div class="card-body">
                                 <h5 class="card-title flex-center gap-2">🔍 Dicover</h5>
-                                <p class="card-text"> Browse high-quality articles across tech, science, and more — curated for real learning.</p>
+                                <p class="card-text text-center"> Browse high-quality articles across tech, science, and more — curated for real learning.</p>
                                 <div className="flex-center">
                                     <Link to={'/islands'} className='btn btn-danger mt-3 px-4 rounded-0'>Discover Now</Link>
                                 </div>
                             </div>
                         </div>
-                        <div class="card py-4 hover-shadow-colored">
+                        <div class="card py-4 hover-shadow-colored col-md-4">
                             <div class="card-body">
                                 <h5 class="card-title flex-center gap-2">✍️ Contribute</h5>
-                                <p class="card-text">Write and share your knowledge. FARO empowers experts and learners alike.</p>
+                                <p class="card-text text-center">Write and share your knowledge. FARO empowers experts and learners alike.</p>
                                 <div className="flex-center">
                                     <Link to={'/login'} className='btn btn-danger mt-3 px-4 rounded-0'>Get Started</Link>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card py-4 hover-shadow-colored">
-                            <div class="card-body">
-                                <h5 class="card-title flex-center gap-2">🚀 Explore</h5>
-                                <p class="card-text"> Dive into Islands — AI, Engineering, Space, Business and beyond.</p>
-                                <div className="flex-center">
-                                    <Link to={'/islands'} className='btn btn-danger mt-3 px-4 rounded-0'>Explore Now</Link>
                                 </div>
                             </div>
                         </div>
@@ -170,6 +161,12 @@ function Home() {
                             Reference Diagrams
                         </h2>
                         <p className="text-center">Visual guides to understand key system flows</p>
+                        <div className="flex-center">
+                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
+                                <i className="bi bi-cloud-download-fill"></i>
+                                Download Sample
+                            </button>
+                        </div>
                     </div>
                     <div className="col-md-4 bg-light px-4 py-5">
                         <h2 className="fs-3 flex-center gap-2 fw-semibold">
@@ -177,6 +174,12 @@ function Home() {
                             Architecture Templates
                         </h2>
                         <p className="text-center">Sample structures to start your system design</p>
+                        <div className="flex-center">
+                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
+                                <i className="bi bi-cloud-download-fill"></i>
+                                Download Sample
+                            </button>
+                        </div>
                     </div>
                     <div className="col-md-4 bg-light px-4 py-5">
                         <h2 className="fs-3 flex-center gap-2 fw-semibold">
@@ -184,6 +187,12 @@ function Home() {
                             Architectural Diagrams
                         </h2>
                         <p className="text-center">System layouts & deployment visuals</p>
+                        <div className="flex-center">
+                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
+                                <i className="bi bi-cloud-download-fill"></i>
+                                Download Sample
+                            </button>
+                        </div>
                     </div>
                     <div className="col-md-4 bg-light px-4 py-5">
                         <h2 className="fs-3 flex-center gap-2 fw-semibold">
@@ -191,6 +200,12 @@ function Home() {
                             Cheatsheets
                         </h2>
                         <p className="text-center">Fast access to key concepts in tech & methodology</p>
+                        <div className="flex-center">
+                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
+                                <i className="bi bi-cloud-download-fill"></i>
+                                Download Sample
+                            </button>
+                        </div>
                     </div>
                     <div className="col-md-4 bg-light px-4 py-5">
                         <h2 className="fs-3 flex-center gap-2 fw-semibold">
@@ -198,6 +213,12 @@ function Home() {
                             Code Snippets
                         </h2>
                         <p className="text-center">Ready-to-use code blocks across languages</p>
+                        <div className="flex-center">
+                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
+                                <i className="bi bi-cloud-download-fill"></i>
+                                Download Sample
+                            </button>
+                        </div>
                     </div>
                     <div className="col-md-4 bg-light px-4 py-5">
                         <h2 className="fs-3 flex-center gap-2 fw-semibold">
@@ -205,10 +226,22 @@ function Home() {
                             Design Docs & Templates
                         </h2>
                         <p className="text-center">Real templates for technical design and planning</p>
+                        <div className="flex-center">
+                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
+                                <i className="bi bi-cloud-download-fill"></i>
+                                Download Sample
+                            </button>
+                        </div>
                     </div>
                     <div className="col-md-4 bg-light px-4 py-5">
                         <h2 className="fs-3 flex-center gap-2 fw-semibold">🎯 Expert Tips </h2>
                         <p className="text-center">Advice from experienced devs & architects</p>
+                        <div className="flex-center">
+                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
+                                <i className="bi bi-cloud-download-fill"></i>
+                                Download Sample
+                            </button>
+                        </div>
                     </div>
                     <div className="col-md-4 bg-light px-4 py-5">
                         <h2 className="fs-3 flex-center gap-2 fw-semibold">
@@ -216,9 +249,15 @@ function Home() {
                             Professional Tools Intro
                         </h2>
                         <p className="text-center">Hands-on intros to tools like Figma, Postman, Terraform, etc.</p>
+                        <div className="flex-center">
+                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
+                                <i className="bi bi-cloud-download-fill"></i>
+                                Download Sample
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div >
 
 
             {/* <div className="bg-light pb-4" id="choose">

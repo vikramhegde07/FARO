@@ -14,29 +14,11 @@ const DocxUploader = () => {
 
     const navigator = useNavigate();
 
-    const uploadImageToServer = async (base64Data) => {
-        try {
-            const formData = new FormData();
-            const blob = await (await fetch(base64Data)).blob();
-            formData.append('image', blob, 'image.png');
-
-            const response = await axios.post(`${API_BASE}/article/upload`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-
-            return response.data.url;
-        } catch (error) {
-            console.error('Error uploading image:', error);
-            return null;
-        }
-    };
-
     const htmlToBlocks = async (html) => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         const blocks = [];
+        const imageFiles = [];
 
         const walkNodes = async (nodeList) => {
             for (const node of nodeList) {
@@ -57,13 +39,12 @@ const DocxUploader = () => {
                     if (imgs.length > 0) {
                         for (const img of imgs) {
                             if (img.src.startsWith('data:image')) {
-                                const uploadedUrl = await uploadImageToServer(img.src);
-                                if (uploadedUrl) {
-                                    blocks.push({
-                                        type: 'image',
-                                        value: uploadedUrl
-                                    });
-                                }
+                                const blob = await (await fetch(img.src)).blob();
+                                imageFiles.push(blob);
+                                blocks.push({
+                                    type: 'image',
+                                    value: 'upload' // placeholder
+                                });
                             } else {
                                 blocks.push({
                                     type: 'image',
@@ -117,7 +98,7 @@ const DocxUploader = () => {
         };
 
         await walkNodes([...doc.body.children]);
-        return blocks;
+        return { blocks, imageFiles };
     };
 
     const handleFileUpload = async (e) => {
@@ -127,9 +108,8 @@ const DocxUploader = () => {
             mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
                 .then(async (result) => {
                     setParsedHtml(result.value);
-                    const blocks = await htmlToBlocks(result.value);
-                    console.log(blocks);
-                    setParsedBlocks(blocks);
+                    const { blocks, imageFiles } = await htmlToBlocks(result.value);
+                    setParsedBlocks({ blocks, imageFiles });
                 })
                 .catch((err) => {
                     console.error('Error parsing docx', err);
@@ -138,38 +118,48 @@ const DocxUploader = () => {
     };
 
     const handlePublish = async () => {
-        if (!title || !island || parsedBlocks.length === 0) {
+        if (!title || !island || !parsedBlocks.blocks?.length) {
             alert('Please fill all details and upload a valid DOCX file.');
             return;
         }
 
-        const articleData = {
-            title,
-            island,
-            tier,
-            content: parsedBlocks,
-        };
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('island', island);
+        formData.append('tier', tier);
+        formData.append('content', JSON.stringify(parsedBlocks.blocks));
+
+        parsedBlocks.imageFiles?.forEach((file) => {
+            formData.append('images', file);
+        });
 
         const token = localStorage.getItem('faro-user');
-        axios
-            .post(`${API_BASE}/article/create/parser`, articleData, {
+
+        try {
+            const res = await axios.post(`${API_BASE}/article/create/parser`, formData, {
                 headers: {
                     Authorization: token,
+                    'Content-Type': 'multipart/form-data',
                 },
-            })
-            .then((response) => {
-                localStorage.removeItem('faro-title');
-                localStorage.removeItem('faro-island');
-                localStorage.removeItem('faro-tier');
-                toast.success("Article Submitted successfully!");
-                navigator('/account');
-            })
-            .catch((error) => {
-                toast.error("Error while submitting article!");
-            })
+            });
 
+            localStorage.removeItem('faro-title');
+            localStorage.removeItem('faro-island');
+            localStorage.removeItem('faro-tier');
+
+            toast.success('Article Submitted successfully!');
+            navigator('/account');
+        } catch (error) {
+            toast.error('Error while submitting article!');
+        }
     };
 
+    function handleCancel() {
+        localStorage.removeItem('faro-title');
+        localStorage.removeItem('faro-island');
+        localStorage.removeItem('faro-tier');
+        navigator('/account');
+    };
 
     useEffect(() => {
         setTitle(localStorage.getItem('faro-title'));
@@ -190,8 +180,9 @@ const DocxUploader = () => {
                 <div className="border p-3" dangerouslySetInnerHTML={{ __html: parsedHtml }}></div>
             </div>
             <hr />
-            <div className="flex-center py-3">
-                <button onClick={handlePublish} className="btn btn-success">Publish Article</button>
+            <div className="flex-center py-3 gap-3">
+                <button onClick={handleCancel} className="btn btn-danger px-4 rounded-0">Cancel</button>
+                <button onClick={handlePublish} className="btn btn-success px-4 rounded-0">Publish Article</button>
             </div>
         </>
     );
