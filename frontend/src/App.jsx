@@ -33,9 +33,6 @@ import AdminPrivillages from './admin/Privillage';
 import AdminProfile from './admin/Profile';
 import AdminSettings from './admin/Settings';
 import AdminUsers from './admin/Users';
-import axios from 'axios';
-import API_BASE from './API';
-
 
 function App() {
   const [logged, setLogged] = useState(false);
@@ -51,7 +48,8 @@ function App() {
     if (token == null) {
       setLogged(false);
       setIsAdmin(false);
-      navigator('/');
+      if (location.pathname.includes('/admin'))
+        navigator('/');
     }
     else {
       setLogged(true);
@@ -80,7 +78,7 @@ function App() {
         <Route path='/islands' element={<Islands />} />
         <Route path='/about' element={<About />} />
         <Route path='/account' element={<Account refresh={checkUserLogin} />} />
-        <Route path='/island/:id' element={<Island logged={logged} />} />
+        <Route path='/island/:islandId' element={<Island logged={logged} />} />
         <Route path='/article/:id' element={<Article />} />
         {/* routes for author */}
         <Route path='/createArticle' element={<CreateArticle />} />

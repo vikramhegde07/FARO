@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Helmet } from 'react-helmet';
 import { Link, useLocation } from 'react-router-dom';
 import IslandCanvas from '../Components/IslandCanvas';
 import axios from 'axios';
@@ -63,11 +62,6 @@ function Home() {
     }, [screenWidth]);
     return (
         <>
-            <Helmet>
-                <meta name="description" content="This is the home page of FARO" />
-                <title>FARO</title>
-            </Helmet>
-
             <div className="container-fluid bg-hero g-0">
                 <div className="container-fluid bg-mask p-3" style={{ "minHeight": "100vh" }}>
                     <div className="row flex-center">
@@ -88,19 +82,19 @@ function Home() {
                     <h1 className="text-center fw-bold fs-2">Why FARO?</h1>
                     <p className="text-center text-muted mb-5">Everything you need to learn, share, and grow in one platform.</p>
                     <div className="flex-jcenter gap-5 flex-column flex-md-row">
-                        <div class="card py-4 hover-shadow-colored col-md-4">
-                            <div class="card-body">
-                                <h5 class="card-title flex-center gap-2">🔍 Dicover</h5>
-                                <p class="card-text text-center"> Browse high-quality articles across tech, science, and more — curated for real learning.</p>
+                        <div className="card py-4 hover-shadow-colored col-md-4">
+                            <div className="card-body">
+                                <h5 className="card-title flex-center gap-2">🔍 Dicover</h5>
+                                <p className="card-text text-center"> Browse high-quality articles across tech, science, and more — curated for real learning.</p>
                                 <div className="flex-center">
                                     <Link to={'/islands'} className='btn btn-danger mt-3 px-4 rounded-0'>Discover Now</Link>
                                 </div>
                             </div>
                         </div>
-                        <div class="card py-4 hover-shadow-colored col-md-4">
-                            <div class="card-body">
-                                <h5 class="card-title flex-center gap-2">✍️ Contribute</h5>
-                                <p class="card-text text-center">Write and share your knowledge. FARO empowers experts and learners alike.</p>
+                        <div className="card py-4 hover-shadow-colored col-md-4">
+                            <div className="card-body">
+                                <h5 className="card-title flex-center gap-2">✍️ Contribute</h5>
+                                <p className="card-text text-center">Write and share your knowledge. FARO empowers experts and learners alike.</p>
                                 <div className="flex-center">
                                     <Link to={'/login'} className='btn btn-danger mt-3 px-4 rounded-0'>Get Started</Link>
                                 </div>
@@ -152,8 +146,8 @@ function Home() {
             </Swiper >
 
             <div className="container-fluid py-5 px-3 bg-white" id="services">
-                <h2 class="text-center fw-bold mb-3">What You'll Find on FARO</h2>
-                <p class="text-center text-muted mb-5">More than just articles — FARO offers real-world resources to build, learn, and contribute.</p>
+                <h2 className="text-center fw-bold mb-3">What You'll Find on FARO</h2>
+                <p className="text-center text-muted mb-5">More than just articles — FARO offers real-world resources to build, learn, and contribute.</p>
                 <div className="row flex-jcenter gap-3">
                     <div className="col-md-4 bg-light px-4 py-5">
                         <h2 className="fs-3 flex-center gap-2 fw-semibold">

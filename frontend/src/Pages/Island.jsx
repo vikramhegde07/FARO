@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import API_BASE from '../API';
-import { toast } from 'react-toastify';
 
 
 function Island({ logged }) {
     const [articles, setArticles] = useState([]);
-    const navigator = useNavigate();
-    const { id } = useParams();
+    const { islandId } = useParams();
     const [subscription, setSubscription] = useState(false);
 
     function getAllArticles() {
         axios
-            .get(`${API_BASE}/article/island/${id}`)
+            .get(`${API_BASE}/article/island/${islandId}`)
             .then((response) => {
                 setArticles(response.data);
             })
@@ -23,10 +21,11 @@ function Island({ logged }) {
     }
 
     function checkAccess() {
+        const user = localStorage.getItem('faro-user');
         axios
-            .get(`${API_BASE}/island/checkAccess/${id}`, {
+            .get(`${API_BASE}/island/checkAccess/${islandId}`, {
                 headers: {
-                    Authorization: localStorage.getItem('faro-user')
+                    Authorization: user
                 }
             })
             .then((response) => {
@@ -37,6 +36,7 @@ function Island({ logged }) {
             .catch((error) => {
                 setSubscription(false);
             })
+
     }
 
     useEffect(() => {
