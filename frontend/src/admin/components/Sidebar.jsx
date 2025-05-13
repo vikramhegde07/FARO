@@ -23,8 +23,8 @@ const Sidebar = ({ refresh }) => {
                     <i className="bi bi-list"></i>
                 </button>
             </div>
-            <div className={`container bg-light sidebar px-2 py-3 flex-jbetween flex-column ${navActive ? 'change' : ''}`}>
-                <div className="container-fluid flex-center flex-column gap-2">
+            <div className={`container-fluid bg-light px-0 sidebar py-3 flex-jbetween flex-column ${navActive ? 'change' : ''}`}>
+                <div className="container-fluid flex-acenter flex-column gap-2">
                     <Link className="navbar-brand fw-bolder fs-1 p-0" to={"/"}>
                         <p className='d-inline mb-0'>F</p>
                         <p className='text-danger d-inline mb-0'>A</p>
@@ -32,39 +32,39 @@ const Sidebar = ({ refresh }) => {
                         <p className='text-danger d-inline mb-0'>O</p>
                     </Link>
                     <hr className='m-0 mb-2 border border-black w-100' />
-                    <Link to={'/admin'} className='btn flex-acenter gap-2 fs-5 hover-shadow-1 w-100 rounded-0'>
+                    <Link to={'/admin'} className='w-100 py-2 ps-2 text-black text-decoration-none flex-acenter gap-2 fs-5 hover-bg-gray rounded-0'>
                         <ion-icon name="stats-chart-outline"></ion-icon>
                         Admin Panel
                     </Link>
-                    <Link to={'/admin/islands'} className='btn flex-acenter gap-2 fs-5 hover-shadow-1 w-100 rounded-0'>
+                    <Link to={'/admin/islands'} className='w-100 py-2 ps-2 text-black text-decoration-none flex-acenter gap-2 fs-5 hover-bg-gray rounded-0'>
                         <img src="/assets/img/island-icon.png" alt="" width={16} height={16} />
                         Islands
                     </Link>
-                    <Link to={'/admin/articles'} className='btn flex-acenter gap-2 fs-5 hover-shadow-1 w-100 rounded-0'>
+                    <Link to={'/admin/articles'} className='w-100 py-2 ps-2 text-black text-decoration-none flex-acenter gap-2 fs-5 hover-bg-gray rounded-0'>
                         <ion-icon name="document-text-outline"></ion-icon>
                         Articles
                     </Link>
-                    <Link to={'/admin/reviews'} className='btn flex-acenter gap-2 fs-5 hover-shadow-1 w-100 rounded-0'>
+                    <Link to={'/admin/reviews'} className='w-100 py-2 ps-2 text-black text-decoration-none flex-acenter gap-2 fs-5 hover-bg-gray rounded-0'>
                         <ion-icon name="documents-outline"></ion-icon>
                         Article Reviews
                     </Link>
-                    <Link to={'/admin/privillage'} className='btn flex-acenter gap-2 fs-5 hover-shadow-1 w-100 rounded-0'>
+                    <Link to={'/admin/privillage'} className='w-100 py-2 ps-2 text-black text-decoration-none flex-acenter gap-2 fs-5 hover-bg-gray rounded-0'>
                         <ion-icon name="key-outline"></ion-icon>
                         Privillages
                     </Link>
-                    <Link to={'/admin/users'} className='btn flex-acenter gap-2 fs-5 hover-shadow-1 w-100 rounded-0'>
+                    <Link to={'/admin/users'} className='w-100 py-2 ps-2 text-black text-decoration-none flex-acenter gap-2 fs-5 hover-bg-gray rounded-0'>
                         <ion-icon name="people-circle-outline"></ion-icon>
                         Users
                     </Link>
 
                 </div>
                 <div className="container-fluid flex-center flex-column gap-2">
-                    <Link to={'/admin/settings'} className='btn flex-acenter gap-2 fs-5 hover-shadow-1 w-100 rounded-0'>
+                    <Link to={'/admin/settings'} className='w-100 py-2 ps-2 text-black text-decoration-none flex-acenter gap-2 fs-5 hover-bg-gray rounded-0'>
                         <ion-icon name="cog-outline"></ion-icon>
                         Settings
                     </Link>
-                    <button className='btn flex-acenter gap-2 fs-5 hover-shadow-1 w-100 rounded-0' onClick={handleLogout}>
-                        <ion-icon name="log-out-outline" className="text-danger"></ion-icon>
+                    <button className='btn btn-danger w-100 flex-acenter gap-2 fs-5 rounded-0' onClick={handleLogout}>
+                        <ion-icon name="log-out-outline" className=""></ion-icon>
                         Logout
                     </button>
                 </div>
