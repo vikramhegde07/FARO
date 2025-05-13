@@ -1,0 +1,45 @@
+name: Build and Deploy React App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Show installed npm packages
+        working-directory: ./frontend
+        run: npm list --depth=0
+
+      - name: Build React app
+        working-directory: ./frontend
+        run: |
+          echo "Starting React build."
+          npm run build
+
+      - name: Debug - list contents of build directory
+        run: ls -al ./frontend/dist
+
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./frontend/dist/
+          server-dir: /
