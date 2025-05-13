@@ -84,7 +84,7 @@ function Home() {
                     <div className="flex-jcenter gap-5 flex-column flex-md-row">
                         <div className="card py-4 hover-shadow-colored col-md-4">
                             <div className="card-body">
-                                <h5 className="card-title flex-center gap-2">🔍 Dicover</h5>
+                                <h5 className="card-title flex-center gap-2">🔍 Discover</h5>
                                 <p className="card-text text-center"> Browse high-quality articles across tech, science, and more — curated for real learning.</p>
                                 <div className="flex-center">
                                     <Link to={'/islands'} className='btn btn-danger mt-3 px-4 rounded-0'>Discover Now</Link>
