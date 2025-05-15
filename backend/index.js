@@ -7,6 +7,7 @@ import cors from 'cors';
 import userRoute from './routes/userRoute.js';
 import islasndRoute from './routes/islandRoute.js';
 import articleRoute from './routes/articleRoute.js';
+import eventsRoute from './routes/eventsRoute.js';
 import subscriptionRoute from './routes/subscriptionRoute.js';
 
 //configure dotenv
@@ -37,6 +38,9 @@ app.use('/island', islasndRoute);
 
 //Route to handle articles
 app.use('/article', articleRoute);
+
+//Route to handle articles
+app.use('/event', eventsRoute);
 
 //Route to handle subscriptions
 app.use('/subscription', subscriptionRoute);

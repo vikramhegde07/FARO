@@ -20,9 +20,10 @@ import Account from './Pages/Account';
 import Islands from './Pages/Islands';
 import Article from './Pages/Article';
 import CreateArticle from './Pages/CreateArticle';
+import AdminAllArticles from './admin/AllArticles';
 
 //importing admin components
-import AdminAllArticles from './admin/components/AllArticles';
+import AdminIslandArticles from './admin/components/IslandArticles';
 import AdminArticle from './admin/components/Article';
 import AdminSidebar from './admin/components/Sidebar';
 
@@ -33,6 +34,7 @@ import AdminPrivillages from './admin/Privillage';
 import AdminProfile from './admin/Profile';
 import AdminSettings from './admin/Settings';
 import AdminUsers from './admin/Users';
+import AdminEvents from './admin/Events';
 
 function App() {
   const [logged, setLogged] = useState(false);
@@ -89,12 +91,14 @@ function App() {
         {/* admin routes  */}
         <Route path='/admin' element={<AdminDashBoard />} />
         <Route path='/admin/Islands' element={<AdminIslands />} />
-        <Route path='/admin/island/:id' element={<AdminAllArticles />} />
+        <Route path='/admin/island/:id' element={<AdminIslandArticles />} />
         <Route path='/admin/privillage' element={<AdminPrivillages />} />
         <Route path='/admin/profile' element={<AdminProfile />} />
         <Route path='/admin/settings' element={<AdminSettings />} />
         <Route path='/admin/users' element={<AdminUsers />} />
         <Route path='/admin/article/:id' element={<AdminArticle />} />
+        <Route path='/admin/articles/' element={<AdminAllArticles />} />
+        <Route path='/admin/events/' element={<AdminEvents />} />
         {/* end of admin routes  */}
       </Routes>
 

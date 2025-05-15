@@ -16,6 +16,8 @@ function Home() {
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const [slides, setSlides] = useState(1);
 
+    const [events, setEvents] = useState([]);
+
     function getIslands() {
         axios
             .get(`${API_BASE}/island/`)
@@ -29,6 +31,37 @@ function Home() {
             });
     }
 
+    function getUpcomingEvents() {
+        setEvents([]);
+        axios
+            .get(`${API_BASE}/event/upcoming`)
+            .then((response) => {
+                setEvents(response.data);
+            })
+            .catch((error) => {
+                console.log(error.response);
+            })
+    };
+
+    function formatDateOrToday(isoDate) {
+        const inputDate = new Date(isoDate);
+        const today = new Date();
+
+        // Reset time for both dates to compare only the date part
+        inputDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        if (inputDate.getTime() === today.getTime()) {
+            return "Today";
+        }
+
+        const day = String(inputDate.getDate()).padStart(2, '0');
+        const month = String(inputDate.getMonth() + 1).padStart(2, '0');
+        const year = inputDate.getFullYear();
+
+        return `${day}-${month}-${year}`;
+    }
+
     useEffect(() => {
         AOS.init();
 
@@ -40,6 +73,7 @@ function Home() {
         }
 
         getIslands();
+        getUpcomingEvents();
 
         const handleResize = () => {
             setScreenWidth(window.innerWidth);
@@ -65,13 +99,40 @@ function Home() {
             <div className="container-fluid bg-hero g-0">
                 <div className="container-fluid bg-mask p-3" style={{ "minHeight": "100vh" }}>
                     <div className="row flex-center">
-                        <div className="col-md-10 px-4">
+                        <div className="col-md-8 px-4">
                             <div className="flex-jcenter flex-column p-4 w-fit">
                                 <h1 className='fw-semibold fs-large text-white' data-aos="fade-right" data-aos-duration="800">Hello,</h1>
                                 <h1 className='fw-semibold fs-large text-white' data-aos="fade-right" data-aos-duration="800" data-aos-delay="500">WE ARE</h1>
                                 <h1 className='fw-normal fs-large text-secondary' data-aos="fade-right" data-aos-duration="800" data-aos-delay="800">FARO</h1>
                             </div>
                             <p className='text-white-50 fw-semibold fs-4' data-aos="fade-up" data-aos-duration="800" data-aos-delay="1300">At FARO, we excel in knowledge services. We provide authentic professional content for multiple domains in multiple languages and media. We bring the knowledge workers across the world to a common forum enriching content and consumers collaboratively.</p>
+                        </div>
+                        <div className="col-md-4 flex-center flex-column gap-2">
+                            {events.length === 0 ? '' : (
+                                <div className="container bg-blur p-4">
+                                    <div className="flex-jbetween flex-acenter">
+                                        <h1 className="text-white">Events</h1>
+                                        <Link to={''} className='text-white flex-acenter gap-2 text-decoration-none'>
+                                            See all
+                                            <ion-icon name="arrow-forward-outline" className="text-white"></ion-icon>
+                                        </Link>
+                                    </div>
+                                    <hr className='border border-white' />
+
+                                    {events.map((event) => (
+                                        <div className="container overflow-y-scroll" style={{ maxHeight: "350px" }} key={event._id}>
+                                            <div className="card text-bg-secondary mb-3">
+                                                <div className="card-header">{formatDateOrToday(event.createdAt)}</div>
+                                                <div className="card-body">
+                                                    <h5 className="card-title">{event.title}</h5>
+                                                    <Link to={`/event/${event._id}`} className="btn btn-dark px-4 rounded-0">See Details</Link>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

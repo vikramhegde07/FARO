@@ -59,6 +59,11 @@
     background-color: rgba(0, 0, 0, 0.7);
 }
 
+.bg-blur {
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(3px);
+}
+
 .bg-primary {
     background: var(--primary) !important;
 }
@@ -179,6 +184,16 @@
 .hover-op-container:hover .hover-opacity,
 .hover-opacity:hover {
     opacity: 1;
+    transition: all 0.5s;
+}
+
+.hover-decoration {
+    text-decoration: none;
+    transition: all 0.5s;
+}
+
+.hover-decoration:hover {
+    text-decoration: underline;
     transition: all 0.5s;
 }
 

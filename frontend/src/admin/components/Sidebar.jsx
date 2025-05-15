@@ -52,6 +52,10 @@ const Sidebar = ({ refresh }) => {
                         <ion-icon name="key-outline"></ion-icon>
                         Privillages
                     </Link>
+                    <Link to={'/admin/events'} className='w-100 py-2 ps-2 text-black text-decoration-none flex-acenter gap-2 fs-5 hover-bg-gray rounded-0'>
+                        <ion-icon name="calendar-outline"></ion-icon>
+                        Events
+                    </Link>
                     <Link to={'/admin/users'} className='w-100 py-2 ps-2 text-black text-decoration-none flex-acenter gap-2 fs-5 hover-bg-gray rounded-0'>
                         <ion-icon name="people-circle-outline"></ion-icon>
                         Users

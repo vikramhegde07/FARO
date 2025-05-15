@@ -1,11 +1,11 @@
 import React from 'react'
 
-function Article() {
+function IslandArticles() {
     return (
         <div className='admin-content px-2'>
-            article info
+
         </div>
     )
 }
 
-export default Article
+export default IslandArticles
