@@ -51,6 +51,14 @@
     background: linear-gradient(60deg, #29323c 0%, #485563 100%);
 }
 
+.bg-gradient-trans {
+    background: linear-gradient(180deg, transparent, rgb(255, 255, 255));
+}
+
+.bg-gradient-trans-black {
+    background: linear-gradient(180deg, transparent, rgb(0, 0, 0));
+}
+
 .bg-dark-2 {
     background: #111 !important;
 }
@@ -200,7 +208,7 @@
 .swiper {
     width: 100%;
     height: 100%;
-    background: #000;
+    /* background: #000; */
 }
 
 .swiper-slide {
@@ -208,7 +216,7 @@
     color: #fff;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    padding: 40px 60px;
+    /* padding: 40px 60px; */
 }
 
 .parallax-bg {
@@ -291,4 +299,18 @@
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.75);
     z-index: 100;
+}
+
+.irregular-shape {
+    clip-path: polygon( 50% 0%, 65.45% 6.45%, 76.55% 17.1%, 85.35% 29.3%, 91.35% 42.9%, 94.25% 57.1%, 94.25% 71.9%, 91.35% 86.1%, 85.35% 100%, 76.55% 112.9%, 65.45% 123.55%, 50% 130%, 34.55% 123.55%, 23.45% 112.9%, 14.65% 100%, 8.65% 86.1%, 5.75% 71.9%, 5.75% 57.1%, 8.65% 42.9%, 14.65% 29.3%, 23.45% 17.1%, 34.55% 6.45%);
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+.irregular-shape img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
 }
