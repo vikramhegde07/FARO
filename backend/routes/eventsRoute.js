@@ -4,6 +4,8 @@ import auth from '../middlewares/auth.js';
 import { User } from '../models/userModel.js';
 import upload from '../middlewares/upload.js';
 import { uploadImageToS3 } from '../controllers/uploadController.js';
+import { addRemovables } from '../controllers/event.js';
+import deleteS3Files from '../middlewares/remover.js';
 
 const router = express.Router();
 
@@ -93,7 +95,7 @@ router.post('/create', auth, upload.array('images'), async(req, res) => {
                     file.originalname,
                     file.mimetype
                 );
-                updatedContent.push({ type: 'image', value: uploadedUrl });
+                updatedContent.push({ type: 'image', value: uploadedUrl.url });
                 fileIndex++;
             } else {
                 updatedContent.push(block);
@@ -113,6 +115,27 @@ router.post('/create', auth, upload.array('images'), async(req, res) => {
         console.error('Error creating event:', err);
         return res.status(500).json({ message: err.message });
     }
+});
+
+//Route to remove a published event
+router.delete('/delete/:id', auth, async(req, res, next) => {
+
+    if (!req.userId)
+        return res.status(403).json({ error: 'No user id detected' });
+
+    const user = await User.findById(req.userId);
+
+    if (!user)
+        return res.status(403).json({ error: "No user found!" });
+
+    if (user.user_type !== 'admin')
+        return res.status(404).json({ error: "Access restricted" });
+    else
+        next();
+
+}, addRemovables, deleteS3Files, async(req, res) => {
+    await Event.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: 'Event and images deleted successfully' });
 });
 
 export default router;

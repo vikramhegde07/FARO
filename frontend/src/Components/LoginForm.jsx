@@ -27,8 +27,6 @@ function LoginForm({ changeForm, refresh }) {
             email: loginData.email,
             password: loginData.password
         }
-        console.log(formData);
-
 
         axios
             .post(`${API_BASE}/user/login`, formData)

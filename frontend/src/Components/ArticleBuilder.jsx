@@ -290,17 +290,37 @@ const ArticleBuilder = () => {
                 <div className="col-md-6">
                     <h4>Preview</h4>
                     <div className="border p-3">
-                        {articleStructure.map((item, index) => {
-                            switch (item.type) {
-                                case 'heading': return <h2 key={index}>{item.value}</h2>;
-                                case 'subheading': return <h4 key={index}>{item.value}</h4>;
-                                case 'paragraph': return <p key={index}>{item.value}</p>;
-                                case 'points': return <ul key={index}>{item.value.map((pt, i) => <li key={i}>{pt}</li>)}</ul>;
-                                case 'link': return <a key={index} href={item.value.href}>{item.value.text}</a>;
-                                case 'image': return <img key={index} src={item.value} alt="img" className="img-fluid" />;
-                                default: return null;
-                            }
-                        })}
+                        {
+                            articleStructure.map((item, index) => {
+                                switch (item.type) {
+                                    case 'heading': return <h2 key={index}>{item.value}</h2>;
+                                    case 'subheading': return <h4 key={index}>{item.value}</h4>;
+                                    case 'paragraph': return <p key={index}>{item.value}</p>;
+                                    case 'points': return <ul key={index}>{item.value.map((pt, i) => <li key={i}>{pt}</li>)}</ul>;
+                                    case 'link': return <a key={index} href={item.value.href}>{item.value.text}</a>;
+                                    case 'image':
+                                        const fileIndex = articleStructure
+                                            .slice(0, index)
+                                            .filter(b => b.type === 'image' && b.value === 'upload')
+                                            .length - 1;
+
+                                        const imageFile = fileUploads[fileIndex];
+
+                                        const previewUrl = imageFile ? URL.createObjectURL(imageFile) : null;
+                                        return (
+                                            <div key={index} className='bg-danger'>
+                                                <h1>{item.type} something</h1>
+                                                <img
+                                                    // key={index}
+                                                    src={previewUrl || item.value}
+                                                    alt="img"
+                                                    className="img-fluid"
+                                                />
+                                            </div>
+                                        );
+                                    default: return null;
+                                }
+                            })}
                     </div>
                 </div>
             </div>
