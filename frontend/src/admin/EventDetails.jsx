@@ -43,7 +43,7 @@ function EventDetails() {
                         </ol>
                     ) : item.type == 'image' ? (
                         <div className='flex-center'>
-                            <img src={item.value} alt="" className='img-fluid' />
+                            <img src={item.value} alt="" className='img-fluid' style={{ maxHeight: '70vh' }} />
                         </div>
                     ) : item.type == 'heading' ? (
                         <h1 className='fw-bold fs-1'>{item.value}</h1>

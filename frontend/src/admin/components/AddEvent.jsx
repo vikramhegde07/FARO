@@ -116,7 +116,7 @@ const AddEvent = () => {
     };
 
     return (
-        <div className="admin-content mt-4 px-2">
+        <div className="admin-content mt-4 px-2 py-3">
             <h2 className="mb-4 text-center">Event Builder</h2>
             <div className="row">
                 <div className="col-md-6">
@@ -186,13 +186,13 @@ const AddEvent = () => {
 
                     {contentType === 'points' && (
                         <>
-                            <button className="btn btn-secondary mb-2" onClick={handleAddListItem} disabled={!inputValue}>Add List Item</button>
+                            <button className="btn btn-dark rounded-0 my-3" onClick={handleAddListItem} disabled={!inputValue}>Add List Item</button>
                             <ul>{listItems.map((item, idx) => <li key={idx}>{item}</li>)}</ul>
                         </>
                     )}
 
                     <div className="d-flex justify-content-end">
-                        <button className="btn btn-primary" onClick={handleAddBlock}>Add Content Block</button>
+                        <button className="btn btn-primary px-3 rounded-0" onClick={handleAddBlock}>Add Content Block</button>
                     </div>
                 </div>
 
@@ -205,8 +205,26 @@ const AddEvent = () => {
                                 case 'subheading': return <h5 key={index}>{block.value}</h5>;
                                 case 'paragraph': return <p key={index}>{block.value}</p>;
                                 case 'points': return <ul key={index}>{block.value.map((pt, i) => <li key={i}>{pt}</li>)}</ul>;
-                                case 'image': return <img key={index} src={block.value} alt="preview" className="img-fluid" />;
                                 case 'link': return <a key={index} href={block.value.href} target="_blank" rel="noreferrer">{block.value.text}</a>;
+                                case 'image':
+
+                                    const fileIndex = contentBlocks
+                                        .slice(0, index)
+                                        .filter(b => b.type === 'image' && b.value === 'upload')
+                                        .length;
+
+                                    console.log(fileIndex);
+                                    const imageFile = fileUploads[fileIndex];
+
+                                    const previewUrl = imageFile ? URL.createObjectURL(imageFile) : null;
+                                    return (
+                                        <img
+                                            key={index}
+                                            src={previewUrl || block.value}
+                                            alt="img"
+                                            className="img-fluid"
+                                        />
+                                    );
                                 default: return null;
                             }
                         })}
@@ -214,7 +232,7 @@ const AddEvent = () => {
                 </div>
             </div>
             <div className="text-center mt-4">
-                <button className="btn btn-success px-4" onClick={handleSubmit}>Submit Event</button>
+                <button className="btn btn-success px-4 rounded-0" onClick={handleSubmit}>Submit Event</button>
             </div>
         </div>
     );

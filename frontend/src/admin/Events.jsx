@@ -3,9 +3,86 @@ import React, { useEffect, useState } from 'react'
 import API_BASE from '../API';
 import { Link } from 'react-router-dom';
 import { formatDateOrToday } from '../utils/dateFormatter';
+import { toast } from 'react-toastify';
+
+function RemoveModal({ title, id, close, refresh }) {
+
+    function handleRemove() {
+        axios
+            .delete(`${API_BASE}/event/delete/${id}`, {
+                headers: {
+                    Authorization: localStorage.getItem('faro-user')
+                }
+            })
+            .then((response) => {
+                if (response.status == 200)
+                    toast.success("Event removed successfully!");
+                refresh();
+                close();
+            })
+            .catch((err) => {
+                console.log(err.response.data);
+                toast.error("Sorry! some error occured while deleting");
+                close();
+            })
+    }
+
+    return (
+        <>
+            <div className="my-modal">
+                <div className="col-4 bg-white p-4">
+                    <div className="flex-jbetween">
+                        <div>
+                            <h1 className="flex-acenter fs-3">
+                                <ion-icon name="warning-outline" className="text-danger"></ion-icon>
+                                Removing an event
+                            </h1>
+                        </div>
+                        <ion-icon
+                            name="close-outline"
+                            className="text-black-50 fs-2 cursor-pointer"
+                            onClick={() => { close(); }}
+                        ></ion-icon>
+                    </div>
+                    <hr />
+
+                    <h5 className="fs-5 text-danger flex-acenter">
+                        Warning: The event has been published. Removing can cause confusion to viewers.
+                    </h5>
+                    <p className='fs-18 mb-0'>
+                        Title : {title}
+                    </p>
+                    <hr />
+                    <div className="flex-jend">
+                        <button
+                            type="button"
+                            className="btn btn-dark px-4 rounded-0 me-2"
+                            onClick={close}
+                        >Cancel</button>
+                        <button type='button' onClick={handleRemove} className="btn btn-danger px-4 rounded-0">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
 
 function Events() {
     const [events, setEvents] = useState([]);
+    const [removeModal, setRemoveModal] = useState(false);
+
+    const handleRemoveModal = () => {
+        setRemoveModal(false);
+        setRemovingData({
+            id: null,
+            title: null
+        });
+    }
+
+    const [removingData, setRemovingData] = useState({
+        id: null,
+        title: null
+    });
 
     function getEventList() {
         setEvents([]);
@@ -67,9 +144,20 @@ function Events() {
                                                     <ion-icon name="ellipsis-vertical-outline"></ion-icon>
                                                 </button>
                                                 <ul className="dropdown-menu">
-                                                    <li><button className="dropdown-item" href="#">Action</button></li>
-                                                    <li><button className="dropdown-item" href="#">Another action</button></li>
-                                                    <li><button className="dropdown-item" href="#">Something else here</button></li>
+                                                    <li>
+                                                        <button
+                                                            className="dropdown-item bg-danger text-white rounded-0 flex-acenter gap-2"
+                                                            onClick={() => {
+                                                                setRemovingData({
+                                                                    id: event._id,
+                                                                    title: event.title
+                                                                });
+                                                                setRemoveModal(true);
+                                                            }} >
+                                                            <ion-icon name="trash-outline"></ion-icon>
+                                                            Remove Event
+                                                        </button>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </td>
@@ -80,6 +168,9 @@ function Events() {
                     </table>
                 </div>
             </div>
+
+            {removeModal && <RemoveModal title={removingData.title} id={removingData.id} close={handleRemoveModal} refresh={getEventList} />}
+
         </>
     )
 }
