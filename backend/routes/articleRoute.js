@@ -1,8 +1,8 @@
 import express from 'express';
 import auth from '../middlewares/auth.js';
 import upload from '../middlewares/upload.js';
-import { Article } from '../models/articleModel.js';
 import { uploadImageToS3 } from '../controllers/uploadController.js';
+import { Article } from '../models/articleModel.js';
 
 const router = express.Router();
 

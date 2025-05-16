@@ -1,5 +1,17 @@
 import mongoose from 'mongoose';
 
+const contentBlockSchema = new mongoose.Schema({
+    type: {
+        type: String,
+        enum: ['heading', 'subheading', 'paragraph', 'points', 'image', 'link'],
+        required: true,
+    },
+    value: {
+        type: mongoose.Schema.Types.Mixed, // Can be string, array, object depending on type
+        required: true,
+    },
+});
+
 const eventSchema = mongoose.Schema({
     title: {
         type: String,
@@ -13,9 +25,9 @@ const eventSchema = mongoose.Schema({
         type: Date,
         required: true
     },
-    desc: {
-        type: String,
-        required: true
+    content: {
+        type: [contentBlockSchema],
+        default: []
     }
 }, {
     timestamps: true

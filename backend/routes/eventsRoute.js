@@ -2,6 +2,9 @@ import express from 'express';
 import { Event } from '../models/eventModel.js';
 import auth from '../middlewares/auth.js';
 import { User } from '../models/userModel.js';
+import upload from '../middlewares/upload.js';
+import { uploadImageToS3 } from '../controllers/uploadController.js';
+
 const router = express.Router();
 
 // Route to get all expired events (events before today)
@@ -68,33 +71,48 @@ router.get('/getOne/:eventId', async(req, res) => {
 
 
 //route to create an event
-router.post('/create', auth, async(req, res) => {
-    const { title, location, eventDate, desc } = req.body;
+router.post('/create', auth, upload.array('images'), async(req, res) => {
     try {
-        if (!title ||
-            !location ||
-            !eventDate ||
-            !desc
-        ) {
-            return res.status(404).json({
-                message: 'Send all required fields'
-            });
+        const { title, location, eventDate, content } = req.body;
+
+        if (!title || !location || !eventDate || !content) {
+            return res.status(400).json({ error: 'Send all required fields' });
         }
 
-        if (!req.userId)
-            return res.status(404).json({ error: "Forbidden! No access found" });
+        const parsedContent = JSON.parse(content);
+        const updatedContent = [];
+        let fileIndex = 0;
 
-        const userData = await User.findById(req.userId);
-        if (userData.user_type !== 'admin')
-            return res.status(404).json({ error: "Forbidden! No access found" });
+        // Replace 'upload' images with S3 uploaded URLs
+        for (let block of parsedContent) {
+            if (block.type === 'image' && block.value === 'upload') {
+                const file = req.files[fileIndex];
+                const uploadedUrl = await uploadImageToS3(
+                    file.buffer,
+                    'events/images',
+                    file.originalname,
+                    file.mimetype
+                );
+                updatedContent.push({ type: 'image', value: uploadedUrl });
+                fileIndex++;
+            } else {
+                updatedContent.push(block);
+            }
+        }
 
-        const newEvent = new Event({ title, location, eventDate, desc });
-        await newEvent.save();
+        const newEvent = new Event({
+            title,
+            location,
+            eventDate,
+            content: updatedContent,
+        });
 
-        return res.status(201).json(newEvent);
+        const saved = await newEvent.save();
+        return res.status(201).json(saved);
     } catch (err) {
-        console.log('Server error : ' + err.message);
-        res.status(500).json({ message: err.message });
+        console.error('Error creating event:', err);
+        return res.status(500).json({ message: err.message });
     }
 });
+
 export default router;

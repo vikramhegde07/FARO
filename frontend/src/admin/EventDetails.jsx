@@ -28,7 +28,7 @@ function EventDetails() {
         return ''
 
     return (
-        <div className='container px-5 py-3 mt-lg-4 mt-2'>
+        <div className='admin-content px-5 py-3 mt-lg-4 mt-2'>
             <h1 className="text-center fw-semibold fs-3">{eventData.title}</h1>
             <hr />
             {eventData.content.map((item) => (

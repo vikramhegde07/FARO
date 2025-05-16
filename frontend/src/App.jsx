@@ -39,6 +39,8 @@ import AdminSettings from './admin/Settings';
 import AdminUsers from './admin/Users';
 import AdminEvents from './admin/Events';
 import AdminAllArticles from './admin/AllArticles';
+import AdminEventDetails from './admin/EventDetails';
+
 
 
 function App() {
@@ -107,6 +109,7 @@ function App() {
         <Route path='/admin/article/:id' element={<AdminArticle />} />
         <Route path='/admin/articles/' element={<AdminAllArticles />} />
         <Route path='/admin/events/' element={<AdminEvents />} />
+        <Route path='/admin/event/:eventId' element={<AdminEventDetails />} />
         <Route path='/admin/addEvent/' element={<AdminAddEvent />} />
         {/* end of admin routes  */}
       </Routes>
