@@ -47,6 +47,25 @@ router.get('/upcoming', async(req, res) => {
     }
 });
 
+//Route to get one event data
+router.get('/getOne/:eventId', async(req, res) => {
+    const eventId = req.params.eventId;
+
+    try {
+        if (!eventId)
+            return res.status(404).json({ error: "Sorry! Need event id." });
+
+        const eventData = await Event.findById(eventId);
+        if (!eventData)
+            return res.status(403).json({ error: 'Sorry! no event found.' })
+
+        return res.status(200).json(eventData);
+    } catch (err) {
+        console.log('Server error : ' + err.message);
+        res.status(500).json({ message: err.message });
+    }
+});
+
 
 //route to create an event
 router.post('/create', auth, async(req, res) => {

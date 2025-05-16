@@ -28,6 +28,8 @@ function Footer() {
                         <Link to={'/about'} className='text-decoration-none text-white'>About</Link>
                         <Link to={'/contact'} className='text-decoration-none text-white'>Contact Us</Link>
                         <Link to={'/news'} className='text-decoration-none text-white'>News</Link>
+                        <Link to={'/events'} className='text-decoration-none text-white'>Events</Link>
+                        <Link to={'/samples'} className='text-decoration-none text-white'>Samples</Link>
                     </div>
                 </div>
             </div>

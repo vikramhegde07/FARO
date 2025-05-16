@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import IslandCanvas from '../Components/IslandCanvas';
-import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Parallax, Pagination, Navigation } from 'swiper/modules';
+import { Autoplay, Parallax, Pagination, Navigation } from 'swiper/modules';
+import axios from 'axios';
 import API_BASE from '../API';
+import { formatDateOrToday } from '../utils/dateFormatter';
+import IslandCanvas from '../Components/IslandCanvas';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -23,8 +24,6 @@ function Home() {
             .get(`${API_BASE}/island/`)
             .then((response) => {
                 setIslands(response.data);
-                // console.log(response.data);
-
             })
             .catch((error) => {
                 console.log(error.response.data);
@@ -42,25 +41,6 @@ function Home() {
                 console.log(error.response);
             })
     };
-
-    function formatDateOrToday(isoDate) {
-        const inputDate = new Date(isoDate);
-        const today = new Date();
-
-        // Reset time for both dates to compare only the date part
-        inputDate.setHours(0, 0, 0, 0);
-        today.setHours(0, 0, 0, 0);
-
-        if (inputDate.getTime() === today.getTime()) {
-            return "Today";
-        }
-
-        const day = String(inputDate.getDate()).padStart(2, '0');
-        const month = String(inputDate.getMonth() + 1).padStart(2, '0');
-        const year = inputDate.getFullYear();
-
-        return `${day}-${month}-${year}`;
-    }
 
     useEffect(() => {
         AOS.init();
@@ -112,7 +92,7 @@ function Home() {
                                 <div className="container bg-blur p-4">
                                     <div className="flex-jbetween flex-acenter">
                                         <h1 className="text-white">Events</h1>
-                                        <Link to={''} className='text-white flex-acenter gap-2 text-decoration-none'>
+                                        <Link to={'/events'} className='text-white flex-acenter gap-2 text-decoration-none'>
                                             See all
                                             <ion-icon name="arrow-forward-outline" className="text-white"></ion-icon>
                                         </Link>
@@ -196,7 +176,7 @@ function Home() {
                 ></div>
                 {islands.slice(0, 5).map((island) => (
                     <SwiperSlide>
-                        <div className='' key={island._id}>
+                        <div className='py-5' key={island._id}>
                             <IslandCanvas title={island.title} slides={slides} />
                             <div className="flex-center">
                                 <Link to={`/island/${island._id}`} className='btn btn-dark px-5 rounded-0'>Visit Island</Link>
@@ -206,147 +186,65 @@ function Home() {
                 ))}
             </Swiper >
 
-            <div className="container-fluid py-5 px-3 bg-white" id="services">
-                <h2 className="text-center fw-bold mb-3">What You'll Find on FARO</h2>
-                <p className="text-center text-muted mb-5">More than just articles — FARO offers real-world resources to build, learn, and contribute.</p>
-                <div className="row flex-jcenter gap-3">
-                    <div className="col-md-4 bg-light px-4 py-5">
-                        <h2 className="fs-3 flex-center gap-2 fw-semibold">
-                            <i className="bi bi-bar-chart-fill text-warning"></i>
-                            Reference Diagrams
+            <div className="container-fluid px-lg-5 px-3 mt-5">
+                <div className="row flex-center">
+                    <div className="col-md-5">
+                        <h2 className="text-center fw-bold mb-3 ">
+                            What You'll Find on
+                            <p className='d-inline mb-0'> F</p>
+                            <p className='text-danger d-inline mb-0'>A</p>
+                            <p className='d-inline mb-0'>R</p>
+                            <p className='text-danger d-inline mb-0'>O</p>
                         </h2>
-                        <p className="text-center">Visual guides to understand key system flows</p>
-                        <div className="flex-center">
-                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
-                                <i className="bi bi-cloud-download-fill"></i>
-                                Download Sample
-                            </button>
+                        <p className="text-center text-muted mb-3">Explore the Blueprint of Modern Knowledge.</p>
+                        <p className='fs-18'>FARO is your gateway to structured, reliable, and expertly curated content — from architectural blueprints and engineering methodologies to practical code snippets and reference diagrams. Whether you're a student, professional, or curious learner, FARO helps you navigate complex topics with clarity, depth, and precision.</p>
+                        <div className='d-flex'>
+                            <Link to={'/samples'} className='btn btn-danger flex-acenter px-4 rounded-0 gap-2'>
+                                <ion-icon name="eye-outline"></ion-icon>
+                                View Samples
+                            </Link>
                         </div>
                     </div>
-                    <div className="col-md-4 bg-light px-4 py-5">
-                        <h2 className="fs-3 flex-center gap-2 fw-semibold">
-                            <i className="bi bi-buildings"></i>
-                            Architecture Templates
-                        </h2>
-                        <p className="text-center">Sample structures to start your system design</p>
-                        <div className="flex-center">
-                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
-                                <i className="bi bi-cloud-download-fill"></i>
-                                Download Sample
-                            </button>
-                        </div>
-                    </div>
-                    <div className="col-md-4 bg-light px-4 py-5">
-                        <h2 className="fs-3 flex-center gap-2 fw-semibold">
-                            <i className="bi bi-diagram-3 text-danger"></i>
-                            Architectural Diagrams
-                        </h2>
-                        <p className="text-center">System layouts & deployment visuals</p>
-                        <div className="flex-center">
-                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
-                                <i className="bi bi-cloud-download-fill"></i>
-                                Download Sample
-                            </button>
-                        </div>
-                    </div>
-                    <div className="col-md-4 bg-light px-4 py-5">
-                        <h2 className="fs-3 flex-center gap-2 fw-semibold">
-                            <i className="bi bi-clipboard-fill text-primary"></i>
-                            Cheatsheets
-                        </h2>
-                        <p className="text-center">Fast access to key concepts in tech & methodology</p>
-                        <div className="flex-center">
-                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
-                                <i className="bi bi-cloud-download-fill"></i>
-                                Download Sample
-                            </button>
-                        </div>
-                    </div>
-                    <div className="col-md-4 bg-light px-4 py-5">
-                        <h2 className="fs-3 flex-center gap-2 fw-semibold">
-                            <i className="bi bi-file-earmark-code-fill text-success"></i>
-                            Code Snippets
-                        </h2>
-                        <p className="text-center">Ready-to-use code blocks across languages</p>
-                        <div className="flex-center">
-                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
-                                <i className="bi bi-cloud-download-fill"></i>
-                                Download Sample
-                            </button>
-                        </div>
-                    </div>
-                    <div className="col-md-4 bg-light px-4 py-5">
-                        <h2 className="fs-3 flex-center gap-2 fw-semibold">
-                            <i className="bi bi-file-earmark-pdf-fill text-primary"></i>
-                            Design Docs & Templates
-                        </h2>
-                        <p className="text-center">Real templates for technical design and planning</p>
-                        <div className="flex-center">
-                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
-                                <i className="bi bi-cloud-download-fill"></i>
-                                Download Sample
-                            </button>
-                        </div>
-                    </div>
-                    <div className="col-md-4 bg-light px-4 py-5">
-                        <h2 className="fs-3 flex-center gap-2 fw-semibold">🎯 Expert Tips </h2>
-                        <p className="text-center">Advice from experienced devs & architects</p>
-                        <div className="flex-center">
-                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
-                                <i className="bi bi-cloud-download-fill"></i>
-                                Download Sample
-                            </button>
-                        </div>
-                    </div>
-                    <div className="col-md-4 bg-light px-4 py-5">
-                        <h2 className="fs-3 flex-center gap-2 fw-semibold">
-                            <i className="bi bi-gear-fill text-success"></i>
-                            Professional Tools Intro
-                        </h2>
-                        <p className="text-center">Hands-on intros to tools like Figma, Postman, Terraform, etc.</p>
-                        <div className="flex-center">
-                            <button className="btn btn-danger px-4 rounded-0 flex-acenter gap-2 fs-6">
-                                <i className="bi bi-cloud-download-fill"></i>
-                                Download Sample
-                            </button>
-                        </div>
+                    <div className="col-md-7 irregular-shape">
+                        <Swiper
+                            spaceBetween={30}
+                            loop={true}
+                            centeredSlides={true}
+                            autoplay={{
+                                delay: 4000,
+                                disableOnInteraction: false,
+                            }}
+                            modules={[Autoplay]}
+                            className="mySwiper"
+                        >
+                            <SwiperSlide>
+                                <div className="position-relative">
+                                    <img src="/assets/img/service.png" alt="" className="img-fluid" width={960} height={720} />
+                                    <div className="position-absolute top-0 pt-4 left-0 w-100 h-100 bg-gradient-trans-black d-flex align-items-end justify-content-center">
+                                        <h1 className="text-white mt-5 fw-bold">Reference Diagrams</h1>
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+                            <SwiperSlide>
+                                <div className="position-relative">
+                                    <img src="/assets/img/service-2.jpg" alt="" className="img-fluid" width={960} height={720} />
+                                    <div className="position-absolute top-0 pt-4 left-0 w-100 h-100 bg-gradient-trans-black d-flex align-items-end justify-content-center">
+                                        <h1 className="text-white mt-5 fw-bold">Architectural Diagrams</h1>
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+                            <SwiperSlide>
+                                <div className="position-relative">
+                                    <img src="/assets/img/service-3.jpg" alt="" className="img-fluid" width={960} height={720} />
+                                    <div className="position-absolute top-0 pt-4 left-0 w-100 h-100 bg-gradient-trans-black d-flex align-items-end justify-content-center">
+                                        <h1 className="text-white mt-5 fw-bold">Code Snippets</h1>
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+                        </Swiper>
                     </div>
                 </div>
-            </div >
-
-
-            {/* <div className="bg-light pb-4" id="choose">
-                <h1 className='text-center fs-large p-3'>CHOOSE <b className='text-secondary fw-normal'>US</b></h1>
-                <div className="container">
-                    <div className="flex-acenter flex-md-row flex-column bg-gradient-dark overflow-hidden">
-                        <div className="col-md-6 p-5 text-white">
-                            <h1 className='fw-semibold'>Expertise Across Domains</h1>
-                            <p>Our domain experts carefully hand craft or curate the contents for effective consumption. </p>
-                        </div>
-                        <div className="col-md-6 hover-zoom">
-                            <img src="/assets/img/meeting.jpg" alt="" className="img-fluid" />
-                        </div>
-                    </div>
-                    <div className="flex-acenter flex-md-row flex-column-reverse bg-gradient-dark overflow-hidden">
-                        <div className="col-md-6 hover-zoom">
-                            <img src="/assets/img/colab.jpg" alt="" className="img-fluid" />
-                        </div>
-                        <div className="col-md-6 p-5 text-white">
-                            <h1 className='fw-semibold'>Collaborative Approach</h1>
-                            <p>Collaboration brings out best of the summary and themes for industrial consumption.</p>
-                        </div>
-                    </div>
-                    <div className="flex-acenter flex-md-row flex-column bg-gradient-dark overflow-hidden">
-                        <div className="col-md-6 p-5 text-white">
-                            <h1 className='fw-semibold'>Future-Proof Solutions</h1>
-                            <p> We focus on designing architectures that are adaptable, helping you stay ahead of evolving technology trends and business needs. </p>
-                        </div>
-                        <div className="col-md-6 hover-zoom">
-                            <img src="/assets/img/futuretech.jpg" alt="" className="img-fluid" />
-                        </div>
-                    </div>
-                </div>
-            </div> */}
+            </div>
         </>
     )
 }

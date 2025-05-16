@@ -20,12 +20,15 @@ import Account from './Pages/Account';
 import Islands from './Pages/Islands';
 import Article from './Pages/Article';
 import CreateArticle from './Pages/CreateArticle';
-import AdminAllArticles from './admin/AllArticles';
+import Event from './Pages/Event';
+import EventDetails from './Pages/EventDetails';
+import Samples from './Pages/Samples';
 
 //importing admin components
 import AdminIslandArticles from './admin/components/IslandArticles';
 import AdminArticle from './admin/components/Article';
 import AdminSidebar from './admin/components/Sidebar';
+import AdminAddEvent from './admin/components/AddEvent';
 
 //importing admin pages
 import AdminDashBoard from './admin/DashBoard';
@@ -35,6 +38,8 @@ import AdminProfile from './admin/Profile';
 import AdminSettings from './admin/Settings';
 import AdminUsers from './admin/Users';
 import AdminEvents from './admin/Events';
+import AdminAllArticles from './admin/AllArticles';
+
 
 function App() {
   const [logged, setLogged] = useState(false);
@@ -82,6 +87,9 @@ function App() {
         <Route path='/account' element={<Account refresh={checkUserLogin} />} />
         <Route path='/island/:islandId' element={<Island logged={logged} />} />
         <Route path='/article/:id' element={<Article />} />
+        <Route path='/samples' element={<Samples />} />
+        <Route path='/events' element={<Event />} />
+        <Route path='/event/:eventId' element={<EventDetails />} />
         {/* routes for author */}
         <Route path='/createArticle' element={<CreateArticle />} />
         <Route path='/createArticle/builder' element={<ArticleBuilder />} />
@@ -99,6 +107,7 @@ function App() {
         <Route path='/admin/article/:id' element={<AdminArticle />} />
         <Route path='/admin/articles/' element={<AdminAllArticles />} />
         <Route path='/admin/events/' element={<AdminEvents />} />
+        <Route path='/admin/addEvent/' element={<AdminAddEvent />} />
         {/* end of admin routes  */}
       </Routes>
 
