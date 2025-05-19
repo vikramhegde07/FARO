@@ -16,13 +16,13 @@ function Samples() {
                             <p className="text-center mb-0 fw-semibold fs-4">Features</p>
                         </li>
                         <li className="list-group-item cursor-pointer" onClick={() => { setSample('rfd') }}>
-                            <p className="mb-0 fs-18">Reference Diagrams</p>
+                            <p className="mb-0 fs-18 text-primary">Reference Diagrams</p>
                         </li>
                         <li className="list-group-item cursor-pointer" onClick={() => { setSample('act') }}>
                             <p className="mb-0 fs-18">Architecture Templates</p>
                         </li>
                         <li className="list-group-item cursor-pointer" onClick={() => { setSample('acd') }}>
-                            <p className="mb-0 fs-18">Architecture Diagrams</p>
+                            <p className="mb-0 fs-18 text-primary">Architecture Diagrams</p>
                         </li>
                         <li className="list-group-item cursor-pointer" onClick={() => { setSample('csh') }}>
                             <p className="mb-0 fs-18">Cheatsheets</p>
@@ -41,12 +41,12 @@ function Samples() {
                 <div className="vr d-md-block d-none p-0 border border-black"></div>
                 <div className="col-md-8">
                     {sample === 'rfd' && (<ReferenceDiagram />)}
-                    {sample === 'act' && (<></>)}
+                    {sample === 'act' && (<><h1 className='text-center mt-5'>The sample will be added shortly</h1></>)}
                     {sample === 'acd' && (<ArchitectureDiagram />)}
                     {sample === 'csh' && (<CheatSheet />)}
-                    {sample === 'csn' && (<></>)}
-                    {sample === 'ddt' && (<></>)}
-                    {sample === 'pti' && (<></>)}
+                    {sample === 'csn' && (<><h1 className='text-center mt-5'>The sample will be added shortly</h1></>)}
+                    {sample === 'ddt' && (<><h1 className='text-center mt-5'>The sample will be added shortly</h1></>)}
+                    {sample === 'pti' && (<><h1 className='text-center mt-5'>The sample will be added shortly</h1></>)}
                 </div>
             </div>
         </div>
