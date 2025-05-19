@@ -5,7 +5,6 @@ import { Autoplay, Parallax, Pagination, Navigation } from 'swiper/modules';
 import axios from 'axios';
 import API_BASE from '../API';
 import { formatDateOrToday } from '../utils/dateFormatter';
-import IslandCanvas from '../Components/IslandCanvas';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -68,10 +67,12 @@ function Home() {
     }, [location]);
 
     useEffect(() => {
-        if (screenWidth < 1024) {
+        if (screenWidth < 540) {
+            setSlides(1)
+        } else if (screenWidth < 768) {
             setSlides(1);
         } else {
-            setSlides(2);
+            setSlides(3);
         }
     }, [screenWidth]);
     return (
@@ -118,7 +119,7 @@ function Home() {
                 </div>
             </div>
 
-            <div className="container-fluid bg-light">
+            <div className="container-fluid">
                 <div className="container py-5">
                     <h1 className="text-center fw-bold fs-2">Why FARO?</h1>
                     <p className="text-center text-muted mb-5">Everything you need to learn, share, and grow in one platform.</p>
@@ -147,6 +148,7 @@ function Home() {
 
             <div className="container-fluid g-0 bg-light p-3" id='islands'>
                 <h1 className="text-center">Islands of Knowledge</h1>
+                <hr />
             </div>
             <Swiper
                 style={{
@@ -157,30 +159,22 @@ function Home() {
                 parallax={true}
                 slidesPerView={slides}
                 spaceBetween={0}
-                centeredSlides={false}
+                centeredSlides={true}
                 pagination={{
                     clickable: true,
                 }}
                 navigation={true}
                 modules={[Parallax, Pagination, Navigation]}
-                className="mySwiper"
+                className="mySwiper bg-light"
             >
-                <div
-                    slot="container-start"
-                    className="parallax-bg"
-                    style={{
-                        'backgroundImage':
-                            'url(/assets/img/bg-sea3.jpg)',
-                    }}
-                    data-swiper-parallax="-23%"
-                ></div>
+                <div slot="container-start" data-swiper-parallax="-23%"></div>
                 {islands.slice(0, 5).map((island) => (
                     <SwiperSlide>
-                        <div className='py-5' key={island._id}>
-                            <IslandCanvas title={island.title} slides={slides} />
-                            <div className="flex-center">
-                                <Link to={`/island/${island._id}`} className='btn btn-dark px-5 rounded-0'>Visit Island</Link>
-                            </div>
+                        <div className='py-5 position-relative' key={island._id}>
+                            <Link to={`/island/${island._id}`} className="bg-island">
+                                <h3>{island.title}</h3>
+                            </Link>
+                            <div className="island-slider"></div>
                         </div>
                     </SwiperSlide>
                 ))}

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
-import IslandCanvas from '../Components/IslandCanvas';
 import { Link } from 'react-router-dom';
 import API_BASE from '../API';
 
@@ -47,7 +46,6 @@ function Islands() {
                 <div className="row p-2">
                     {islands.length == 0 ? '' : islands.map((island) => (
                         <div className="col-md-6 col-lg-4 col-sm-12 p-3 " key={island._id}>
-                            <IslandCanvas title={island.title} />
                             <div className="flex-center">
                                 <Link to={`/island/${island._id}`} className='btn btn-dark'>Visit Island</Link>
                             </div>

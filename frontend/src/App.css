@@ -80,6 +80,59 @@
     background: var(--cream) !important;
 }
 
+.bg-island {
+    background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.8) 100%), url('/assets/img/island.jpg');
+    width: 450px;
+    height: 450px;
+    position: relative;
+    background-size: auto, cover;
+    /* Maintain image aspect ratio */
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    text-decoration: none !important;
+    clip-path: polygon( 16px 0, calc(100% - 16px) 0, 100% 16px, 100% calc(100% - 16px), calc(100% - 16px) 100%, 16px 100%, 0 calc(100% - 16px), 0 16px);
+}
+
+.island-slider {
+    position: absolute;
+    bottom: 10%;
+    left: 0;
+    width: 450px;
+    height: 0;
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), transparent);
+    transition: all 0.6s;
+    pointer-events: none;
+}
+
+.bg-island:hover~.island-slider {
+    height: 445px;
+}
+
+.bg-island h3 {
+    color: #fff;
+    background-color: var(--secondary);
+    width: 100%;
+    padding: 8px 16px;
+    text-align: center;
+    margin: 0;
+}
+
+@media screen and (max-width: 540px) {
+    .bg-island {
+        width: 360px;
+        height: 360px;
+    }
+    .island-slider {
+        width: 360px;
+    }
+    .bg-island:hover~.island-slider {
+        height: 355px;
+    }
+}
+
 .bg-glass {
     background: rgba(255, 255, 255, 0.3);
 }
@@ -216,6 +269,9 @@
     color: #fff;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     /* padding: 40px 60px; */
 }
 
