@@ -1,6 +1,9 @@
 import { User } from "../models/userModel.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import upload from "../middlewares/upload.js";
+import { uploadImageToS3 } from "./uploadController.js";
+import deleteS3Files from "../middlewares/remover.js";
 
 //method to get all users data
 export const getAllUsers = async(req, res) => {
@@ -26,6 +29,19 @@ export const getOneUserWithToken = async(req, res) => {
 
         if (!userData)
             return res.status(403).json({ error: "No user data found" });
+
+        const payload = {
+            id: userData._id,
+            username: userData.username,
+            email: userData.email,
+            password: userData.password
+        }
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24hr' });
+
+        return res.status(200).json({
+            userData,
+            token
+        });
 
         return res.status(200).json(userData);
     } catch (err) {
@@ -240,3 +256,30 @@ export const updatePassword = async(req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+export const updateProfileImage = async(req, res) => {
+    try {
+        const userId = req.userId;
+
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        const { buffer, originalname, mimetype } = req.file;
+
+        // Upload image to S3
+        const { url, key } = await uploadImageToS3(buffer, 'profiles', originalname, mimetype);
+
+        // Update user in DB
+        const updatedUser = await User.findByIdAndUpdate(userId, { profile_pic: url });
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        return res.status(200).json({ message: 'Profile image uploaded successfully' });
+    } catch (error) {
+        console.error('Error uploading user profile image:', error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+}

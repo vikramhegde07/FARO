@@ -23,6 +23,7 @@ import CreateArticle from './Pages/CreateArticle';
 import Event from './Pages/Event';
 import EventDetails from './Pages/EventDetails';
 import Samples from './Pages/Samples';
+import Profile from './Pages/Profile';
 
 //importing admin components
 import AdminIslandArticles from './admin/components/IslandArticles';
@@ -87,6 +88,7 @@ function App() {
         <Route path='/islands' element={<Islands />} />
         <Route path='/about' element={<About />} />
         <Route path='/account' element={<Account refresh={checkUserLogin} />} />
+        <Route path='/account/profile' element={<Profile refresh={checkUserLogin} />} />
         <Route path='/island/:islandId' element={<Island logged={logged} />} />
         <Route path='/article/:id' element={<Article />} />
         <Route path='/samples' element={<Samples />} />
