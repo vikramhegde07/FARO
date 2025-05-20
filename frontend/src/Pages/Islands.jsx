@@ -45,10 +45,11 @@ function Islands() {
             <div className="container-fluid">
                 <div className="row p-2">
                     {islands.length == 0 ? '' : islands.map((island) => (
-                        <div className="col-md-6 col-lg-4 col-sm-12 p-3 " key={island._id}>
-                            <div className="flex-center">
-                                <Link to={`/island/${island._id}`} className='btn btn-dark'>Visit Island</Link>
-                            </div>
+                        <div className='col-md-4 flex-center py-5 position-relative' key={island._id}>
+                            <Link to={`/island/${island._id}`} className="bg-island" style={{ maxWidth: "450px" }}>
+                                <h3>{island.title}</h3>
+                            </Link>
+                            <div className="island-slider w-100"></div>
                         </div>
                     ))}
                 </div>
