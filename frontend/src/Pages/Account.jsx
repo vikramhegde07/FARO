@@ -22,7 +22,7 @@ function Account({ refresh }) {
     return (
         <>
             <div className="container bg-white py-5 w-75">
-                <h2 className="mb-3 text-center">Welcome Back, </h2>
+                <h2 className="mb-3 text-center">Welcome Back, {userInfo?.username}</h2>
                 <p className="text-muted text-center mb-4">Manage your FARO account</p>
 
                 <div className="row flex-center gap-3">
@@ -64,18 +64,18 @@ function Account({ refresh }) {
                         </Link>
                     </div>
                     <div className="col-md-4">
-                        <Link to={'/account/security'} className="card text-decoration-none hover-shadow-1">
+                        <Link to={'/account/privillage'} className="card text-decoration-none hover-shadow-1">
                             <div className="card-body">
                                 <h5 className="fs-3 flex-center gap-3">
-                                    <i className="bi bi-shield-lock"></i>
-                                    Security
+                                    <ion-icon name="ribbon-outline"></ion-icon>
+                                    Privillages
                                 </h5>
-                                <p className="card-text text-muted text-center">Manage Passwords</p>
+                                <p className="card-text text-muted text-center">Get Access to become Author,Curator,Editor</p>
                             </div>
                         </Link>
                     </div>
                     <div className="col-md-4">
-                        <Link to={'/profile'} className="card text-decoration-none hover-shadow-1">
+                        <Link to={'/account/preference'} className="card text-decoration-none hover-shadow-1">
                             <div className="card-body">
                                 <h5 className="fs-3 flex-center gap-3">
                                     <i className="bi bi-gear"></i>

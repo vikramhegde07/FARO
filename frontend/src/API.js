@@ -4,7 +4,5 @@
 //api base for production render account
 const API_BASE = "https://faro-vb8w.onrender.com";
 
-//api base for testing render account
-// const API_BASE = "https://faro-1.onrender.com";
 
 export default API_BASE;
