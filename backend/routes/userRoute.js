@@ -44,6 +44,7 @@ router.post('/update/auth/prof_pic', auth, upload.single('image'), async(req, re
     next();
 }, deleteS3Files, updateProfileImage);
 
+//route to delete a user profile image
 router.delete('/delete/auth/remove_pic', auth, async(req, res, next) => {
     const userData = await User.findById(req.userId);
     if (!userData)
@@ -58,5 +59,60 @@ router.delete('/delete/auth/remove_pic', auth, async(req, res, next) => {
     await User.findByIdAndUpdate(req.userId, { profile_pic: '' });
     return res.status(200).json({ message: "Profile pic removed" });
 })
+
+//route to revoke or grant user privillage
+router.patch('/update/privillage', auth, async(req, res) => {
+    const adminId = req.userId;
+    const { action, userId, privillage } = req.body;
+    try {
+
+        if (!adminId || !privillage)
+            return res.status(403).json({ error: "Send all required fields!" });
+
+        const adminData = await User.findById(adminId);
+        if (!adminData)
+            return res.status(404).json({ error: "No admin account found!" });
+
+        if (adminData.user_type !== 'admin')
+            return res.status(403).json({ error: "No admin privillages!" });
+
+        const allowed = ['read', 'write', 'review', 'edit'];
+        if (!allowed.includes(privillage))
+            return res.status(400).json({ message: 'Invalid privilege value' });
+
+        const userData = await User.findById(userId);
+
+        if (action === 'allow') {
+            if (userData.privillage.includes(accessData.privillage))
+                return res.status(404).json({ error: "User already has the privillage" });
+
+            await User.findByIdAndUpdate(
+                userId, {
+                    $addToSet: {
+                        privillage: privillage
+                    }
+                }, { new: true }
+            )
+
+            res.status(200).json({ message: "The user privillage has been granted!" });
+        } else if (action === 'revoke') {
+            if (!userData.privillage.includes(privillage))
+                return res.status(404).json({ error: "User doesn't have the privillage!" });
+            await User.findByIdAndUpdate(
+                userId, {
+                    $pull: {
+                        privillage: privillage
+                    }
+                }, { new: true }
+            );
+            res.status(200).json({ message: "The user privillage has been removed" });
+        }
+
+        return res;
+    } catch (err) {
+        console.log('Server error : ' + err.message);
+        res.status(500).json({ message: err.message });
+    }
+});
 
 export default router;

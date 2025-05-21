@@ -10,7 +10,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-function Home() {
+function Home({ logged }) {
     const location = useLocation();
     const [islands, setIslands] = useState([]);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -138,7 +138,7 @@ function Home() {
                                 <h5 className="card-title flex-center gap-2">✍️ Contribute</h5>
                                 <p className="card-text text-center">Write and share your knowledge. FARO empowers experts and learners alike.</p>
                                 <div className="flex-center">
-                                    <Link to={'/login'} className='btn btn-danger mt-3 px-4 rounded-0'>Get Started</Link>
+                                    <Link to={`${logged ? '/account' : '/login'}`} className='btn btn-danger mt-3 px-4 rounded-0'>Get Started</Link>
                                 </div>
                             </div>
                         </div>
@@ -180,7 +180,7 @@ function Home() {
                 ))}
             </Swiper >
 
-            <div className="container-fluid px-lg-5 px-3 mt-5">
+            <div className="container-fluid px-lg-5 px-3 mt-5" id='services'>
                 <div className="row flex-center">
                     <div className="col-md-5">
                         <h2 className="text-center fw-bold mb-3 ">

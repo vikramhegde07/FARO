@@ -24,6 +24,7 @@ import Event from './Pages/Event';
 import EventDetails from './Pages/EventDetails';
 import Samples from './Pages/Samples';
 import Profile from './Pages/Profile';
+import Privillage from './Pages/Privillage';
 
 //importing admin components
 import AdminIslandArticles from './admin/components/IslandArticles';
@@ -50,7 +51,9 @@ function App() {
 
   const navigator = useNavigate();
   const location = useLocation();
-  const hideNavAndFooter = location.pathname.includes('/admin');
+
+  const hiddenRoutes = ['/admin', '/login'];
+  const hideNavAndFooter = hiddenRoutes.some((route) => location.pathname.includes(route));
 
   function checkUserLogin() {
     const token = localStorage.getItem('faro-user');
@@ -64,8 +67,10 @@ function App() {
     else {
       setLogged(true);
       const userType = JSON.parse(localStorage.getItem('faro-user-info')).user_type;
-      if (userType == 'admin')
+      if (userType == 'admin') {
         setIsAdmin(true);
+        navigator('/admin');
+      }
       else
         setIsAdmin(false);
     }
@@ -83,23 +88,26 @@ function App() {
       <Routes>
 
         {/* user routes */}
-        <Route path='/' element={<Home />} />
+        <Route path='/' element={<Home logged={logged} />} />
         <Route path='/login' element={<Login refresh={checkUserLogin} />} />
         <Route path='/islands' element={<Islands />} />
         <Route path='/about' element={<About />} />
         <Route path='/account' element={<Account refresh={checkUserLogin} />} />
-        <Route path='/account/profile' element={<Profile refresh={checkUserLogin} />} />
+        <Route path='/account/profile' element={<Profile />} />
+        <Route path='/account/privillage' element={<Privillage />} />
         <Route path='/island/:islandId' element={<Island logged={logged} />} />
         <Route path='/article/:id' element={<Article />} />
         <Route path='/samples' element={<Samples />} />
         <Route path='/events' element={<Event />} />
         <Route path='/event/:eventId' element={<EventDetails />} />
+
         {/* routes for author */}
         <Route path='/createArticle' element={<CreateArticle />} />
         <Route path='/createArticle/builder' element={<ArticleBuilder />} />
         <Route path='/createArticle/parseDocx' element={<DocxUploader />} />
         {/* end of routes for authors  */}
         {/* end of user routes  */}
+
         {/* admin routes  */}
         <Route path='/admin' element={<AdminDashBoard />} />
         <Route path='/admin/Islands' element={<AdminIslands />} />
