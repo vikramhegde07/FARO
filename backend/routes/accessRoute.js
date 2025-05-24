@@ -6,8 +6,13 @@ import { User } from '../models/userModel.js';
 const router = express.Router();
 
 //Get all access route requests
-router.get('/', async(req, res) => {
+router.get('/', auth, async(req, res) => {
+    const userId = req.userId;
     try {
+        const adminData = await User.findById(userId);
+        if (!adminData)
+            return res.status(404).json({ error: "No admin account found" });
+
         const requests = await Access.find().sort({ created_at: -1 });
         if (requests.length === 0)
             return res.status(404).json({ error: "No requests found!" });

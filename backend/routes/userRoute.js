@@ -1,6 +1,6 @@
 import express from 'express';
 import auth from '../middlewares/auth.js';
-import { checkUserLogin, getAllUsers, getOneUserWithId, getOneUserWithToken, loginUser, registerUser, updatePassword, updateProfileImage, updateUserProfile } from '../controllers/user.js';
+import { checkUserLogin, getAllUsers, getOneUserWithId, getOneUserWithToken, getPrivillaged, loginUser, registerUser, updatePassword, updateProfileImage, updateUserProfile } from '../controllers/user.js';
 import upload from '../middlewares/upload.js';
 import deleteS3Files from '../middlewares/remover.js';
 import { User } from '../models/userModel.js';
@@ -16,6 +16,9 @@ router.get('/getOne', auth, getOneUserWithToken);
 
 //get user data with id
 router.get('/getOne/:userId', getOneUserWithId);
+
+//route to get privillaged users
+router.get('/privillaged', getPrivillaged);
 
 //register a new user
 router.post('/register', registerUser);
@@ -74,7 +77,7 @@ router.patch('/update/privillage', auth, async(req, res) => {
             return res.status(404).json({ error: "No admin account found!" });
 
         if (adminData.user_type !== 'admin')
-            return res.status(403).json({ error: "No admin privillages!" });
+            return res.status(404).json({ error: "No admin privillages!" });
 
         const allowed = ['read', 'write', 'review', 'edit'];
         if (!allowed.includes(privillage))
@@ -83,7 +86,7 @@ router.patch('/update/privillage', auth, async(req, res) => {
         const userData = await User.findById(userId);
 
         if (action === 'allow') {
-            if (userData.privillage.includes(accessData.privillage))
+            if (userData.privillage.includes(privillage))
                 return res.status(404).json({ error: "User already has the privillage" });
 
             await User.findByIdAndUpdate(

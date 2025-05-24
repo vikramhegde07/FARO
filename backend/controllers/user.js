@@ -9,7 +9,7 @@ import deleteS3Files from "../middlewares/remover.js";
 export const getAllUsers = async(req, res) => {
     try {
 
-        const users = await User.find();
+        const users = await User.find().sort({ username: 1 });
 
         if (!users)
             return res.status(403).json({ error: "No Users Found" });
@@ -50,6 +50,23 @@ export const getOneUserWithToken = async(req, res) => {
     }
 };
 
+//method to get users with special privillages
+export const getPrivillaged = async(req, res) => {
+    try {
+        const users = await User.find({
+            // either they have a privilege that is not 'read'
+            privillage: { $elemMatch: { $ne: 'read' } }
+        });
+
+        if (users.length === 0)
+            return res.status(404).json({ error: 'No users have additional privillages' });
+
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 //method to get one user data with user id
 export const getOneUserWithId = async(req, res) => {
@@ -257,6 +274,7 @@ export const updatePassword = async(req, res) => {
     }
 };
 
+//method to update user profile images
 export const updateProfileImage = async(req, res) => {
     try {
         const userId = req.userId;

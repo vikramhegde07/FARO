@@ -31,9 +31,11 @@ function Article() {
             {article == null ? '' : (
                 <div className='container-fluid p-5'>
                     <div className="row">
-                        <div className="col-md-9">
-
-                            <h1 className='fs-2 text-center'>{article.title}</h1>
+                        <div className="col-md-9  position-relative">
+                            <div className='flex-acenter'>
+                                <img src="/assets/img/Logo.jpg" alt="" className="img-fluid" width={40} />
+                                <h1 className='fs-2 text-center text-semibold'>{article.title}</h1>
+                            </div>
                             <div className="flex-jend">
                                 <p className='text-black-50 m-0'>- Article by {article.author.username}</p>
                             </div>
