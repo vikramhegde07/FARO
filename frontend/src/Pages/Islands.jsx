@@ -28,7 +28,7 @@ function Islands() {
     }, [])
     return (
         <>
-            <div className="container-fluid px-5 py-3 flex-jbetween bg-light border-bottom">
+            <div className="container-fluid px-5 py-3 flex-jbetween flex-md-row flex-column bg-light border-bottom">
                 <h2 className="fs-3">Discover Islands of Knowledge</h2>
                 <div className='flex-jcenter gap-2'>
                     <input

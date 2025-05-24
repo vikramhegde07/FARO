@@ -9,6 +9,7 @@ import islasndRoute from './routes/islandRoute.js';
 import articleRoute from './routes/articleRoute.js';
 import eventsRoute from './routes/eventsRoute.js';
 import subscriptionRoute from './routes/subscriptionRoute.js';
+import accessRoute from './routes/accessRoute.js';
 
 //configure dotenv
 dotenv.config();
@@ -44,6 +45,9 @@ app.use('/event', eventsRoute);
 
 //Route to handle subscriptions
 app.use('/subscription', subscriptionRoute);
+
+//Route to handle new access requests
+app.use('/access', accessRoute);
 
 // connection to mongodb
 mongoose

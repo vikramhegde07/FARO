@@ -69,7 +69,8 @@ function App() {
       const userType = JSON.parse(localStorage.getItem('faro-user-info')).user_type;
       if (userType == 'admin') {
         setIsAdmin(true);
-        navigator('/admin');
+        if (!location.pathname.includes('/admin'))
+          navigator('/admin');
       }
       else
         setIsAdmin(false);
