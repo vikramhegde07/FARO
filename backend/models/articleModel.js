@@ -3,13 +3,17 @@ import mongoose from 'mongoose';
 const contentBlockSchema = new mongoose.Schema({
     type: {
         type: String,
-        enum: ['heading', 'subheading', 'paragraph', 'points', 'image', 'link'],
+        enum: ['heading', 'subheading', 'paragraph', 'points', 'image', 'link', 'table'],
         required: true,
     },
     value: {
         type: mongoose.Schema.Types.Mixed, // Can be string, array, object depending on type
         required: true,
     },
+    classes: {
+        type: String,
+        default: '', // e.g., "text-center fw-bold text-lg"
+    }
 });
 
 const relatedLinksBlockSchema = new mongoose.Schema({
@@ -23,26 +27,20 @@ const relatedLinksBlockSchema = new mongoose.Schema({
     }
 });
 
-const relatedFilesBlockSchema = new mongoose.Schema({
-    fileName: {
-        type: String,
-        required: true
-    },
-    linkToFile: {
-        type: String,
-        required: true
-    }
-});
-
 const articleSchema = mongoose.Schema({
     title: {
         type: String,
         required: true
     },
     author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+        authorName: {
+            type: String,
+            required: true
+        },
+        linkToProfile: {
+            type: String,
+            required: false
+        }
     },
     island: {
         type: mongoose.Schema.Types.ObjectId,
@@ -65,10 +63,6 @@ const articleSchema = mongoose.Schema({
     },
     relatedLinks: {
         type: [relatedLinksBlockSchema],
-        default: []
-    },
-    relatedFiles: {
-        type: [relatedFilesBlockSchema],
         default: []
     }
 }, {

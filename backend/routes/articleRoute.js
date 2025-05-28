@@ -10,24 +10,26 @@ const router = express.Router();
 router.post('/create/parser', auth, upload.array('images'), async(req, res) => {
     try {
         const { title, island, tier, approval } = req.body;
-        let { content } = req.body;
-        if (!title || !island || !content) {
-            return res.status(404).json({
-                error: 'Send All fields'
+        let { content, author } = req.body;
+
+        // Validate required fields
+        if (!title || !island || !content || !author) {
+            return res.status(400).json({
+                error: 'Please provide title, island, content, and authorName.'
             });
         }
 
-        if (typeof content === 'string') {
-            content = JSON.parse(content);
-        }
+        // Parse content if it's sent as a JSON string
+        if (typeof content === 'string') content = JSON.parse(content);
+        if (typeof author === 'string') author = JSON.parse(author);
 
+        // Validate content format
         if (!Array.isArray(content)) {
             return res.status(400).json({ message: 'Invalid content format' });
         }
 
-        // Process images in content blocks
+        // Handle uploaded images
         const uploadedImages = [];
-
         for (const file of req.files) {
             const { url } = await uploadImageToS3(
                 file.buffer,
@@ -38,91 +40,102 @@ router.post('/create/parser', auth, upload.array('images'), async(req, res) => {
             uploadedImages.push(url);
         }
 
-        // Replace placeholders in content
+        // Replace 'upload' placeholders in image blocks with actual URLs
         let imageIndex = 0;
         content = content.map((block) => {
             if (block.type === 'image' && block.value === 'upload') {
                 const url = uploadedImages[imageIndex++];
-                return {...block, value: url };
+                return {
+                    ...block,
+                    value: url
+                };
             }
             return block;
         });
 
+        // Construct the article object
         const article = new Article({
             title,
-            author: req.userId,
+            author: author,
+            island,
+            tier: tier || 'paid',
+            approval: approval || false,
+            content
+        });
+
+        // Save and respond
+        const saved = await article.save();
+        return res.status(201).json(saved);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: err.message });
+    }
+});
+
+
+router.post('/create/builder', auth, upload.array('images'), async(req, res) => {
+    try {
+        const { title, island, tier, approval } = req.body;
+        let { content, author, relatedLinks } = req.body;
+
+        // Validate required fields
+        if (!title || !island || !content || !author) {
+            return res.status(400).json({
+                error: 'Please provide title, island, content, and authorName.'
+            });
+        }
+
+        // Parse content if it's sent as a JSON string
+        if (typeof content === 'string') content = JSON.parse(content);
+        if (typeof author === 'string') author = JSON.parse(author);
+        if (typeof relatedLinks === 'string') relatedLinks = JSON.parse(relatedLinks);
+
+        // Validate content format
+        if (!Array.isArray(content)) {
+            return res.status(400).json({ message: 'Invalid content format' });
+        }
+
+        // Handle uploaded images
+        const uploadedImages = [];
+        for (const file of req.files) {
+            const { url } = await uploadImageToS3(
+                file.buffer,
+                'articles',
+                file.originalname,
+                file.mimetype
+            );
+            uploadedImages.push(url);
+        }
+
+        // Replace 'upload' placeholders in image blocks with actual URLs
+        let imageIndex = 0;
+        content = content.map((block) => {
+            if (block.type === 'image' && block.value === 'upload') {
+                const url = uploadedImages[imageIndex++];
+                return {
+                    ...block,
+                    value: url
+                };
+            }
+            return block;
+        });
+
+        // Construct the article object
+        const article = new Article({
+            title,
+            author: author,
             island,
             tier: tier || 'paid',
             approval: approval || false,
             content,
+            relatedLinks
         });
 
+        // Save and respond
         const saved = await article.save();
         return res.status(201).json(saved);
     } catch (err) {
-        return res.status(400).json({ message: err.message });
-    }
-});
-
-router.post('/create/builder', auth, upload.array('images'), async(req, res) => {
-    try {
-        const { title, island, tier, approval, content, relatedLinks, relatedFiles } = req.body;
-
-        if (!title || !island || !content) {
-            return res.status(400).json({ error: 'Send all required fields' });
-        }
-
-        // Parse stringified fields
-        const parsedContent = JSON.parse(content);
-        const parsedRelatedLinks = JSON.parse(relatedLinks || '[]');
-        const parsedRelatedFiles = JSON.parse(relatedFiles || '[]');
-
-        // Upload image files and replace 'upload' with actual S3/local URLs
-        const updatedContent = [];
-        let imageIndex = 0;
-
-        for (let block of parsedContent) {
-            if (block.type === 'image' && block.value === 'upload') {
-                const file = req.files[imageIndex];
-                const uploadedUrl = await uploadImageToS3(file, 'articles/images');
-                updatedContent.push({ type: 'image', value: uploadedUrl });
-                imageIndex++;
-            } else {
-                updatedContent.push(block);
-            }
-        }
-
-        // Upload related files
-        const totalImages = imageIndex;
-        const uploadedFiles = [];
-
-        for (let i = totalImages; i < req.files.length; i++) {
-            const file = req.files[i];
-            const fileUrl = await uploadImageToS3(file, 'articles/files');
-            uploadedFiles.push(fileUrl);
-        }
-
-        // Replace 'upload' in relatedFiles with actual URLs
-        const finalizedRelatedFiles = parsedRelatedFiles.map((file, idx) => ({
-            fileName: file.fileName,
-            linkToFile: uploadedFiles[idx] || ''
-        }));
-
-        const newArticle = new Article({
-            title,
-            author: req.userId,
-            island,
-            tier: tier || 'paid',
-            approval: approval || false,
-            content: updatedContent,
-            relatedLinks: parsedRelatedLinks,
-            relatedFiles: finalizedRelatedFiles,
-        });
-
-        const savedArticle = await newArticle.save();
-        return res.status(201).json(savedArticle);
-    } catch (err) {
-        console.error('Error creating article:', err);
+        console.error(err);
         return res.status(500).json({ message: err.message });
     }
 });

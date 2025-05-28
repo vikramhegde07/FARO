@@ -11,6 +11,8 @@ const DocxUploader = () => {
     const [title, setTitle] = useState('');
     const [island, setIsland] = useState('');
     const [tier, setTier] = useState('free');
+    const [author, setAuthor] = useState('');
+    const [authorLink, setAuthorLink] = useState('');
 
     const navigator = useNavigate();
 
@@ -25,17 +27,33 @@ const DocxUploader = () => {
                 if (node.nodeType !== 1) continue;
 
                 const tag = node.tagName.toLowerCase();
+                const classList = [];
 
+                const isBold = node.style.fontWeight === 'bold' || node.tagName === 'B' || node.tagName === 'STRONG';
+                const isItalic = node.style.fontStyle === 'italic' || node.tagName === 'I' || node.tagName === 'EM';
+                const isCentered = node.style.textAlign === 'center' || node.classList.contains('text-center');
+
+                if (isBold) classList.push('fw-bold');
+                if (isItalic) classList.push('fst-italic');
+                if (isCentered) classList.push('text-center');
+
+                // 📌 Handle headings
                 if (['h1', 'h2', 'h3'].includes(tag)) {
                     const text = node.textContent.trim();
                     if (text) {
                         blocks.push({
                             type: tag === 'h1' ? 'heading' : 'subheading',
-                            value: text
+                            value: text,
+                            classes: classList.join(' ')
                         });
                     }
-                } else if (tag === 'p') {
+                }
+
+                // 📌 Handle paragraphs
+                else if (tag === 'p') {
                     const imgs = node.querySelectorAll('img');
+                    const links = node.querySelectorAll('a');
+
                     if (imgs.length > 0) {
                         for (const img of imgs) {
                             if (img.src.startsWith('data:image')) {
@@ -43,18 +61,19 @@ const DocxUploader = () => {
                                 imageFiles.push(blob);
                                 blocks.push({
                                     type: 'image',
-                                    value: 'upload' // placeholder
+                                    value: 'upload',
+                                    classes: ''
                                 });
                             } else {
                                 blocks.push({
                                     type: 'image',
-                                    value: img.src
+                                    value: img.src,
+                                    classes: ''
                                 });
                             }
                         }
                     }
 
-                    const links = node.querySelectorAll('a');
                     if (links.length > 0) {
                         for (const link of links) {
                             blocks.push({
@@ -62,7 +81,8 @@ const DocxUploader = () => {
                                 value: {
                                     text: link.textContent.trim(),
                                     href: link.getAttribute('href')
-                                }
+                                },
+                                classes: ''
                             });
                         }
                     }
@@ -71,10 +91,14 @@ const DocxUploader = () => {
                     if (text && imgs.length === 0 && links.length === 0) {
                         blocks.push({
                             type: 'paragraph',
-                            value: text
+                            value: text,
+                            classes: classList.join(' ')
                         });
                     }
-                } else if (tag === 'ul' || tag === 'ol') {
+                }
+
+                // 📌 Handle bullet/numbered lists
+                else if (tag === 'ul' || tag === 'ol') {
                     const items = [];
                     node.querySelectorAll('li').forEach(li => {
                         const liText = li.textContent.trim();
@@ -86,22 +110,50 @@ const DocxUploader = () => {
                             value: {
                                 listType: tag,
                                 items
-                            }
+                            },
+                            classes: ''
                         });
                     }
                 }
 
-                if (node.children.length > 0) {
+                // ✅ Handle table and SKIP CHILDREN after
+                else if (tag === 'table') {
+                    const rows = [];
+                    node.querySelectorAll('tr').forEach(tr => {
+                        const row = [];
+                        tr.querySelectorAll('td,th').forEach(cell => {
+                            row.push(cell.textContent.trim());
+                        });
+                        if (row.length > 0) rows.push(row);
+                    });
+                    if (rows.length > 0) {
+                        blocks.push({
+                            type: 'table',
+                            value: rows,
+                            classes: classList.join(' ')
+                        });
+                    }
+
+                    // 🛑 SKIP children after handling table
+                    continue;
+                }
+
+                // 🔁 Walk children (if not table)
+                if (tag !== 'table' && node.children.length > 0) {
                     await walkNodes([...node.children]);
                 }
             }
         };
 
+
         await walkNodes([...doc.body.children]);
+        console.log(blocks);
         return { blocks, imageFiles };
     };
 
+
     const handleFileUpload = async (e) => {
+
         const file = e.target.files[0];
         if (file) {
             const arrayBuffer = await file.arrayBuffer();
@@ -127,7 +179,12 @@ const DocxUploader = () => {
         formData.append('title', title);
         formData.append('island', island);
         formData.append('tier', tier);
+        formData.append('author', JSON.stringify({
+            authorName: author,
+            linkToProfile: authorLink
+        }));
         formData.append('content', JSON.stringify(parsedBlocks.blocks));
+
 
         parsedBlocks.imageFiles?.forEach((file) => {
             formData.append('images', file);
@@ -146,6 +203,8 @@ const DocxUploader = () => {
             localStorage.removeItem('faro-title');
             localStorage.removeItem('faro-island');
             localStorage.removeItem('faro-tier');
+            localStorage.removeItem('faro-author');
+            localStorage.removeItem('faro-authorLink');
 
             toast.success('Article Submitted successfully!');
             navigator('/account');
@@ -154,10 +213,13 @@ const DocxUploader = () => {
         }
     };
 
+
     function handleCancel() {
         localStorage.removeItem('faro-title');
         localStorage.removeItem('faro-island');
         localStorage.removeItem('faro-tier');
+        localStorage.removeItem('faro-author');
+        localStorage.removeItem('faro-authorLink');
         navigator('/account');
     };
 
@@ -165,6 +227,8 @@ const DocxUploader = () => {
         setTitle(localStorage.getItem('faro-title'));
         setIsland(localStorage.getItem('faro-island'));
         setTier(localStorage.getItem('faro-tier'));
+        setAuthor(localStorage.getItem('faro-author'));
+        setAuthorLink(localStorage.getItem('faro-authorLink'));
     }, []);
 
     return (
