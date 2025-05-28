@@ -31,88 +31,88 @@ function Article() {
             {article == null ? '' : (
                 <div className='container-fluid p-5'>
                     <div className="row">
-                        <div className="col-md-9  position-relative">
-                            <div className='flex-acenter'>
-                                <img src="/assets/img/Logo.jpg" alt="" className="img-fluid" width={40} />
+                        <div className="col-md-9 position-relative">
+                            <div className='flex-acenter gap-2'>
+                                <img src="/assets/img/Logo.jpg" alt="Logo" className="img-fluid" width={40} />
                                 <h1 className='fs-2 text-center text-semibold'>{article.title}</h1>
                             </div>
-                            <div className="flex-jend">
-                                <p className='text-black-50 m-0'>- Article by {article.author.username}</p>
-                            </div>
+                            {article.author.authorName ? (
+                                <div className="flex-jend">
+                                    <p className='text-black-50 m-0'>- Article by {article.author.authorName}</p>
+                                </div>
+                            ) : ''}
+
                             <hr />
 
-                            {article.content.map((item) => (
-                                <div key={item._id}>
-                                    {item.type == 'paragraph' ? (
-                                        <p>{item.value}</p>
-                                    ) : item.type == 'points' ? (
-                                        <ol>
-                                            {item.value.items.map((point) => (
-                                                <li>{point}</li>
-                                            ))}
-                                        </ol>
-                                    ) : item.type == 'image' ? (
+                            {article.content.map((item, idx) => (
+                                <div key={item._id || idx} className={item.classes}>
+                                    {item.type === 'paragraph' && <p>{item.value}</p>}
+                                    {item.type === 'heading' && <h1>{item.value}</h1>}
+                                    {item.type === 'subheading' && <h3>{item.value}</h3>}
+                                    {item.type === 'image' && (
                                         <div className='flex-center'>
-                                            <img src={item.value} alt="" className='img-fluid' />
+                                            <img src={item.value} alt="article" className='img-fluid' />
                                         </div>
-                                    ) : item.type == 'heading' ? (
-                                        <h1 className='fw-bold'>{item.value}</h1>
-                                    ) : item.type == 'subheading' ? (
-                                        <h3 className='fw-semibold'>{item.value}</h3>
-                                    ) : item.type == 'link' ? (
-                                        <a href={item.value.href} className='d-block'>{item.value.text}</a>
-                                    ) : ''}
+                                    )}
+                                    {item.type === 'link' && (
+                                        <a href={item.value.href} target="_blank" rel="noopener noreferrer" className='d-block'>
+                                            {item.value.text}
+                                        </a>
+                                    )}
+                                    {item.type === 'points' && (
+                                        <ul className='ps-4'>
+                                            {item.value.items.map((point, index) => (
+                                                <li key={index}>{point}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                    {item.type === 'table' && (
+                                        <div className="table-responsive overflow-y-scroll my-3">
+                                            <table className="table table-bordered">
+                                                <tbody>
+                                                    {item.value.map((row, rowIndex) => (
+                                                        <tr key={rowIndex}>
+                                                            {row.map((cell, colIndex) => (
+                                                                <td key={colIndex}>{cell}</td>
+                                                            ))}
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
-                            {
-                                article.relatedFiles.length != 0 ? (
-                                    <>
-                                        <hr />
-                                        <div className='bg-light'>
-                                            <h2 className="fw-semibold flex-acenter">
-                                                <i className="bi bi-paperclip"></i>
-                                                Attached Files
-                                            </h2>
-                                            {article.relatedFiles.map((file, index) => (
-                                                <li className="list-group-item d-flex justify-content-between align-items-center" key={index}>
-                                                    {file.fileName}
-                                                    <a
-                                                        href={file.linkToFile}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        download
-                                                        className="btn btn-sm btn-outline-primary"
-                                                    >
-                                                        Download
-                                                    </a>
-                                                </li>))}
-                                        </div>
-                                    </>
-                                ) : ''
-                            }
 
-                            {
-                                article.relatedLinks.length != 0 ? (
-                                    <>
-                                        <hr />
-                                        <div className='bg-light'>
-                                            <h2 className="fw-semibold">Related Links</h2>
-                                            {article.relatedLinks.map((link) => (
-                                                <a href={link.linkAddr} target='_blank'>{link.linkText}</a>
+                            {article.relatedLinks.length > 0 && (
+                                <>
+                                    <hr />
+                                    <div className='bg-light p-3'>
+                                        <h2 className="fw-semibold mb-3">Related Links</h2>
+                                        <ul>
+                                            {article.relatedLinks.map((link, index) => (
+                                                <li key={index}>
+                                                    <a href={link.linkAddr} target='_blank' rel="noopener noreferrer">
+                                                        {link.linkText}
+                                                    </a>
+                                                </li>
                                             ))}
-                                        </div>
-                                    </>
-                                ) : ''
-                            }
+                                        </ul>
+                                    </div>
+                                </>
+                            )}
                         </div>
+
+                        {/* Right Column (optional use) */}
                         <div className="vr d-md-block d-none m-0 g-0 border-black border"></div>
                         <hr className='d-md-none d-block my-3' />
                         <div className="col-md-3">
-
+                            {/* Add widgets or related articles if needed */}
                         </div>
                     </div>
                 </div>
             )}
+
 
         </>
     )

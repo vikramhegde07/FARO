@@ -7,6 +7,8 @@ import { toast } from 'react-toastify';
 const CreateArticle = () => {
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
+    const [author, setAuthor] = useState('');
+    const [authorLink, setAuthorLink] = useState('');
     const [island, setIsland] = useState('');
     const [tier, setTier] = useState('');
     const [method, setMethod] = useState('');
@@ -21,6 +23,8 @@ const CreateArticle = () => {
         localStorage.setItem('faro-title', title);
         localStorage.setItem('faro-island', island);
         localStorage.setItem('faro-tier', tier);
+        localStorage.setItem('faro-author', author);
+        localStorage.setItem('faro-authorLink', authorLink);
 
         if (method === 'builder') {
             navigate('/createArticle/builder');
@@ -42,7 +46,7 @@ const CreateArticle = () => {
 
     useEffect(() => {
         getAllIslands();
-    })
+    }, [])
 
     return (
         <>
@@ -61,6 +65,28 @@ const CreateArticle = () => {
                                         onChange={(e) => setTitle(e.target.value)}
                                         required
                                     />
+                                </div>
+                                <div className="row">
+                                    <div className="mb-3 col-md-6">
+                                        <label className="form-label">Author Name</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={author}
+                                            onChange={(e) => setAuthor(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3 col-md-6">
+                                        <label className="form-label">Author Profile Link</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={authorLink}
+                                            placeholder='(if any)'
+                                            onChange={(e) => setAuthorLink(e.target.value)}
+                                        />
+                                    </div>
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Island to Publish</label>
