@@ -25,7 +25,7 @@ const Sidebar = ({ refresh }) => {
             </div>
             <div className={`container-fluid bg-light px-0 sidebar py-3 flex-jbetween flex-column ${navActive ? 'change' : ''}`}>
                 <div className="container-fluid flex-acenter flex-column gap-2">
-                    <Link className="navbar-brand fw-bolder fs-1 p-0" to={"/"}>
+                    <Link className="navbar-brand fw-bolder fs-1 p-0" to={"/admin"}>
                         <p className='d-inline mb-0'>F</p>
                         <p className='text-danger d-inline mb-0'>A</p>
                         <p className='d-inline mb-0'>R</p>

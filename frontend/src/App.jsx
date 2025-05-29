@@ -31,6 +31,7 @@ import AdminIslandArticles from './admin/components/IslandArticles';
 import AdminArticle from './admin/components/Article';
 import AdminSidebar from './admin/components/Sidebar';
 import AdminAddEvent from './admin/components/AddEvent';
+import AdminArticleEditor from './admin/components/ArticleLoader';
 
 //importing admin pages
 import AdminDashBoard from './admin/DashBoard';
@@ -118,6 +119,7 @@ function App() {
         <Route path='/admin/settings' element={<AdminSettings />} />
         <Route path='/admin/users' element={<AdminUsers />} />
         <Route path='/admin/article/:id' element={<AdminArticle />} />
+        <Route path='/admin/edit/:articleId' element={<AdminArticleEditor />} />
         <Route path='/admin/articles/' element={<AdminAllArticles />} />
         <Route path='/admin/events/' element={<AdminEvents />} />
         <Route path='/admin/event/:eventId' element={<AdminEventDetails />} />

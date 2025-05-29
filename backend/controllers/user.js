@@ -9,7 +9,7 @@ import deleteS3Files from "../middlewares/remover.js";
 export const getAllUsers = async(req, res) => {
     try {
 
-        const users = await User.find().sort({ username: 1 });
+        const users = await User.find({ user_type: { $ne: 'admin' } }).sort({ username: 1 });
 
         if (!users)
             return res.status(403).json({ error: "No Users Found" });

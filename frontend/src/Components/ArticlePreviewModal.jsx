@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ArticlePreviewModal = ({ show, onClose, articleStructure, fileUploads, relatedLinks }) => {
+const ArticlePreviewModal = ({ show, onClose, articleStructure, fileUploads, relatedLinks, existingImageUrls }) => {
     if (!show) {
         return null;
     }
@@ -10,15 +10,35 @@ const ArticlePreviewModal = ({ show, onClose, articleStructure, fileUploads, rel
             case 'heading': return <h2 key={index} className={item.classes}>{item.value}</h2>;
             case 'subheading': return <h4 key={index} className={item.classes}>{item.value}</h4>;
             case 'paragraph': return <p key={index} className={item.classes}>{item.value}</p>;
-            case 'points': return <ul key={index} className={item.classes}>{item.value.map((pt, i) => <li key={i}>{pt}</li>)}</ul>;
+            case 'points':
+                // Check if item.value is an object with listType and items
+                if (item.value && typeof item.value === 'object' && item.value.items) {
+                    const ListTag = item.value.listType === 'ol' ? 'ol' : 'ul';
+                    return (
+                        <ListTag key={index} className={item.classes}>
+                            {item.value.items.map((pt, i) => <li key={i}>{pt}</li>)}
+                        </ListTag>
+                    );
+                }
+                // Fallback for old structure or malformed data if necessary
+                return <ul key={index} className={item.classes}>{Array.isArray(item.value) ? item.value.map((pt, i) => <li key={i}>{pt}</li>) : <li>{item.value}</li>}</ul>;
             case 'link': return <a key={index} href={item.value.href} target="_blank" rel="noopener noreferrer" className={item.classes}>{item.value.text}</a>;
             case 'image':
-                // Find the correct image file for preview
-                const imgFileIndex = articleStructure
-                    .slice(0, index)
-                    .filter(b => b.type === 'image' && b.value === 'upload')
-                    .length;
-                const imageFile = fileUploads[imgFileIndex];
+                // Prioritize existingImageUrls if available for the block's index
+                if (existingImageUrls && existingImageUrls[index]) {
+                    return (
+                        <div key={index} className={item.classes}>
+                            <img
+                                src={existingImageUrls[index]}
+                                alt="article content"
+                                className="img-fluid"
+                            />
+                        </div>
+                    );
+                }
+
+                // If not an existing image, check fileUploads (for newly added images before submission)
+                const imageFile = fileUploads[index]; // fileUploads are now keyed by their final index in articleStructure
                 const previewUrl = imageFile ? URL.createObjectURL(imageFile) : null;
 
                 return (
@@ -30,7 +50,7 @@ const ArticlePreviewModal = ({ show, onClose, articleStructure, fileUploads, rel
                                 className="img-fluid"
                             />
                         ) : (
-                            <p>Image placeholder (file not loaded for preview)</p>
+                            <p>Image placeholder (file not loaded for preview or no existing image URL)</p>
                         )}
                     </div>
                 );
@@ -54,13 +74,13 @@ const ArticlePreviewModal = ({ show, onClose, articleStructure, fileUploads, rel
 
     return (
         <div className="my-modal" onClick={onClose}>
-            <div className="d-flex flex-column bg-white p-3 w-75" onClick={e => e.stopPropagation()}>
+            <div className="bg-white p-3 w-75 my-auto" onClick={e => e.stopPropagation()}>
                 <div className="flex-jbetween">
                     <h5 className="fw-semibold fs-3">Article Preview</h5>
                     <button type="button" className="btn-close" onClick={onClose}></button>
                 </div>
                 <hr />
-                <div className="">
+                <div className="overflow-y-scroll" style={{ maxHeight: '70vh' }}>
                     {articleStructure.length === 0 && <p className="text-muted text-center">No content added yet for preview.</p>}
                     {articleStructure.map((item, index) => renderBlock(item, index))}
 
@@ -75,6 +95,7 @@ const ArticlePreviewModal = ({ show, onClose, articleStructure, fileUploads, rel
                         </>
                     )}
                 </div>
+                <hr />
                 <div className="flex-jend">
                     <button type="button" className="btn btn-dark rounded-0 px-3" onClick={onClose}>Close Preview</button>
                 </div>
