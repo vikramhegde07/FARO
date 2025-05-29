@@ -10,6 +10,7 @@ import articleRoute from './routes/articleRoute.js';
 import eventsRoute from './routes/eventsRoute.js';
 import subscriptionRoute from './routes/subscriptionRoute.js';
 import accessRoute from './routes/accessRoute.js';
+import reviewAssignmentRoute from './routes/reviewAssignmentRoute.js';
 
 //configure dotenv
 dotenv.config();
@@ -48,6 +49,9 @@ app.use('/subscription', subscriptionRoute);
 
 //Route to handle new access requests
 app.use('/access', accessRoute);
+
+//Route to add review assignments
+app.use('/assignReview', reviewAssignmentRoute);
 
 // connection to mongodb
 mongoose
