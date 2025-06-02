@@ -1,4 +1,4 @@
-import { ArticleReview } from "../models/articleReview";
+import { ArticleReview } from "../models/articleReview.js";
 
 //Delete Review by id
 export const removeReviewById = async(reviewId) => {

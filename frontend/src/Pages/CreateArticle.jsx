@@ -11,9 +11,11 @@ const CreateArticle = () => {
     const [authorLink, setAuthorLink] = useState('');
     const [island, setIsland] = useState('');
     const [tier, setTier] = useState('');
+    const [articleType, setArticleType] = useState('');
     const [method, setMethod] = useState('');
     const [allIslands, setAllIslands] = useState([]);
 
+    const types = ['Reference Diagram', 'Cheatsheet', 'Architecture Diagram', 'Code Snippets']
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -23,6 +25,7 @@ const CreateArticle = () => {
         localStorage.setItem('faro-title', title);
         localStorage.setItem('faro-island', island);
         localStorage.setItem('faro-tier', tier);
+        localStorage.setItem('faro-articleType', articleType);
         localStorage.setItem('faro-author', author);
         localStorage.setItem('faro-authorLink', authorLink);
 
@@ -101,6 +104,23 @@ const CreateArticle = () => {
                                         {
                                             !allIslands ? '' : allIslands.map((island) => (
                                                 <option value={island._id} key={island._id} >{island.title}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Article Type</label>
+                                    <select
+                                        name="articleType"
+                                        id="articleType"
+                                        className="form-select"
+                                        onChange={(e) => { setArticleType(e.target.value) }}
+                                        required
+                                    >
+                                        <option value={null}>Select Article Type</option>
+                                        {
+                                            !types ? '' : types.map((type) => (
+                                                <option value={type} key={type} >{type}</option>
                                             ))
                                         }
                                     </select>

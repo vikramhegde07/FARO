@@ -7,10 +7,12 @@ import cors from 'cors';
 import userRoute from './routes/userRoute.js';
 import islasndRoute from './routes/islandRoute.js';
 import articleRoute from './routes/articleRoute.js';
+import articleReviewRoute from './routes/articleReview.js';
 import eventsRoute from './routes/eventsRoute.js';
 import subscriptionRoute from './routes/subscriptionRoute.js';
 import accessRoute from './routes/accessRoute.js';
 import reviewAssignmentRoute from './routes/reviewAssignmentRoute.js';
+import eventRegistryRoutes from './routes/eventRegistryRoutes.js';
 
 //configure dotenv
 dotenv.config();
@@ -52,6 +54,12 @@ app.use('/access', accessRoute);
 
 //Route to add review assignments
 app.use('/assignReview', reviewAssignmentRoute);
+
+//Route to manage reviews
+app.use('/review', articleReviewRoute);
+
+//Route to add review assignments
+app.use('/eventRegistry', eventRegistryRoutes);
 
 // connection to mongodb
 mongoose

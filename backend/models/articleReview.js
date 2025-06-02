@@ -11,10 +11,15 @@ const reviewSchema = mongoose.Schema({
         ref: 'User',
         required: true
     },
-    comments: {
-        type: String,
-        required: true
-    },
+    content: [{
+        index: {
+            type: Number
+        },
+        comment: {
+            type: String,
+            required: true
+        }
+    }]
 }, {
     timestamps: true
 });
