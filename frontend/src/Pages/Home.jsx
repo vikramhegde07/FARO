@@ -159,7 +159,7 @@ function Home({ logged }) {
                 parallax={true}
                 slidesPerView={slides}
                 spaceBetween={0}
-                centeredSlides={true}
+                centeredSlides={false}
                 pagination={{
                     clickable: true,
                 }}

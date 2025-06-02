@@ -23,6 +23,11 @@ const ArticleBuilder = () => {
     const [authorLink, setAuthorLink] = useState('');
     const [tier, setTier] = useState('paid');
     const [blockClasses, setBlockClasses] = useState(''); // State for block classes
+
+    // New states for Code Snippet
+    const [codeLanguage, setCodeLanguage] = useState('');
+    const [codeContent, setCodeContent] = useState('');
+
     const [showPreviewModal, setShowPreviewModal] = useState(false); // State for preview modal visibility
 
     const navigator = useNavigate();
@@ -78,7 +83,16 @@ const ArticleBuilder = () => {
             }
             newBlock = { type: contentType, value: tableRows, classes: blockClasses };
             setTableRows([]);
-        } else {
+        } else if (contentType === 'code') { // Handle 'code' type
+            if (!codeLanguage.trim() || !codeContent.trim()) {
+                toast.error('Please provide both code language and content.');
+                return;
+            }
+            newBlock = { type: contentType, value: { language: codeLanguage.trim(), code: codeContent.trim() }, classes: blockClasses };
+            setCodeLanguage('');
+            setCodeContent('');
+        }
+        else {
             if (!inputValue.trim()) {
                 toast.error(`Please enter content for ${contentType}.`);
                 return;
@@ -111,6 +125,8 @@ const ArticleBuilder = () => {
             setListItems([]);
             setTableRows([]);
             setCurrentTableRow('');
+            setCodeLanguage(''); // Clear code snippet states
+            setCodeContent(''); // Clear code snippet states
             setBlockClasses('');
             setContentType('heading'); // Reset content type
         }
@@ -134,7 +150,12 @@ const ArticleBuilder = () => {
         } else if (item.type === 'table') {
             setTableRows(item.value);
             setCurrentTableRow(''); // Clear input for new table rows
-        } else {
+        } else if (item.type === 'code') { // Handle 'code' type for editing
+            setCodeLanguage(item.value.language);
+            setCodeContent(item.value.code);
+            setInputValue(''); // Clear generic input
+        }
+        else {
             setInputValue(item.value);
         }
         setEditingIndex(index);
@@ -297,6 +318,8 @@ const ArticleBuilder = () => {
                                             </p>
                                         ) : item.type === 'table' ? (
                                             <p>Table block ({item.value.length} rows)</p>
+                                        ) : item.type === 'code' ? ( // Display for 'code' type
+                                            <p>Code Snippet ({item.value.language})</p>
                                         ) : (
                                             <p>{item.value}</p>
                                         )}
@@ -345,6 +368,8 @@ const ArticleBuilder = () => {
                                 setListItems([]);
                                 setTableRows([]);
                                 setCurrentTableRow('');
+                                setCodeLanguage(''); // Clear code snippet states on type change
+                                setCodeContent(''); // Clear code snippet states on type change
                                 setEditingIndex(null); // Clear editing when changing type
                                 setBlockClasses(''); // Clear classes when changing type
                             }}
@@ -356,6 +381,7 @@ const ArticleBuilder = () => {
                             <option value="image">Image</option>
                             <option value="link">Link</option>
                             <option value="table">Table</option>
+                            <option value="code">Code Snippet</option>
                         </select>
                     </div>
 
@@ -476,6 +502,33 @@ const ArticleBuilder = () => {
                                 </table>
                             )}
                         </>
+                    ) : contentType === 'code' ? ( // New input fields for 'code' type
+                        <>
+                            <div className="mb-3">
+                                <label htmlFor="codeLanguage" className='form-label'>Programming Language</label>
+                                <input
+                                    type="text"
+                                    name='codeLanguage'
+                                    id='codeLanguage'
+                                    className="form-control mb-2"
+                                    placeholder="e.g., javascript, python, css"
+                                    value={codeLanguage}
+                                    onChange={(e) => setCodeLanguage(e.target.value)}
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="codeContent" className='form-label'>Code Snippet</label>
+                                <textarea
+                                    className="form-control mb-2"
+                                    name='codeContent'
+                                    id='codeContent'
+                                    placeholder="Paste your code here..."
+                                    value={codeContent}
+                                    onChange={(e) => setCodeContent(e.target.value)}
+                                    rows={10}
+                                ></textarea>
+                            </div>
+                        </>
                     ) : (
                         <textarea
                             className="form-control mb-2"
@@ -530,7 +583,8 @@ const ArticleBuilder = () => {
                             (contentType === 'link' && (!linkText.trim() || !linkHref.trim())) ||
                             (contentType === 'points' && listItems.length === 0 && !inputValue.trim()) ||
                             (contentType === 'table' && tableRows.length === 0 && !currentTableRow.trim()) ||
-                            ((contentType !== 'points' && contentType !== 'link' && contentType !== 'table' && contentType !== 'image') && !inputValue.trim()) ||
+                            (contentType === 'code' && (!codeLanguage.trim() || !codeContent.trim())) || // Disable if code fields are empty
+                            ((contentType !== 'points' && contentType !== 'link' && contentType !== 'table' && contentType !== 'image' && contentType !== 'code') && !inputValue.trim()) ||
                             (contentType === 'image' && !inputValue)
                         }>
                             {editingIndex !== null ? 'Update Block' : 'Add to Article'}
@@ -568,6 +622,8 @@ const ArticleBuilder = () => {
                                     {item.classes && <span className="ms-2 badge bg-info">Classes: {item.classes}</span>}
                                     {item.type === 'paragraph' || item.type === 'heading' || item.type === 'subheading' ? (
                                         <span className="ms-2 text-muted text-truncate d-inline-block" style={{ maxWidth: 'calc(100% - 150px)' }}>{item.value}</span>
+                                    ) : item.type === 'code' ? ( // Display code snippet language in progress view
+                                        <span className="ms-2 text-muted">Language: {item.value.language}</span>
                                     ) : null}
                                 </div>
                             ))

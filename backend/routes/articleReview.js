@@ -1,6 +1,7 @@
 import express from 'express';
-import auth from '../middlewares/auth';
-import { removeArticleReviews, removeReviewById } from '../controllers/articleReview';
+import auth from '../middlewares/auth.js';
+import { removeArticleReviews, removeReviewById } from '../controllers/articleReview.js';
+import { ArticleReview } from '../models/articleReview.js';
 
 const router = express.Router();
 
@@ -19,71 +20,47 @@ router.get('/', async(req, res) => {
     }
 });
 
-//Get All reviews for an article
+// Get All reviews for an article
 router.get('/article/:id', async(req, res) => {
     const articleId = req.params.id;
-    try {
-        const reviews = await ArticleReview.findById(articleId);;
 
-        if (!reviews)
-            return res.status(403).json({ error: "No reviews found for the article" });
+    try {
+
+        // 1. Use .populate() correctly to get user details
+        const reviews = await ArticleReview.find({ articleId: articleId })
+            .populate('userId', 'username email'); // 'userId' is the field to populate, 'username email' are the fields to include from the User model
+
+        if (!reviews || reviews.length === 0) { // Check for empty array instead of !reviews for better semantics
+            return res.status(404).json({ message: "No reviews found for this article." });
+        }
 
         return res.status(200).json(reviews);
     } catch (err) {
-        console.log('Server error : ' + err.message);
-        res.status(500).json({ error: err.message });
-    }
-});
-
-//Get All Reviews made by user with id
-router.get('/user/id/:id', async(req, res) => {
-    try {
-        const userId = req.params.id;
-
-        const reviews = await ArticleReview.find({ userId });
-
-        if (!reviews)
-            return res.status(403).json({ error: "No reviews found!" });
-
-        return res.status(200).json(reviews);
-    } catch (err) {
-        console.log('Server error : ' + err.message);
-        res.status(500).json({ error: err.message });
-    }
-});
-
-//Get All Reviews made by user with token
-router.get('/user/id/:id', auth, async(req, res) => {
-    const userId = req.userId;
-    try {
-        const reviews = await ArticleReview.find({ userId });
-
-        if (!reviews)
-            return res.status(403).json({ error: "No reviews found!" });
-
-        return res.status(200).json(reviews);
-    } catch (err) {
-        console.log('Server error : ' + err.message);
-        res.status(500).json({ error: err.message });
+        console.error('Server error: ' + err.message); // Use console.error for errors
+        res.status(500).json({ error: 'Server error', details: err.message }); // Send more informative error
     }
 });
 
 //Add new review
 router.post('/add', auth, async(req, res) => {
-    const { articleId, comments } = req.body;
+    const { articleId } = req.body;
+    let { content } = req.body;
     const userId = req.userId;
     try {
 
-        if (!articleId || !comments || userId) {
+        if (!articleId || !content || !userId) {
             return res.status(404).json({
                 error: 'Send all required fields'
             });
         }
 
+        if (typeof content === 'string') content = JSON.parse(content);
+
+
         const newReview = new ArticleReview({
             articleId,
             userId,
-            comments
+            content
         });
 
         await newReview.save();

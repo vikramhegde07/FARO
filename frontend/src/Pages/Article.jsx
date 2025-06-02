@@ -1,12 +1,12 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom'; // useNavigate was imported but not used, so removed for conciseness
 import API_BASE from '../API';
-import { toast } from 'react-toastify';
+import { useLoading } from '../Context/LoadingContext';
 
 function Article() {
     const [article, setArticle] = useState(null);
-    const navigator = useNavigate();
+    const { showLoading, hideLoading } = useLoading();
     const { id } = useParams();
 
     function getArticleData() {
@@ -14,17 +14,18 @@ function Article() {
             .get(`${API_BASE}/article/${id}`)
             .then((response) => {
                 console.log(response.data);
-
                 setArticle(response.data);
             })
             .catch((error) => {
                 console.log(error.response);
-            })
+            });
     }
 
     useEffect(() => {
+        showLoading();
         getArticleData();
-    }, [])
+        hideLoading();
+    }, []);
 
     return (
         <>
@@ -36,7 +37,7 @@ function Article() {
                                 <img src="/assets/img/Logo.jpg" alt="Logo" className="img-fluid" width={40} />
                                 <h1 className='fs-2 text-center text-semibold'>{article.title}</h1>
                             </div>
-                            {article.author.authorName ? (
+                            {article.author && article.author.authorName ? ( // Added a check for article.author to prevent errors if it's null
                                 <div className="flex-jend">
                                     <p className='text-black-50 m-0'>- Article by {article.author.authorName}</p>
                                 </div>
@@ -81,6 +82,14 @@ function Article() {
                                             </table>
                                         </div>
                                     )}
+                                    {/* New condition to display code snippet */}
+                                    {item.type === 'code' && (
+                                        <>
+                                            <pre className="bg-light p-3 rounded overflow-y-scroll" style={{ maxHeight: "60vh" }}>
+                                                <code>{item.value.code}</code>
+                                            </pre>
+                                        </>
+                                    )}
                                 </div>
                             ))}
 
@@ -112,11 +121,8 @@ function Article() {
                     </div>
                 </div>
             )}
-
-
         </>
-    )
-
+    );
 }
 
-export default Article
+export default Article;

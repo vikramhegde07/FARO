@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const contentBlockSchema = new mongoose.Schema({
     type: {
         type: String,
-        enum: ['heading', 'subheading', 'paragraph', 'points', 'image', 'link', 'table'],
+        enum: ['heading', 'subheading', 'paragraph', 'points', 'image', 'link', 'table', 'code'],
         required: true,
     },
     value: {
@@ -41,6 +41,10 @@ const articleSchema = mongoose.Schema({
             type: String,
             required: false
         }
+    },
+    articleType: {
+        type: String,
+        required: false
     },
     island: {
         type: mongoose.Schema.Types.ObjectId,

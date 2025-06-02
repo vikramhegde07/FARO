@@ -5,6 +5,7 @@ import { uploadImageToS3 } from '../controllers/uploadController.js';
 import { Article } from '../models/articleModel.js';
 import { ArticleReview } from '../models/articleReview.js';
 import deleteS3Files from '../middlewares/remover.js';
+import { removeArticleReviews } from '../controllers/articleReview.js';
 
 
 const router = express.Router();
@@ -12,7 +13,7 @@ const router = express.Router();
 // 📝 Create Article (with optional image upload)
 router.post('/create/parser', auth, upload.array('images'), async(req, res) => {
     try {
-        const { title, island, tier, approval } = req.body;
+        const { title, island, tier, approval, articleType } = req.body;
         let { content, author } = req.body;
 
         // Validate required fields
@@ -62,6 +63,7 @@ router.post('/create/parser', auth, upload.array('images'), async(req, res) => {
             author: author,
             island,
             tier: tier || 'paid',
+            articleType,
             approval: approval || false,
             content
         });
@@ -78,7 +80,7 @@ router.post('/create/parser', auth, upload.array('images'), async(req, res) => {
 //Create article with builder method
 router.post('/create/builder', auth, upload.array('images'), async(req, res) => {
     try {
-        const { title, island, tier, approval } = req.body;
+        const { title, island, tier, approval, articleType } = req.body;
         let { content, author, relatedLinks } = req.body;
 
         // Validate required fields
@@ -131,6 +133,7 @@ router.post('/create/builder', auth, upload.array('images'), async(req, res) => 
             tier: tier || 'paid',
             approval: approval || false,
             content,
+            articleType,
             relatedLinks
         });
 
@@ -273,15 +276,25 @@ router.put('/update/:id', upload.array('images'), async(req, res, next) => {
 });
 
 //Delete Article
-router.delete('/:id', auth, async(req, res) => {
+router.delete('/articleId/:id', auth, async(req, res, next) => {
+    const articleId = req.params.id;
     try {
-        const deleted = await Article.findByIdAndDelete(req.params.id);
-        if (!deleted)
-            return res.status(404).json({ error: 'Article not found' });
-        return res.status(200).json({ message: 'Deleted successfully' });
+
+        const articleData = await Article.findById(articleId);
+
+        if (!articleData) return res.status(403).json({ error: "Sorry no article found" });
+        req.s3FilesToDelete = articleData.content
+            .filter(block => block.type === 'image')
+            .map(block => block.value);
+
+        next();
     } catch (err) {
         return res.status(500).json({ error: err.message });
     }
+}, deleteS3Files, async(req, res) => {
+    await removeArticleReviews(req.params.id);
+    await Article.findByIdAndDelete(req.params.id);
+    return res.status(200).json({ message: "Article removed." })
 });
 
 // 🌍 Get Articles by Island

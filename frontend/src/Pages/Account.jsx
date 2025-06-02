@@ -51,6 +51,19 @@ function Account({ refresh }) {
                         </div>
                     ) : ''
                     }
+                    {userInfo?.privillage.includes('review') ? (
+                        <div className="col-md-4">
+                            <Link to={'/review'} className="card text-decoration-none hover-shadow-1">
+                                <div className="card-body">
+                                    <h5 className="fs-3 flex-center gap-3">
+                                        <i className="bi bi-file-earmark-check"></i>                                        Review Article
+                                    </h5>
+                                    <p className="card-text text-muted text-center">Review New Articles</p>
+                                </div>
+                            </Link>
+                        </div>
+                    ) : ''
+                    }
 
                     <div className="col-md-4">
                         <Link to={'/account/subscriptions'} className="card text-decoration-none hover-shadow-1">

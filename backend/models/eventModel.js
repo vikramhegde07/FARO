@@ -28,7 +28,11 @@ const eventSchema = mongoose.Schema({
     content: {
         type: [contentBlockSchema],
         default: []
-    }
+    },
+    registryFee: {
+        type: Number,
+        required: false
+    },
 }, {
     timestamps: true
 });

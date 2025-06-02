@@ -4,11 +4,33 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import API_BASE from '../../API';
+import { useLoading } from '../../Context/LoadingContext';
+import ReviewDisplayModal from '../../Components/ReviewDisplayModal';
 
-function Modal({ article, close }) {
+function Modal({ article, close, refresh }) {
+
+  const { showLoading, hideLoading } = useLoading();
 
   function handleRemove() {
+    showLoading();
+    axios
+      .delete(`${API_BASE}/article/articleId/${article.id}`, {
+        headers: {
+          Authorization: localStorage.getItem('faro-user')
+        }
+      })
+      .then((response) => {
+        console.log(response);
+        toast.success("Article Removed Successfully");
+        refresh();
+      })
+      .catch((error) => {
+        console.log(error.response);
+        toast.error("Sorry! couldn't remove the article");
+      });
 
+    hideLoading();
+    close();
   }
 
   return (
@@ -196,13 +218,78 @@ function AssignModal({ article, close }) {
   )
 }
 
-function ArticleList({ articles, list }) {
+function ApproveModal({ article, close, refresh }) {
+
+  function handleApprove() { }
+  return (
+    <div className='my-modal'>
+      <div className="container bg-white p-3" style={{ maxWidth: '560px' }}>
+        <div className="flex-jbetween flex-acenter py-2">
+          <div className="flex-acenter gap-3">
+            <i className="bi bi-check-circle-fill fs-4 text-success"></i>
+            <h3 className="fs-4 fw-semibold mb-0">Approve Article</h3>
+          </div>
+          <button
+            type='button'
+            className="btn rounded-0 px-4"
+            onClick={close}
+          >
+            <ion-icon name="close-outline" className="fs-2 text-dark"></ion-icon>
+          </button>
+        </div>
+        <hr className='mt-0' />
+        <div className="d-flex gap-2">
+          <h3 className="fw-semibold fs-5">Article: </h3>
+          <h3 className="fs-5">{article.title}</h3>
+        </div>
+        <div className="d-flex gap-2">
+          <h3 className="fw-semibold fs-5">Island: </h3>
+          <h3 className="fs-5">{article.island.title}</h3>
+        </div>
+        <div className="d-flex gap-2">
+          <h3 className="fw-semibold fs-5">Published On: </h3>
+          <h3 className="fs-5">{formatDateOrToday(article.createdAt)}</h3>
+        </div>
+        <hr />
+        <div className="flex-jend gap-2">
+          <button
+            type='button'
+            className="btn btn-dark px-4 rounded-0"
+            onClick={close}
+          >
+            Close
+          </button>
+          <button
+            type='button'
+            className="btn btn-success px-4 rounded-0"
+            onClick={handleApprove}
+          >
+            Approve
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ArticleList({ articles, list, refresh }) {
   const listTitles = {
     all: 'All',
     pending: 'Approval Pending',
     review: 'Review Pending',
     approved: 'All Approved'
   }
+
+  const [showReviewsModal, setShowReviewsModal] = useState(false); // State to control modal visibility
+
+  const handleOpenReviewsModal = () => {
+    setShowReviewsModal(true);
+  };
+
+  const handleCloseReviewsModal = () => {
+    setShowReviewsModal(false);
+    closeModal();
+  };
 
   const [action, setAction] = useState('');
   const [modal, setModal] = useState(false);
@@ -221,10 +308,10 @@ function ArticleList({ articles, list }) {
     });
   }
 
-
   useEffect(() => { }, [list]);
 
   if (articles.length === 0) return null;
+
   return (
     <div className="container-fluid px-4 mt-2">
       <h1 className="text-center fw-semibold fs-3">{listTitles[list]} Articles</h1>
@@ -278,19 +365,29 @@ function ArticleList({ articles, list }) {
                           <li>
                             <button
                               type='button'
-                              className="dropdown-item"
+                              className="dropdown-item flex-acenter gap-2"
+                              onClick={() => {
+                                setAction('approve');
+                                setModal(true);
+                                setModalArticle(article);
+                              }}
                             >
+                              <i className="bi bi-check-circle-fill"></i>
                               Approve Article
                             </button>
                           </li>
                           <li>
-                            <Link
-                              to={``}
+                            <button
+                              type='button'
                               className="dropdown-item flex-acenter gap-2"
+                              onClick={() => {
+                                setModalArticle(article);
+                                handleOpenReviewsModal();
+                              }}
                             >
                               <ion-icon name="eye-outline"></ion-icon>
                               View Reviews
-                            </Link>
+                            </button>
                           </li>
                         </>
                       ) : ''
@@ -331,8 +428,10 @@ function ArticleList({ articles, list }) {
 
         </tbody>
       </table>
-      {action === 'remove' && modal && <Modal article={modalArticle} close={closeModal} />}
+      {action === 'remove' && modal && <Modal article={modalArticle} close={closeModal} refresh={refresh} />}
       {action === 'assign' && modal && <AssignModal article={modalArticle} close={closeModal} />}
+      {action === 'approve' && modal && <ApproveModal article={modalArticle} close={closeModal} refresh={refresh} />}
+      {showReviewsModal && modalArticle && <ReviewDisplayModal article={modalArticle} close={handleCloseReviewsModal} />}
     </div >
   )
 }

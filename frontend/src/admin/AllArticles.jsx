@@ -83,10 +83,10 @@ function AllArticles() {
                 </div>
             </div>
             <hr />
-            {list === 'all' && <ArticleList articles={allArticles} list={list} />}
-            {list === 'approved' && <ArticleList articles={approved} list={list} />}
-            {list === 'pending' && <ArticleList articles={approvalPending} list={list} />}
-            {list === 'review' && <ArticleList articles={reviewPending} list={list} />}
+            {list === 'all' && <ArticleList refresh={getArticles} articles={allArticles} list={list} />}
+            {list === 'approved' && <ArticleList refresh={getArticles} articles={approved} list={list} />}
+            {list === 'pending' && <ArticleList refresh={getArticles} articles={approvalPending} list={list} />}
+            {list === 'review' && <ArticleList refresh={getArticles} articles={reviewPending} list={list} />}
         </div>
     )
 }

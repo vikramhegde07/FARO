@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import API_BASE from '../API';
+import { useLoading } from '../Context/LoadingContext';
 
 function Profile() {
     const [enableEdit, setEnableEdit] = useState(false);
@@ -12,6 +13,7 @@ function Profile() {
     const [oldPass, setOldPass] = useState('');
     const [newPass, setNewPass] = useState('');
     const [confPass, setConfPass] = useState('');
+    const { showLoading, hideLoading } = useLoading();
 
     const navigator = useNavigate();
 
@@ -21,6 +23,7 @@ function Profile() {
 
     function handlePasswordChange(e) {
         e.preventDefault();
+        showLoading();
 
         if (newPass !== confPass) {
             toast.error("New passwords do not match!")
@@ -50,13 +53,15 @@ function Profile() {
                     toast.error(error.response.data.error)
                 else
                     toast.error("Sorry! password could not be changed");
-            })
+            });
+        hideLoading();
     }
 
     const updateImage = () => {
         if (!selectedFile) {
             return setMessage('Please select a file first.');
         }
+        showLoading();
         const formData = new FormData();
         formData.append('image', selectedFile);
 
@@ -72,7 +77,8 @@ function Profile() {
                 localStorage.removeItem('faro-user-info');
                 setSelectedFile(null);
                 getUserData();
-            })
+            });
+        hideLoading();
     };
 
     function handleChange(e) {
@@ -85,6 +91,7 @@ function Profile() {
 
     function handleProfileUpdate(e) {
         e.preventDefault();
+        showLoading();
 
         const formData = {
             username: userData.username,
@@ -107,7 +114,8 @@ function Profile() {
             .catch((error) => {
                 console.log(error.data);
                 toast.error("Sorry! Error while updating profile")
-            })
+            });
+        hideLoading();
 
     }
 
@@ -149,6 +157,7 @@ function Profile() {
     }
 
     const handlePicRemoval = () => {
+        showLoading();
         axios
             .delete(`${API_BASE}/user/delete/auth/remove_pic`, {
                 headers: {
@@ -161,7 +170,8 @@ function Profile() {
             })
             .catch((error) => {
                 console.log(error.response);
-            })
+            });
+        hideLoading();
     }
 
     useEffect(() => {

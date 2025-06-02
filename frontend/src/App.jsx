@@ -5,6 +5,10 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
+//importing loading animation and context
+import { LoadingProvider, useLoading } from './Context/LoadingContext';
+import LoadingAnimation from './Components/LoadingAnimation';
+
 //importing user components
 import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
@@ -25,6 +29,7 @@ import EventDetails from './Pages/EventDetails';
 import Samples from './Pages/Samples';
 import Profile from './Pages/Profile';
 import Privillage from './Pages/Privillage';
+import Review from './Pages/Review';
 
 //importing admin components
 import AdminIslandArticles from './admin/components/IslandArticles';
@@ -49,7 +54,7 @@ import AdminEventDetails from './admin/EventDetails';
 function App() {
   const [logged, setLogged] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-
+  const { isLoading } = useLoading();
   const navigator = useNavigate();
   const location = useLocation();
 
@@ -101,6 +106,7 @@ function App() {
         <Route path='/article/:id' element={<Article />} />
         <Route path='/samples' element={<Samples />} />
         <Route path='/events' element={<Event />} />
+        <Route path='/review' element={<Review />} />
         <Route path='/event/:eventId' element={<EventDetails />} />
 
         {/* routes for author */}
@@ -129,6 +135,7 @@ function App() {
 
       {!isAdmin && !hideNavAndFooter && <Footer />}
       <ToastContainer position="top-right" autoClose={3000} />
+      {isLoading && <LoadingAnimation />}
     </>
   )
 }

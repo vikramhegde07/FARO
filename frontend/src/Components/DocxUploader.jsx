@@ -4,6 +4,7 @@ import axios from 'axios';
 import API_BASE from '../API';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { useLoading } from '../Context/LoadingContext';
 
 const DocxUploader = () => {
     const [parsedHtml, setParsedHtml] = useState('');
@@ -11,8 +12,10 @@ const DocxUploader = () => {
     const [title, setTitle] = useState('');
     const [island, setIsland] = useState('');
     const [tier, setTier] = useState('free');
+    const [articleType, setArticleType] = useState('');
     const [author, setAuthor] = useState('');
     const [authorLink, setAuthorLink] = useState('');
+    const { showLoading, hideLoading } = useLoading();
 
     const navigator = useNavigate();
 
@@ -153,7 +156,6 @@ const DocxUploader = () => {
 
 
     const handleFileUpload = async (e) => {
-
         const file = e.target.files[0];
         if (file) {
             const arrayBuffer = await file.arrayBuffer();
@@ -174,17 +176,18 @@ const DocxUploader = () => {
             alert('Please fill all details and upload a valid DOCX file.');
             return;
         }
+        showLoading();
 
         const formData = new FormData();
         formData.append('title', title);
         formData.append('island', island);
         formData.append('tier', tier);
+        formData.append('articleType', articleType);
         formData.append('author', JSON.stringify({
             authorName: author,
             linkToProfile: authorLink
         }));
         formData.append('content', JSON.stringify(parsedBlocks.blocks));
-
 
         parsedBlocks.imageFiles?.forEach((file) => {
             formData.append('images', file);
@@ -203,6 +206,7 @@ const DocxUploader = () => {
             localStorage.removeItem('faro-title');
             localStorage.removeItem('faro-island');
             localStorage.removeItem('faro-tier');
+            localStorage.removeItem('faro-articleType');
             localStorage.removeItem('faro-author');
             localStorage.removeItem('faro-authorLink');
 
@@ -211,6 +215,7 @@ const DocxUploader = () => {
         } catch (error) {
             toast.error('Error while submitting article!');
         }
+        hideLoading();
     };
 
 
@@ -218,6 +223,7 @@ const DocxUploader = () => {
         localStorage.removeItem('faro-title');
         localStorage.removeItem('faro-island');
         localStorage.removeItem('faro-tier');
+        localStorage.removeItem('faro-articleType');
         localStorage.removeItem('faro-author');
         localStorage.removeItem('faro-authorLink');
         navigator('/account');
@@ -227,6 +233,7 @@ const DocxUploader = () => {
         setTitle(localStorage.getItem('faro-title'));
         setIsland(localStorage.getItem('faro-island'));
         setTier(localStorage.getItem('faro-tier'));
+        setArticleType(localStorage.getItem('faro-articleType'));
         setAuthor(localStorage.getItem('faro-author'));
         setAuthorLink(localStorage.getItem('faro-authorLink'));
     }, []);
