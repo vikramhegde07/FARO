@@ -48,6 +48,7 @@ import AdminUsers from './admin/Users';
 import AdminEvents from './admin/Events';
 import AdminAllArticles from './admin/AllArticles';
 import AdminEventDetails from './admin/EventDetails';
+import AdminReviews from './admin/Reviews';
 
 
 
@@ -128,6 +129,7 @@ function App() {
         <Route path='/admin/edit/:articleId' element={<AdminArticleEditor />} />
         <Route path='/admin/articles/' element={<AdminAllArticles />} />
         <Route path='/admin/events/' element={<AdminEvents />} />
+        <Route path='/admin/reviews/' element={<AdminReviews />} />
         <Route path='/admin/event/:eventId' element={<AdminEventDetails />} />
         <Route path='/admin/addEvent/' element={<AdminAddEvent />} />
         {/* end of admin routes  */}
