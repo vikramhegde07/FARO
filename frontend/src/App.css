@@ -349,7 +349,7 @@
     }
     .sidebar.change {
         left: 0;
-        z-index: 3;
+        z-index: 5;
     }
     .admin-content {
         left: 0 !important;
