@@ -242,3 +242,4 @@ function ReviewMode({ article, refresh, close }) {
     </div>
   );
 }
+export default ReviewMode;
