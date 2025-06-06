@@ -220,7 +220,35 @@ function AssignModal({ article, close }) {
 
 function ApproveModal({ article, close, refresh }) {
 
-  function handleApprove() { }
+  const { showLoading, hideLoading } = useLoading();
+
+  function handleApprove() {
+    showLoading();
+    const token = localStorage.getItem('faro-user');
+    if (!token) {
+      toast.error('No user token found');
+      return;
+    }
+    axios
+      .patch(`${API_BASE}/article/approve/${article._id}`, {}, {
+        headers: {
+          Authorization: token
+        }
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          toast.success("Article Approved");
+          refresh();
+          close();
+        }
+      })
+      .catch((error) => {
+        console.log(error.response);
+        toast.error("Sorry! Server error");
+      });
+    hideLoading();
+  }
   return (
     <div className='my-modal'>
       <div className="container bg-white p-3" style={{ maxWidth: '560px' }}>
@@ -360,38 +388,39 @@ function ArticleList({ articles, list, refresh }) {
                             </button>
                           </li>
                         </>
-                      ) : list === 'pending' ? (
-                        <>
-                          <li>
-                            <button
-                              type='button'
-                              className="dropdown-item flex-acenter gap-2"
-                              onClick={() => {
-                                setAction('approve');
-                                setModal(true);
-                                setModalArticle(article);
-                              }}
-                            >
-                              <i className="bi bi-check-circle-fill"></i>
-                              Approve Article
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              type='button'
-                              className="dropdown-item flex-acenter gap-2"
-                              onClick={() => {
-                                setModalArticle(article);
-                                handleOpenReviewsModal();
-                              }}
-                            >
-                              <ion-icon name="eye-outline"></ion-icon>
-                              View Reviews
-                            </button>
-                          </li>
-                        </>
-                      ) : ''
-                    }
+                      ) : (
+                        <li>
+                          <button
+                            type='button'
+                            className="dropdown-item flex-acenter gap-2"
+                            onClick={() => {
+                              setModalArticle(article);
+                              handleOpenReviewsModal();
+                            }}
+                          >
+                            <ion-icon name="eye-outline"></ion-icon>
+                            View Reviews
+                          </button>
+                        </li>
+                      )}
+                    {list !== 'approved' ? (
+                      <>
+                        <li>
+                          <button
+                            type='button'
+                            className="dropdown-item flex-acenter gap-2"
+                            onClick={() => {
+                              setAction('approve');
+                              setModal(true);
+                              setModalArticle(article);
+                            }}
+                          >
+                            <i className="bi bi-check-circle-fill"></i>
+                            Approve Article
+                          </button>
+                        </li>
+                      </>
+                    ) : ''}
                     <li>
                       <Link
                         to={`/admin/edit/${article._id}`}

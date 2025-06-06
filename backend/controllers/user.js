@@ -90,10 +90,7 @@ export const registerUser = async(req, res) => {
     const { username, email, password } = req.body;
     try {
 
-        if (!username ||
-            !email ||
-            !password
-        ) {
+        if (!username || !email || !password) {
             return res.status(404).json({
                 error: 'Send all required fields'
             });
@@ -110,6 +107,58 @@ export const registerUser = async(req, res) => {
             email,
             password: passwordHash
         });
+
+        await newUser.save();
+
+        const payload = {
+            id: newUser._id,
+            username: newUser.username,
+            email: newUser.email,
+            password: newUser.password
+        }
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24hr' });
+        // return user information and token  
+        return res.status(201).json({
+            Success: "New user has been created",
+            user: newUser,
+            token: token
+        });
+    } catch (err) {
+        console.log('Server error : ' + err.message);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+//method to register a new user from admin
+export const adminRegisterUser = async(req, res) => {
+    console.log(req.body);
+
+    const { username, email, password, phone, user_type } = req.body;
+    try {
+
+        if (!username || !email || !password || !user_type) {
+            return res.status(404).json({
+                error: 'Send all required fields'
+            });
+        }
+
+        const user = await User.find({ email: email });
+        if (user.length == 1)
+            return res.status(400).json({ error: 'Email already exists!' });
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        const userPayload = {
+            username: username,
+            email: email,
+            password: passwordHash,
+            user_type: user_type
+        }
+
+        if (phone !== '')
+            userPayload.phone = phone;
+
+        const newUser = new User(userPayload);
 
         await newUser.save();
 

@@ -169,6 +169,10 @@
     color: transparent !important;
 }
 
+.text-indigo {
+    color: oklch(51.1% 0.262 276.966);
+}
+
 .fs-large {
     font-size: 68px;
 }
@@ -217,6 +221,16 @@
 .hover-zoom:hover {
     transform: scale(1.02);
     transition: all 0.5s;
+}
+
+.hover-height {
+    overflow: hidden;
+    transition: all 0.6s;
+}
+
+.hover-height:hover {
+    max-height: fit-content !important;
+    transition: all 0.6s linear;
 }
 
 .hover-shadow-colored {

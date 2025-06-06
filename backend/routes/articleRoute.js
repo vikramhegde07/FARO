@@ -6,6 +6,7 @@ import { Article } from '../models/articleModel.js';
 import { ArticleReview } from '../models/articleReview.js';
 import deleteS3Files from '../middlewares/remover.js';
 import { removeArticleReviews } from '../controllers/articleReview.js';
+import { User } from '../models/userModel.js';
 
 
 const router = express.Router();
@@ -309,7 +310,13 @@ router.get('/island/:islandId', async(req, res) => {
 
 // ✅ Approve Article
 router.patch('/approve/:id', auth, async(req, res) => {
+    const userId = req.userId;
     try {
+        const adminUser = await User.findById(userId);
+
+        if (!adminUser || adminUser.user_type !== 'admin')
+            return res.status(403).json({ error: "No admin found. Access Restricted" });
+
         const approved = await Article.findByIdAndUpdate(req.params.id, { approval: true }, { new: true });
         return res.status(200).json(approved);
     } catch (err) {

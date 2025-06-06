@@ -123,6 +123,7 @@ function Review() {
             </span>
           </h2>
           <hr />
+
           <div className="row flex-jcenter">
             {reviews.map((review) => (
               <div key={review._id}>
