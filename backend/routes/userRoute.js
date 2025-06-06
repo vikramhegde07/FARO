@@ -1,6 +1,6 @@
 import express from 'express';
 import auth from '../middlewares/auth.js';
-import { checkUserLogin, getAllUsers, getOneUserWithId, getOneUserWithToken, getPrivillaged, loginUser, registerUser, updatePassword, updateProfileImage, updateUserProfile } from '../controllers/user.js';
+import { adminRegisterUser, checkUserLogin, getAllUsers, getOneUserWithId, getOneUserWithToken, getPrivillaged, loginUser, registerUser, updatePassword, updateProfileImage, updateUserProfile } from '../controllers/user.js';
 import upload from '../middlewares/upload.js';
 import deleteS3Files from '../middlewares/remover.js';
 import { User } from '../models/userModel.js';
@@ -22,6 +22,9 @@ router.get('/privillaged', getPrivillaged);
 
 //register a new user
 router.post('/register', registerUser);
+
+//register new user with admin 
+router.post('/admin/register', adminRegisterUser);
 
 //login for a user
 router.post('/login', loginUser);

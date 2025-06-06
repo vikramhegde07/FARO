@@ -179,11 +179,10 @@ function ReviewMode({ article, refresh, close }) {
                     onClick={() => toggleCommentCollapse(idx)}
                   >
                     <i
-                      className={`bi ${
-                        activeCommentIndex === idx
+                      className={`bi ${activeCommentIndex === idx
                           ? "bi-chat-left-fill"
                           : "bi-chat-left"
-                      }`}
+                        }`}
                     ></i>
                     {activeCommentIndex === idx
                       ? " Hide Comment"
@@ -242,3 +241,5 @@ function ReviewMode({ article, refresh, close }) {
     </div>
   );
 }
+
+export default ReviewMode;
