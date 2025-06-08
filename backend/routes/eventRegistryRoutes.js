@@ -1,5 +1,7 @@
 import express from 'express';
 import { EventRegistry } from '../models/eventRegistry.js';
+import { sendConfirmationMail } from '../controllers/mail.js';
+import { Event } from '../models/eventModel.js';
 
 const router = express.Router();
 
@@ -60,10 +62,22 @@ router.post('/create', async(req, res) => {
         });
         await newRegister.save();
 
+        const event = await Event.findById(eventId);
+
+        await sendConfirmationMail({
+            to: email,
+            name: fullname,
+            event: {
+                name: event.title,
+                date: event.eventDate,
+                location: event.location
+            }
+        });
+
         return res.status(201).json(newRegister);
     } catch (err) {
         console.log('Server error : ' + err.message);
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ error: err.message });
     }
 });
 

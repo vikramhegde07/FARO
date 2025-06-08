@@ -110,6 +110,7 @@ router.post('/create', auth, upload.array('images'), async(req, res) => {
         });
 
         const saved = await newEvent.save();
+
         return res.status(201).json(saved);
     } catch (err) {
         console.error('Error creating event:', err);
