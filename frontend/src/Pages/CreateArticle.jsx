@@ -15,7 +15,7 @@ const CreateArticle = () => {
     const [method, setMethod] = useState('');
     const [allIslands, setAllIslands] = useState([]);
 
-    const types = ['Reference Diagram', 'Cheatsheet', 'Architecture Diagram', 'Code Snippets']
+    const types = ['General', 'Reference Diagram', 'Cheatsheet', 'Architecture Diagram', 'Code Snippets']
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -31,8 +31,10 @@ const CreateArticle = () => {
 
         if (method === 'builder') {
             navigate('/createArticle/builder');
-        } else {
+        } else if (method === 'docx') {
             navigate('/createArticle/parseDocx');
+        } else {
+            navigate('/createArticle/uploadPdf');
         }
     };
 
@@ -144,7 +146,7 @@ const CreateArticle = () => {
                                 </div>
                                 <div className="mb-4">
                                     <label className="form-label">Method</label>
-                                    <div className="row">
+                                    <div className="row row-gap-3">
                                         <div className="col-md-6">
                                             <div className={`card p-3 ${method === 'builder' ? 'border-primary' : ''}`} style={{ cursor: 'pointer' }} onClick={() => setMethod('builder')}>
                                                 <h5>Create using Builder</h5>
@@ -155,6 +157,12 @@ const CreateArticle = () => {
                                             <div className={`card p-3 ${method === 'docx' ? 'border-primary' : ''}`} style={{ cursor: 'pointer' }} onClick={() => setMethod('docx')}>
                                                 <h5>Parse DOCX File</h5>
                                                 <p className="small">Upload a .docx file and auto-generate the article.</p>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className={`card p-3 ${method === 'pdf' ? 'border-primary' : ''}`} style={{ cursor: 'pointer' }} onClick={() => setMethod('pdf')}>
+                                                <h5>Use PDF files</h5>
+                                                <p className="small">Upload a .pdf file and auto-generate the article.</p>
                                             </div>
                                         </div>
                                     </div>

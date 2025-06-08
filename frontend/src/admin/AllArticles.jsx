@@ -35,8 +35,8 @@ function AllArticles() {
     }, [])
 
     return (
-        <div className='admin-content px-2  mt-4'>
-            <h1 className="text-center fw-bold">Manage Articles</h1>
+        <>
+            <h2 className="text-center fw-semibold">Manage Articles</h2>
             <hr />
             <div className="row">
                 <div className="col-md-3">
@@ -87,7 +87,7 @@ function AllArticles() {
             {list === 'approved' && <ArticleList refresh={getArticles} articles={approved} list={list} />}
             {list === 'pending' && <ArticleList refresh={getArticles} articles={approvalPending} list={list} />}
             {list === 'review' && <ArticleList refresh={getArticles} articles={reviewPending} list={list} />}
-        </div>
+        </>
     )
 }
 

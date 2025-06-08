@@ -484,7 +484,7 @@ const ArticleBuilder = ({ initialArticleData }) => { // Accept initialArticleDat
                                     <h2 className="fw-semibold fs-4 mb-0">Edit block</h2>
                                     <button
                                         type="button"
-                                        class="btn"
+                                        className="btn"
                                         data-bs-toggle="collapse"
                                         data-bs-target="#collapse-1"
                                         aria-expanded="false"
@@ -725,7 +725,7 @@ const ArticleBuilder = ({ initialArticleData }) => { // Accept initialArticleDat
                                 <div className="d-flex justify-content-end gap-2">
                                     <button
                                         type="button"
-                                        class="btn btn-dark rounded-0 px-3"
+                                        className="btn btn-dark rounded-0 px-3"
                                         data-bs-toggle="collapse"
                                         data-bs-target="#collapse-1"
                                         aria-expanded="false"

@@ -7,8 +7,8 @@ function Privillage() {
     const [tab, setTab] = useState('accessList');
 
     return (
-        <div className='admin-content px-2'>
-            <h1 className="text-center fw-bold fs-2">Manage User Privillages</h1>
+        <>
+            <h2 className="text-center fw-semibold">Manage User Privillages</h2>
             <hr />
             <ul className="nav nav-tabs">
                 <li className="nav-item">
@@ -29,7 +29,7 @@ function Privillage() {
             </ul>
             {tab === 'accessList' ? <AccessList /> : <NewReq />}
 
-        </div>
+        </>
     )
 }
 

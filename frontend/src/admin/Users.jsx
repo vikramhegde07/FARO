@@ -125,7 +125,7 @@ function AddUser({ refresh, close }) {
                         </div>
                         <div className="col-md-6 mb-3">
                             <label htmlFor="user_type" className="form-label">User Type</label>
-                            <select class="form-select" name='user_type' onChange={handleChange}>
+                            <select className="form-select" name='user_type' onChange={handleChange}>
                                 <option selected>Select</option>
                                 <option value="reader">Normal User</option>
                                 <option value="admin">Admin</option>
@@ -163,6 +163,7 @@ function Users() {
     const [addUser, setAddUser] = useState(false);
 
     const [tab, setTab] = useState('reader');
+    const { showLoading, hideLoading } = useLoading();
 
     const [privUser, setPrivUser] = useState({
         id: '',
@@ -175,19 +176,30 @@ function Users() {
     const closeUser = () => setAddUser(false);
 
     function getuserList() {
-        setUsers([]);
+        setAllUsers([]);
         axios
             .get(`${API_BASE}/user`)
             .then((response) => {
-                setUsers(response.data);
+                setAllUsers(response.data);
             })
             .catch((error) => {
                 console.log(error.response);
-            })
+            });
+    }
+
+    function userFilter() {
+        let newData = [];
+        allUsers.forEach((user) => {
+            if (user.user_type === tab)
+                newData.push(user);
+        });
+        setUsers(newData);
     }
 
     useEffect(() => {
+        showLoading();
         getuserList();
+        hideLoading();
     }, [])
 
     useEffect(() => {
@@ -208,131 +220,140 @@ function Users() {
         }
     }, [searchKey])
 
+    useEffect(() => {
+        userFilter();
+    }, [allUsers, tab])
+
     return (
         <>
-            <div className='admin-content px-2 mt-5'>
-                <h1 className="text-center fw-bold fs-2">Manage Users</h1>
-                <hr />
-                <div className="container-fluid flex-jbetween flex-md-row flex-column px-4 py-3 mt-2">
-                    <h3 className="fs-5">{!search ? 'All Users' : 'Search Results'}</h3>
-                    <div className="d-flex">
-                        <input
-                            type="text"
-                            className="form-control rounded-0"
-                            placeholder="Search Users"
-                            value={searchKey}
-                            name="search"
-                            id="search"
-                            onChange={(e) => { setSearchKey(e.target.value) }}
-                        />
-                    </div>
+            <h2 className="text-center fw-semibold">Manage Users</h2>
+            <hr />
+            <div className="container-fluid flex-jbetween flex-md-row flex-column px-4 mt-2">
+                <h3 className="fs-5 fw-semibold">{!search ? 'Users' : 'Search Results'}</h3>
+                <div className="d-flex">
+                    <input
+                        type="text"
+                        className="form-control rounded-0"
+                        placeholder="Search Users"
+                        value={searchKey}
+                        name="search"
+                        id="search"
+                        onChange={(e) => { setSearchKey(e.target.value) }}
+                    />
                 </div>
-                <hr />
-
-                {search ? (
-                    <>
-                        {searchResults.length === 0 ? '' : (
-                            <table className="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Username</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Privillages</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {searchResults.map((user, index) => (
-                                        <tr key={user._id}>
-                                            <th scope="row">{index}</th>
-                                            <td>{user.username}</td>
-                                            <td>{user.email}</td>
-                                            <td>
-                                                <button
-                                                    type='button'
-                                                    className="btn btn-danger rounded-0 px-4"
-                                                    onClick={(e) => {
-                                                        setPrivUser({
-                                                            id: user._id,
-                                                            username: user.username,
-                                                            email: user.email,
-                                                            privs: user.privillage
-                                                        });
-                                                        setEditPriv(true);
-                                                    }}
-                                                >Edit Privillage</button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </>
-                ) : (
-                    <>
-                        <ul class="nav nav-tabs">
-                            <li class="nav-item">
-                                <button
-                                    type='button'
-                                    onClick={() => { setTab('admin') }}
-                                    class={`nav-link ${tab === 'admin' ? 'active' : ''}`}
-                                >
-                                    Admin Users
-                                </button>
-                            </li>
-                            <li class="nav-item">
-                                <button
-                                    type='button'
-                                    onClick={() => { setTab('reader') }}
-                                    class={`nav-link ${tab === 'reader' ? 'active' : ''}`}
-                                >
-                                    All Users
-                                </button>
-                            </li>
-                        </ul>
-                        {users.length === 0 ? '' : (
-                            <table className="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Username</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Privillages</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {users.map((user, index) => (
-                                        <>
-                                            <tr key={user._id}>
-                                                <th scope="row">{index}</th>
-                                                <td>{user.username}</td>
-                                                <td>{user.email}</td>
-                                                <td>
-                                                    <button
-                                                        type='button'
-                                                        className="btn btn-danger rounded-0 px-4"
-                                                        onClick={(e) => {
-                                                            setPrivUser({
-                                                                id: user._id,
-                                                                username: user.username,
-                                                                email: user.email,
-                                                                privs: user.privillage
-                                                            });
-                                                            setEditPriv(true);
-                                                        }}
-                                                    >Edit Privillage</button>
-                                                </td>
-                                            </tr>
-                                        </>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </>
-                )}
-                {editPriv && <EditPrivillage privUser={privUser} close={closeEdit} refresh={getuserList} />}
-                {addUser && <AddUser refresh={getuserList} close={closeUser} />}
             </div>
+            <hr />
+
+            {search ? (
+                <>
+                    {searchResults.length === 0 ? '' : (
+                        <table className="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Privillages</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {searchResults.map((user, index) => (
+                                    <tr key={user._id}>
+                                        <th scope="row">{index}</th>
+                                        <td>{user.username}</td>
+                                        <td>{user.email}</td>
+                                        <td>
+                                            <button
+                                                type='button'
+                                                className="btn btn-danger rounded-0 px-4"
+                                                onClick={(e) => {
+                                                    setPrivUser({
+                                                        id: user._id,
+                                                        username: user.username,
+                                                        email: user.email,
+                                                        privs: user.privillage
+                                                    });
+                                                    setEditPriv(true);
+                                                }}
+                                            >Edit Privillage</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </>
+            ) : (
+                <>
+                    <ul className="nav nav-tabs">
+                        <li className="nav-item">
+                            <button
+                                type='button'
+                                onClick={() => { setTab('reader') }}
+                                className={`nav-link ${tab === 'reader' ? 'active' : ''}`}
+                            >
+                                All Users
+                            </button>
+                        </li>
+                        <li className="nav-item">
+                            <button
+                                type='button'
+                                onClick={() => { setTab('admin') }}
+                                className={`nav-link ${tab === 'admin' ? 'active' : ''}`}
+                            >
+                                Admins
+                            </button>
+                        </li>
+                        <li className="nav-item">
+                            <button
+                                type='button'
+                                onClick={() => { setTab('author') }}
+                                className={`nav-link ${tab === 'author' ? 'active' : ''}`}
+                            >
+                                Authors
+                            </button>
+                        </li>
+                    </ul>
+                    {users.length !== 0 && (
+                        <table className="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Privillages</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {users.map((user, index) => (
+                                    <tr key={user._id}>
+                                        <th scope="row">{index + 1}</th>
+                                        <td>{user.username}</td>
+                                        <td>{user.email}</td>
+                                        <td>
+                                            <button
+                                                type='button'
+                                                className="btn btn-danger rounded-0 px-4"
+                                                onClick={(e) => {
+                                                    setPrivUser({
+                                                        id: user._id,
+                                                        username: user.username,
+                                                        email: user.email,
+                                                        privs: user.privillage
+                                                    });
+                                                    setEditPriv(true);
+                                                }}
+                                            >Edit Privillage</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </>
+            )}
+            {editPriv && <EditPrivillage privUser={privUser} close={closeEdit} refresh={getuserList} />}
+            {addUser && <AddUser refresh={getuserList} close={closeUser} />}
             <div className="position-absolute top-0 end-0 pt-4 pe-4">
                 <button
                     type='button'
