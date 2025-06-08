@@ -19,7 +19,7 @@ function Navbar({ logged }) {
             <nav className={`navbar navbar-expand-lg bg-dark`} data-bs-theme="dark">
                 <div className="container-fluid w-75">
                     <Link className="navbar-brand text-gradient-secondary fw-bolder fs-1 p-0" to={"/"}>
-                        <img src="/assets/img/Logo.jpg" alt="" width={30} height={50} class="d-inline-block align-text-top me-2" />
+                        <img src="/assets/img/Logo.jpg" alt="" width={30} height={50} className="d-inline-block align-text-top me-2" />
                         FARO
                     </Link>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

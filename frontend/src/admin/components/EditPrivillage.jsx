@@ -78,18 +78,16 @@ function EditPrivillage({ privUser, refresh, close }) {
                     {privillages.map(priv => (
                         <>
                             {privUser.privs.some((privillage) => priv === privillage) ? (
-                                <>
-                                    <button
-                                        type='button'
-                                        onClick={removePriv}
-                                        value={priv}
-                                        className="btn btn-danger rounded-0 flex-acenter gap-2 text-capitalize"
-
-                                    >
-                                        <ion-icon name="remove-circle-outline"></ion-icon>
-                                        {priv}
-                                    </button>
-                                </>
+                                <button
+                                    type='button'
+                                    onClick={removePriv}
+                                    value={priv}
+                                    className="btn btn-danger rounded-0 flex-acenter gap-2 text-capitalize"
+                                    key={priv}
+                                >
+                                    <ion-icon name="remove-circle-outline"></ion-icon>
+                                    {priv}
+                                </button>
                             ) : (
                                 <>
                                     <button

@@ -28,8 +28,8 @@ function EventDetails() {
         return ''
 
     return (
-        <div className='admin-content px-5 py-3 mt-lg-4 mt-2'>
-            <h1 className="text-center fw-semibold fs-3">{eventData.title}</h1>
+        <>
+            <h2 className="text-center fw-semibold">{eventData.title}</h2>
             <hr />
             {eventData.content.map((item) => (
                 <div key={item._id}>
@@ -64,7 +64,7 @@ function EventDetails() {
                 <p className='fw-semibold fs-5 d-inline'>Location : </p>
                 <p className="fst-italic d-inline">{eventData.location}</p>
             </span>
-        </div>
+        </>
     )
 }
 

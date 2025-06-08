@@ -192,77 +192,73 @@ function Islands() {
 
     return (
         <>
-            <div className='admin-content px-2'>
-                <div className="container-fluid py-3 mt-md-3 mt-1">
-                    <h1 className="text-center fw-bold fs-2">Manage Islands</h1>
-                    <hr />
-                    <div className="container-fluid px-3 py-2">
-                        <div className="row">
-                            <div className="col-md-6 p-3">
-                                <ul className="list-group">
-                                    <li className="list-group-item">
-                                        <h1 className="text-center fw-semibold fs-3">All Islands</h1>
+            <h2 className="text-center fw-semibold">Manage Islands</h2>
+            <hr />
+            <div className="container-fluid px-3 py-2">
+                <div className="row">
+                    <div className="col-md-6 p-3">
+                        <ul className="list-group">
+                            <li className="list-group-item">
+                                <h1 className="text-center fw-semibold fs-3">All Islands</h1>
+                            </li>
+                            {allIslands.length !== 0 ?
+                                allIslands.map((island) => (
+                                    <li className="list-group-item hover-bg-gray flex-jbetween flex-acenter hover-op-container" key={island._id} >
+                                        <Link to={`/admin/island/${island._id}`} className='fs-18 text-decoration-none text-black'>
+                                            {island.title}
+                                        </Link>
+                                        <div className="d-flex gap-2">
+                                            <button
+                                                className="btn btn-primary rounded-0 hover-opacity"
+                                                onClick={() => {
+                                                    setEditingData({
+                                                        title: island.title,
+                                                        id: island._id
+                                                    });
+                                                    setEdit(true);
+                                                }}
+                                            >
+                                                <ion-icon name="pencil-outline"></ion-icon>
+                                            </button>
+                                            <button
+                                                className="btn btn-danger rounded-0 hover-opacity"
+                                                onClick={() => {
+                                                    setEditingData({
+                                                        title: island.title,
+                                                        id: island._id
+                                                    });
+                                                    setRemove(true);
+                                                }}
+                                            >
+                                                <ion-icon name="trash-outline"></ion-icon>
+                                            </button>
+                                        </div>
                                     </li>
-                                    {allIslands.length !== 0 ?
-                                        allIslands.map((island) => (
-                                            <li className="list-group-item hover-bg-gray flex-jbetween flex-acenter hover-op-container" key={island._id} >
-                                                <Link to={`/admin/island/${island._id}`} className='fs-18 text-decoration-none text-black'>
-                                                    {island.title}
-                                                </Link>
-                                                <div className="d-flex gap-2">
-                                                    <button
-                                                        className="btn btn-primary rounded-0 hover-opacity"
-                                                        onClick={() => {
-                                                            setEditingData({
-                                                                title: island.title,
-                                                                id: island._id
-                                                            });
-                                                            setEdit(true);
-                                                        }}
-                                                    >
-                                                        <ion-icon name="pencil-outline"></ion-icon>
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-danger rounded-0 hover-opacity"
-                                                        onClick={() => {
-                                                            setEditingData({
-                                                                title: island.title,
-                                                                id: island._id
-                                                            });
-                                                            setRemove(true);
-                                                        }}
-                                                    >
-                                                        <ion-icon name="trash-outline"></ion-icon>
-                                                    </button>
-                                                </div>
-                                            </li>
-                                        )) : ''
-                                    }
-                                </ul>
-                            </div>
-                            <div className="col-md-6 p-3">
-                                <div className="bg-danger-subtle px-5 py-3">
-                                    <h1 className="text-center">Add New Island</h1>
-                                    <hr />
-                                    <form onSubmit={handleAddIsland}>
-                                        <div className="mb-3">
-                                            <label htmlFor="title" className="form-label">Island Title</label>
-                                            <input
-                                                type="text"
-                                                name="title"
-                                                id="title"
-                                                onChange={(e) => { setNewIsland(e.target.value) }}
-                                                className="form-control rounded-0"
-                                                value={newIsland}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="mb-3 flex-jend">
-                                            <button type="submit" className="btn btn-danger px-4 rounded-0">Add Island</button>
-                                        </div>
-                                    </form>
+                                )) : ''
+                            }
+                        </ul>
+                    </div>
+                    <div className="col-md-6 p-3">
+                        <div className="bg-danger-subtle px-5 py-3">
+                            <h1 className="text-center">Add New Island</h1>
+                            <hr />
+                            <form onSubmit={handleAddIsland}>
+                                <div className="mb-3">
+                                    <label htmlFor="title" className="form-label">Island Title</label>
+                                    <input
+                                        type="text"
+                                        name="title"
+                                        id="title"
+                                        onChange={(e) => { setNewIsland(e.target.value) }}
+                                        className="form-control rounded-0"
+                                        value={newIsland}
+                                        required
+                                    />
                                 </div>
-                            </div>
+                                <div className="mb-3 flex-jend">
+                                    <button type="submit" className="btn btn-danger px-4 rounded-0">Add Island</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

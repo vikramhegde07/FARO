@@ -102,8 +102,8 @@ function Events() {
 
     return (
         <>
-            <div className='admin-content px-2 mt-4'>
-                <h2 className="text-center fw-bold">Manage Events</h2>
+            <>
+                <h2 className="text-center fw-semibold">Manage Events</h2>
                 <hr />
                 <div className="container-fluid px-3 py-2">
                     <div className="flex-jbetween flex-md-row flex-column-reverse gap-3 gap-md-0">
@@ -167,7 +167,7 @@ function Events() {
                         )}
                     </table>
                 </div>
-            </div>
+            </>
 
             {removeModal && <RemoveModal title={removingData.title} id={removingData.id} close={handleRemoveModal} refresh={getEventList} />}
 

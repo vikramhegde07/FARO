@@ -9,6 +9,9 @@ function Assignments({ articleAssignments, userAssignments, refresh }) {
 
   const [groupBy, setGroupBy] = useState('article');
 
+  const [data, setData] = useState({});
+  const [type, setType] = useState('');
+
   useEffect(() => {
     console.log(userAssignments);
     console.log(articleAssignments);
@@ -18,14 +21,14 @@ function Assignments({ articleAssignments, userAssignments, refresh }) {
     <>
       <div className="container flex-acenter gap-2 mt-3">
         <h3 className="fw-semibold fs-5 mb-0">Group By :</h3>
-        <ul class="nav nav-underline mb-0">
-          <li class="nav-item">
+        <ul className="nav nav-underline mb-0">
+          <li className="nav-item">
             <button
               type="button"
               className={`nav-link ${groupBy === 'article' ? 'active' : ''}`}
               onClick={() => { setGroupBy('article') }}
             >Article</button>        </li>
-          <li class="nav-item">
+          <li className="nav-item">
             <button
               type="button"
               className={`nav-link ${groupBy === 'user' ? 'active' : ''}`}
@@ -40,7 +43,15 @@ function Assignments({ articleAssignments, userAssignments, refresh }) {
           <div className="row gap-3">
             {articleAssignments.map((article) => (
               <>
-                <div className="col-md-4 p-3 shadow rounded-2" style={{ maxWidth: '26rem' }} key={article._id}>
+                <div
+                  className="col-md-4 p-3 shadow rounded-2"
+                  style={{ maxWidth: '26rem' }}
+                  key={article._id}
+                  onClick={() => {
+                    setType('article');
+                    setData(article);
+                  }}
+                >
                   <h1 className="fs-4 fw-semibold text-indigo">{article.articleTitle}</h1>
                   <p className="text-muted fs-small">Published On: {formatDateOrToday(article.createdAt)}</p>
                   <hr />
@@ -54,9 +65,9 @@ function Assignments({ articleAssignments, userAssignments, refresh }) {
                         </div>
                         {
                           user.hasReviewed ? (
-                            <span class="badge text-bg-success mb-1">Reviewed</span>
+                            <span className="badge text-bg-success mb-1">Reviewed</span>
                           ) : (
-                            <span class="badge text-bg-danger mb-1">Pending</span>
+                            <span className="badge text-bg-danger mb-1">Pending</span>
                           )
                         }
                       </div>
@@ -74,7 +85,15 @@ function Assignments({ articleAssignments, userAssignments, refresh }) {
           <div className="row gap-3">
             {userAssignments.map((user) => (
               <>
-                <div className="col-md-4 p-3 shadow rounded-2 overflow-hidden" style={{ maxWidth: '26rem', maxHeight: '240px' }} key={user._id}>
+                <div
+                  className="col-md-4 p-3 shadow rounded-2 overflow-hidden cursor-pointer"
+                  style={{ maxWidth: '26rem', maxHeight: '240px' }}
+                  key={user._id}
+                  onClick={() => {
+                    setType('user');
+                    setData(user);
+                  }}
+                >
                   <h1 className="fs-4 fw-semibold text-indigo">{user.username}</h1>
                   <p className="text-muted fs-small">ID: {user.userId}</p>
                   <hr />
@@ -84,9 +103,9 @@ function Assignments({ articleAssignments, userAssignments, refresh }) {
                       <h3 className="fs-small mb-1">{article.title}</h3>
                       {
                         article.hasReviewed ? (
-                          <span class="badge text-bg-success mb-1">Reviewed</span>
+                          <span className="badge text-bg-success mb-1">Reviewed</span>
                         ) : (
-                          <span class="badge text-bg-danger mb-1">Pending</span>
+                          <span className="badge text-bg-danger mb-1">Pending</span>
                         )
                       }
                     </div>
@@ -96,6 +115,99 @@ function Assignments({ articleAssignments, userAssignments, refresh }) {
             ))}
           </div>
         </>
+      )}
+
+      {type === 'user' && data && (
+        <div
+          className="my-modal"
+          style={{ zIndex: '10' }}
+          onClick={() => {
+            setType('');
+            setData({});
+          }}>
+          <div className="position-fixed bottom-0 end-0 mb-md-4 mb-1 me-md-4 me-1 p-md-3 p-2 bg-white shadow" style={{ width: '26rem', zIndex: '11' }}>
+            <div className="flex-jbetween flex-acenter">
+              <h2 className="fs-5 fw-semibold mb-0">Details</h2>
+              <button
+                type="button"
+                className="btn fs-4 mb-0"
+                onClick={() => {
+                  setType('');
+                  setData({});
+                }}>
+                <ion-icon name="close-outline"></ion-icon>
+              </button>
+            </div>
+            <hr className="mt-0" />
+            <div className="container-fluid overflow-y-scroll" style={{ maxHeight: "50vh" }}>
+              <h1 className="fs-4 fw-semibold text-indigo">{data.username}</h1>
+              <p className="text-muted fs-small">ID: {data.userId}</p>
+              <hr />
+              <p className="fs-4">Assigned Articles:</p>
+              {data.assignedArticles.map((article) => (
+                <div className="flex-jbetween flex-acenter mb-1" key={article._id}>
+                  <h3 className="fs-small mb-1">{article.title}</h3>
+                  {
+                    article.hasReviewed ? (
+                      <span className="badge text-bg-success mb-1">Reviewed</span>
+                    ) : (
+                      <span className="badge text-bg-danger mb-1">Pending</span>
+                    )
+                  }
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+      {type === 'article' && data && (
+        <div
+          className="my-modal"
+          style={{ zIndex: '10' }}
+          onClick={() => {
+            setType('');
+            setData({});
+          }}>
+          <div className="position-fixed bottom-0 end-0 mb-md-4 mb-1 me-md-4 me-1 p-md-3 p-2 bg-white shadow" style={{ width: '26rem', zIndex: '11' }}>
+            <div className="flex-jbetween flex-acenter">
+              <h2 className="fs-5 fw-semibold mb-0">Details</h2>
+              <button
+                type="button"
+                className="btn fs-4 mb-0"
+                onClick={() => {
+                  setType('');
+                  setData({});
+                }}>
+                <ion-icon name="close-outline"></ion-icon>
+              </button>
+            </div>
+            <hr className="mt-0" />
+            <div className="container-fluid overflow-y-scroll" style={{ maxHeight: "50vh" }}>
+              <h1 className="fs-4 fw-semibold text-indigo">{data.articleTitle}</h1>
+              <p className="text-muted fs-small">Published On: {formatDateOrToday(data.createdAt)}</p>
+              <hr />
+              <p className="fs-4">Assigned Reviewers:</p>
+              {data.assignedUsers.map((user) => (
+                <div key={user._id}>
+                  <div className="flex-jbetween flex-acenter mb-1">
+                    <div>
+                      <h3 className="fs-small mb-1">{user.username}</h3>
+                      <h3 className="fs-small mb-1 text-muted">({user.email})</h3>
+                    </div>
+                    {
+                      user.hasReviewed ? (
+                        <span className="badge text-bg-success mb-1">Reviewed</span>
+                      ) : (
+                        <span className="badge text-bg-danger mb-1">Pending</span>
+                      )
+                    }
+                  </div>
+
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
     </>
   )
@@ -202,40 +314,37 @@ function Reviews() {
   }, []);
 
   return (
-    <div className="admin-content px-2">
-      <div className="container-fluid p-3 mt-5">
-        <h3 className="text-center fw-semibold fs-3">Manage Reviews</h3>
-        <hr />
-        {allReviews.length === 0 ? (
-          <h2 className="text-center fst-italic fw-normal fs-2">
-            No reviews found!
-          </h2>
-        ) : (
-          <>
-            <ul className="nav nav-tabs">
-              <li className="nav-item">
-                <button
-                  onClick={() => { setTab('all') }}
-                  type='button'
-                  className={`nav-link text-black  ${tab === 'all' ? 'active' : ''}`}
-                  aria-current="page"
-                >Reviews</button>
-              </li>
-              <li className="nav-item">
-                <button
-                  type='button'
-                  onClick={(e) => { setTab('assignment') }}
-                  className={`nav-link text-black  ${tab === 'assignment' ? 'active' : ''}`}
-                >Assignments</button>
-              </li>
-            </ul>
+    <>
+      <h2 className="text-center fw-semibold">Manage Reviews</h2>
+      <hr />
+      {allReviews.length === 0 ? (
+        <h2 className="text-center fst-italic fw-normal fs-2">
+          No reviews found!
+        </h2>
+      ) : (
+        <div className="container-fluid">
+          <ul className="nav nav-tabs">
+            <li className="nav-item">
+              <button
+                onClick={() => { setTab('all') }}
+                type='button'
+                className={`nav-link text-black  ${tab === 'all' ? 'active' : ''}`}
+                aria-current="page"
+              >Reviews</button>
+            </li>
+            <li className="nav-item">
+              <button
+                type='button'
+                onClick={(e) => { setTab('assignment') }}
+                className={`nav-link text-black  ${tab === 'assignment' ? 'active' : ''}`}
+              >Assignments</button>
+            </li>
+          </ul>
 
-            {tab === 'all' ? <AllReviews allReviews={allReviews} refresh={getAllReviews} /> : <Assignments articleAssignments={articleAssignments} userAssignments={userAssignments} refresh={getAllAssignments} />}
-          </>
-        )}
-      </div>
-
-    </div>
+          {tab === 'all' ? <AllReviews allReviews={allReviews} refresh={getAllReviews} /> : <Assignments articleAssignments={articleAssignments} userAssignments={userAssignments} refresh={getAllAssignments} />}
+        </div>
+      )}
+    </>
   );
 }
 

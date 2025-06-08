@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'; // useNavigate was imported but not used, so removed for conciseness
 import API_BASE from '../API';
 import { useLoading } from '../Context/LoadingContext';
+import PdfLoader from '../Components/PdfLoader';
 
 function Article() {
     const [article, setArticle] = useState(null);
@@ -88,6 +89,12 @@ function Article() {
                                             <pre className="bg-light p-3 rounded overflow-y-scroll" style={{ maxHeight: "60vh" }}>
                                                 <code>{item.value.code}</code>
                                             </pre>
+                                        </>
+                                    )}
+                                    {/* new condition to display pdf */}
+                                    {item.type === 'pdf' && (
+                                        <>
+                                            <PdfLoader pdfUrl={item.value} />
                                         </>
                                     )}
                                 </div>

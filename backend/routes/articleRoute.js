@@ -147,6 +147,58 @@ router.post('/create/builder', auth, upload.array('images'), async(req, res) => 
     }
 });
 
+//Create article with pdf uploader
+router.post('/create/pdf', auth, upload.single('pdf'), async(req, res) => {
+    try {
+        const { title, island, tier, approval, articleType } = req.body;
+        let { author, relatedLinks } = req.body;
+
+        // Validate required fields
+        if (!title || !island || !author) {
+            return res.status(400).json({
+                error: 'Please provide title, island, content, and authorName.'
+            });
+        }
+
+        // Parse content if it's sent as a JSON string
+        if (typeof author === 'string') author = JSON.parse(author);
+        if (typeof relatedLinks === 'string') relatedLinks = JSON.parse(relatedLinks);
+
+        // Handle pdf upload
+        const file = req.file;
+        const { url } = await uploadImageToS3(
+            file.buffer,
+            'articles',
+            file.originalname,
+            file.mimetype
+        );
+        const content = [{
+            type: 'pdf',
+            value: url
+        }];
+
+
+        // Construct the article object
+        const article = new Article({
+            title,
+            author: author,
+            island,
+            tier: tier || 'paid',
+            approval: approval || false,
+            content,
+            articleType,
+            relatedLinks
+        });
+
+        // Save and respond
+        const saved = await article.save();
+        return res.status(201).json(saved);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: err.message });
+    }
+});
+
 // Express endpoint
 router.post('/upload', upload.single('image'), (req, res) => {
     const imagePath = `/uploads/${req.file.filename}`;
@@ -285,7 +337,7 @@ router.delete('/articleId/:id', auth, async(req, res, next) => {
 
         if (!articleData) return res.status(403).json({ error: "Sorry no article found" });
         req.s3FilesToDelete = articleData.content
-            .filter(block => block.type === 'image')
+            .filter(block => (block.type === 'image' || block.type === 'pdf'))
             .map(block => block.value);
 
         next();
