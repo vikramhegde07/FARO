@@ -116,8 +116,9 @@ const AddEvent = () => {
     };
 
     return (
-        <div className="admin-content mt-4 px-2 py-3">
-            <h2 className="mb-4 text-center">Event Builder</h2>
+        <>
+            <h2 className="fw-semibold text-center">Event Builder</h2>
+            <hr />
             <div className="row">
                 <div className="col-md-6">
                     <div className="mb-3">
@@ -231,10 +232,11 @@ const AddEvent = () => {
                     </div>
                 </div>
             </div>
+            <hr />
             <div className="text-center mt-4">
                 <button className="btn btn-success px-4 rounded-0" onClick={handleSubmit}>Submit Event</button>
             </div>
-        </div>
+        </>
     );
 };
 

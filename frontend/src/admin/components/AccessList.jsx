@@ -67,7 +67,7 @@ function AccessList() {
                                     <td>
                                         {user.privillage.map((item, index) => (
                                             <>
-                                                {item === 'read' ? '' : <div key={index}>{item}</div>}
+                                                {item === 'read' ? null : <div key={index}>{item}</div>}
                                             </>
                                         ))}
                                     </td>
