@@ -68,18 +68,19 @@ function Review() {
         <>
           <h2 className="fs-5 fw-semibold">
             Latest Assigned Articles{" "}
-            <span className="badge text-primary">{newCount}</span>
+            <span className="badge text-bg-danger">{newCount}</span>
           </h2>
           <hr />
-          <div className="row flex-jcenter">
+          <div className="row gap-2">
             {reviews.map((review) => (
-              <div key={review._id}>
+              <>
                 {review.hasBeenReviewed === false && (
-                  <div className="col-md-4 rounded-3 bg-danger-subtle p-3">
-                    <div className="d-flex gap-2">
-                      <h2 className="fs-5 fw-semibold">Article: </h2>
-                      <h3 className="fs-5">{review.articleId.title} </h3>
-                    </div>
+                  <div
+                    className="col-md-4 rounded-3 shadow p-3"
+                    style={{ maxWidth: "26rem" }}
+                    key={review._id}
+                  >
+                    <h3 className="fs-4 fw-semibold text-indigo">{review.articleId.title} </h3>
                     <div className="d-flex gap-2">
                       <h2 className="fs-5 fw-semibold">Author: </h2>
                       <h3 className="fs-5">
@@ -112,27 +113,30 @@ function Review() {
                     </div>
                   </div>
                 )}
-              </div>
+              </>
             ))}
           </div>
 
-          <h2 className="fs-5 fw-semibold">
-            Previously Reviewed Articles{" "}
-            <span className="badge text-primary">
-              {reviews.length - newCount}
-            </span>
-          </h2>
+          <div className="mt-5">
+            <h2 className="fs-5 fw-semibold">
+              Previously Reviewed Articles{" "}
+              <span className="badge text-bg-success">
+                {reviews.length - newCount}
+              </span>
+            </h2>
+          </div>
           <hr />
 
-          <div className="row flex-jcenter">
+          <div className="row gap-2">
             {reviews.map((review) => (
-              <div key={review._id}>
+              <>
                 {review.hasBeenReviewed !== false && (
-                  <div className="col-md-4 rounded-3 bg-danger-subtle p-3">
-                    <div className="d-flex gap-2">
-                      <h2 className="fs-5 fw-semibold">Article: </h2>
-                      <h3 className="fs-5">{review.articleId.title} </h3>
-                    </div>
+                  <div
+                    className="col-md-4 rounded-3 shadow p-3"
+                    style={{ maxWidth: "26rem" }}
+                    key={review._id}
+                  >
+                    <h3 className="fs-5 fw-semibold text-indigo">{review.articleId.title} </h3>
                     <div className="d-flex gap-2">
                       <h2 className="fs-5 fw-semibold">Author: </h2>
                       <h3 className="fs-5">
@@ -176,7 +180,7 @@ function Review() {
                     </div>
                   </div>
                 )}
-              </div>
+              </>
             ))}
           </div>
         </>

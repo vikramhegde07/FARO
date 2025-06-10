@@ -116,37 +116,38 @@ function App() {
         <Route path='/createArticle/parseDocx' element={<DocxUploader />} />
         <Route path='/createArticle/uploadPdf' element={<UploadPdf />} />
         {/* end of routes for authors  */}
+        {/* end of user routes  */}
+
+
+        {/* admin routes  */}
+        <Route path='/admin/*' element={
+          <div className="admin-content px-2 mt-3 py-3">
+            <Routes> {/* Nested Routes for admin */}
+              <Route index element={<AdminDashBoard />} /> {/* This will match /admin */}
+              <Route path='islands' element={<AdminIslands />} />
+              <Route path='island/:id' element={<AdminIslandArticles />} />
+              <Route path='privillage' element={<AdminPrivillages />} />
+              <Route path='profile' element={<AdminProfile />} />
+              <Route path='settings' element={<AdminSettings />} />
+              <Route path='users' element={<AdminUsers />} />
+              <Route path='article/:id' element={<AdminArticle />} />
+              <Route path='edit/:articleId' element={<AdminArticleEditor />} />
+              <Route path='articles' element={<AdminAllArticles />} />
+              <Route path='events' element={<AdminEvents />} />
+              <Route path='reviews' element={<AdminReviews />} />
+              <Route path='event/:eventId' element={<AdminEventDetails />} />
+              <Route path='addEvent' element={<AdminAddEvent />} />
+            </Routes>
+          </div>
+        } />
       </Routes>
-      {/* end of user routes  */}
-
-
-      {/* admin routes  */}
-      <div className="admin-content px-2 mt-3 py-3">
-        <Routes>
-          <Route path='/admin' element={<AdminDashBoard />} />
-          <Route path='/admin/Islands' element={<AdminIslands />} />
-          <Route path='/admin/island/:id' element={<AdminIslandArticles />} />
-          <Route path='/admin/privillage' element={<AdminPrivillages />} />
-          <Route path='/admin/profile' element={<AdminProfile />} />
-          <Route path='/admin/settings' element={<AdminSettings />} />
-          <Route path='/admin/users' element={<AdminUsers />} />
-          <Route path='/admin/article/:id' element={<AdminArticle />} />
-          <Route path='/admin/edit/:articleId' element={<AdminArticleEditor />} />
-          <Route path='/admin/articles/' element={<AdminAllArticles />} />
-          <Route path='/admin/events/' element={<AdminEvents />} />
-          <Route path='/admin/reviews/' element={<AdminReviews />} />
-          <Route path='/admin/event/:eventId' element={<AdminEventDetails />} />
-          <Route path='/admin/addEvent/' element={<AdminAddEvent />} />
-        </Routes >
-      </div>
       {/* end of admin routes  */}
 
-      {!isAdmin && !hideNavAndFooter && <Footer />
-      }
+      {!isAdmin && !hideNavAndFooter && <Footer />}
       <ToastContainer position="top-right" autoClose={3000} />
       {isLoading && <LoadingAnimation />}
     </>
   )
 }
 
-export default App
+export default App;

@@ -94,6 +94,7 @@ function EditPrivillage({ privUser, refresh, close }) {
                                         type='button'
                                         onClick={addPriv}
                                         value={priv}
+                                        key={priv}
                                         className="btn btn-primary rounded-0 flex-acenter gap-2 text-capitalize"
 
                                     >

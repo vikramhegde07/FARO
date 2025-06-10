@@ -118,8 +118,7 @@ const UploadPdf = () => {
 
     return (
         <div className="container mt-4">
-            <h2 className="mb-3">Upload and Preview PDF</h2>
-
+            <h2 className="mb-3 text-center fw-semibold fst-italic">Upload and Preview PDF</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <input
@@ -145,9 +144,15 @@ const UploadPdf = () => {
                     </div>
                 )}
 
-                <button type="submit" className="btn btn-primary">
-                    Submit PDF
-                </button>
+                <hr />
+                <div className="flex-center mb-2">
+                    <button
+                        type="submit"
+                        className="btn btn-success rounded-0 px-3"
+                    >
+                        Submit PDF
+                    </button>
+                </div>
             </form>
         </div>
     );

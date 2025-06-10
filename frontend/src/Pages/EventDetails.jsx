@@ -15,6 +15,7 @@ function EventDetails() {
     const { showLoading, hideLoading } = useLoading();
 
     function getEventData() {
+        showLoading();
         axios
             .get(`${API_BASE}/event/getOne/${eventId}`)
             .then((response) => {
@@ -23,10 +24,10 @@ function EventDetails() {
             .catch((error) => {
                 console.log(error.response);
             });
+        hideLoading();
     }
 
-    function handleRegistration(e) {
-        e.preventDefault();
+    function handleRegistration() {
         showLoading();
         axios
             .post(`${API_BASE}/eventRegistry/create`, {
@@ -36,6 +37,8 @@ function EventDetails() {
             })
             .then((response) => {
                 if (response.status === 201) {
+                    setEmail('');
+                    setFullname('');
                     toast.success("Registration successfull check your email for invite to event");
                 }
             })
@@ -46,8 +49,6 @@ function EventDetails() {
                 else
                     toast.error("Sorry! some error happened while registering");
             });
-        setEmail('');
-        setFullname('');
         hideLoading();
     }
 
@@ -104,8 +105,7 @@ function EventDetails() {
                     <div className="container-fluid p-3 bg-light rounded-2">
                         <h2 className="text-center fw-semibold fs-4">Register for Event </h2>
                         <hr />
-                        <form onSubmit={handleRegistration}>
-
+                        <form >
                             <div className="form-floating mb-3">
                                 <input
                                     type="text"
@@ -132,7 +132,8 @@ function EventDetails() {
                             </div>
                             <div className="flex-center mb-3">
                                 <button
-                                    type="submit"
+                                    type="button"
+                                    onClick={handleRegistration}
                                     className="btn btn-danger rounded-0 px-3"
                                 >Register Now</button>
                             </div>
