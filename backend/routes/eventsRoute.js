@@ -6,6 +6,7 @@ import upload from '../middlewares/upload.js';
 import { uploadImageToS3 } from '../controllers/uploadController.js';
 import { addRemovables } from '../controllers/event.js';
 import deleteS3Files from '../middlewares/remover.js';
+import { EventRegistry } from '../models/eventRegistry.js';
 
 const router = express.Router();
 
@@ -64,7 +65,18 @@ router.get('/getOne/:eventId', async(req, res) => {
         if (!eventData)
             return res.status(403).json({ error: 'Sorry! no event found.' })
 
-        return res.status(200).json(eventData);
+        const registry = await EventRegistry.find({ eventId });
+        if (!registry)
+            return res.status(200).json({
+                message: "No Registration Found",
+                eventData
+            });
+
+        return res.status(200).json({
+            message: "Registration Found",
+            eventData,
+            registry
+        });
     } catch (err) {
         console.log('Server error : ' + err.message);
         res.status(500).json({ message: err.message });

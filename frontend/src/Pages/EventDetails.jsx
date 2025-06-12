@@ -19,7 +19,7 @@ function EventDetails() {
         axios
             .get(`${API_BASE}/event/getOne/${eventId}`)
             .then((response) => {
-                setEventData(response.data)
+                setEventData(response.data.eventData)
             })
             .catch((error) => {
                 console.log(error.response);
