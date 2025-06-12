@@ -1,9 +1,10 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import API_BASE from '../API';
 import EditPrivillage from './components/EditPrivillage';
 import { useLoading } from '../Context/LoadingContext';
 import { toast } from 'react-toastify';
+import { formatDateOrToday } from '../utils/dateFormatter';
 
 function AddUser({ refresh, close }) {
     const { showLoading, hideLoading } = useLoading();
@@ -153,6 +154,118 @@ function AddUser({ refresh, close }) {
     )
 }
 
+function AddSubscription({ close, user }) {
+    const [islands, setIslands] = useState([]);
+    const [chosenIsland, setChosenIsland] = useState('');
+    const [expiry, setExpiry] = useState();
+
+    function getIslands() {
+        axios
+            .get(`${API_BASE}/island`)
+            .then((response) => {
+                setIslands(response.data);
+            })
+            .catch((error) => {
+                console.log(error.reponse);
+            })
+    }
+
+    function handleChange(e) {
+        setChosenIsland(e.target.value);
+    }
+
+    function handleSubmit(e) {
+        e.preventDefault();
+
+        if (chosenIsland === '')
+            return toast.error("Choose island");
+
+        const formData = {
+            userId: user._id,
+            islandId: chosenIsland,
+        }
+        axios
+            .post(`${API_BASE}/subscription/admin/create`, formData, {
+                headers: {
+                    Authorization: localStorage.getItem('faro-user')
+                }
+            })
+            .then((response) => {
+                if (response.status === 201)
+                    toast.success("Added new Subscription");
+                close();
+            })
+            .catch((err) => {
+                console.log(err.reponse);
+            });
+    }
+
+    useEffect(() => {
+        getIslands();
+        let now = new Date();
+        let expiresIn = new Date(now);
+        expiresIn.setMonth(expiresIn.getMonth() + 1)
+        setExpiry(expiresIn);
+    }, [])
+    return (
+        <>
+            <div className="my-modal">
+                <div className="container bg-white p-3 overflow-y-scroll" style={{ maxWidth: '960px', maxHeight: '90vh' }}>
+                    <div className="px-3 pt-2 flex-jbetween flex-acenter">
+                        <h1 className="fw-semibold fs-4">Add New Subscription</h1>
+                        <button
+                            type='button'
+                            onClick={close}
+                            className="btn fs-4">
+                            <ion-icon name="close-outline"></ion-icon>
+                        </button>
+                    </div>
+                    <hr />
+
+                    <form onSubmit={handleSubmit}>
+                        <div className="flex-jcenter flex-column gap-2">
+                            <h2 className="fs-5"><b>User: </b>{user.username}</h2>
+                            <h2 className="fs-5"><b>Email: </b>{user.email}</h2>
+                            <div className="mb-3">
+                                <label htmlFor="island" className="form-label">Select Island</label>
+                                <select
+                                    name="island"
+                                    id="island"
+                                    className='form-select'
+                                    style={{ maxWidth: '24rem' }}
+                                    onChange={handleChange}
+                                >
+                                    <option selected>Choose</option>
+                                    {islands.map((island) => (
+                                        <option value={island._id} key={island._id}>{island.title}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <p className='fs-5'>The Subscription will be valid till : <b>{formatDateOrToday(expiry)}</b></p>
+                        </div>
+
+                        <hr />
+                        <div className="flex-jend gap-2">
+                            <button
+                                type='button'
+                                className="btn btn-dark rounded-0 px-3"
+                                onClick={close}
+                            >
+                                Close
+                            </button>
+                            <button
+                                type='submit'
+                                className="btn btn-danger px-3 rounded-0">
+                                Add Subscription
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div >
+        </>
+    )
+}
+
 function Users() {
     const [users, setUsers] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
@@ -161,6 +274,7 @@ function Users() {
     const [searchResults, setSearchResults] = useState([]);
     const [editPriv, setEditPriv] = useState(false);
     const [addUser, setAddUser] = useState(false);
+    const [subscrUser, setSubscrUser] = useState(false);
 
     const [tab, setTab] = useState('reader');
     const { showLoading, hideLoading } = useLoading();
@@ -171,9 +285,11 @@ function Users() {
         email: '',
         privs: ''
     });
+    const [subscrUserData, setSubscrUserData] = useState({});
 
     const closeEdit = () => setEditPriv(false);
     const closeUser = () => setAddUser(false);
+    const closeSubscr = () => setSubscrUser(false);
 
     function getuserList() {
         setAllUsers([]);
@@ -259,23 +375,45 @@ function Users() {
                             <tbody>
                                 {searchResults.map((user, index) => (
                                     <tr key={user._id}>
-                                        <th scope="row">{index}</th>
+                                        <th scope="row">{index + 1}</th>
                                         <td>{user.username}</td>
                                         <td>{user.email}</td>
                                         <td>
-                                            <button
-                                                type='button'
-                                                className="btn btn-danger rounded-0 px-4"
-                                                onClick={(e) => {
-                                                    setPrivUser({
-                                                        id: user._id,
-                                                        username: user.username,
-                                                        email: user.email,
-                                                        privs: user.privillage
-                                                    });
-                                                    setEditPriv(true);
-                                                }}
-                                            >Edit Privillage</button>
+                                            <div className="dropdown">
+                                                <button className="btn btn-danger" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+                                                </button>
+                                                <ul className="dropdown-menu">
+                                                    <li>
+                                                        <button
+                                                            type='button'
+                                                            className="btn btn-danger rounded-0 px-4"
+                                                            onClick={(e) => {
+                                                                setPrivUser({
+                                                                    id: user._id,
+                                                                    username: user.username,
+                                                                    email: user.email,
+                                                                    privs: user.privillage
+                                                                });
+                                                                setEditPriv(true);
+                                                            }}
+                                                        >Edit Privillage</button>
+                                                    </li>
+                                                    <li>
+                                                        <button
+                                                            type='button'
+                                                            className="dropdown-item flex-acenter gap-2"
+                                                            onClick={(e) => {
+                                                                setSubscrUser(true);
+                                                                setSubscrUserData(user)
+                                                            }}
+                                                        >
+                                                            <i class="bi bi-currency-rupee"></i>
+                                                            Add Subscription
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -330,21 +468,44 @@ function Users() {
                                         <th scope="row">{index + 1}</th>
                                         <td>{user.username}</td>
                                         <td>{user.email}</td>
-                                        <td>
-                                            <button
-                                                type='button'
-                                                className="btn btn-danger rounded-0 px-4"
-                                                onClick={(e) => {
-                                                    setPrivUser({
-                                                        id: user._id,
-                                                        username: user.username,
-                                                        email: user.email,
-                                                        privs: user.privillage
-                                                    });
-                                                    setEditPriv(true);
-                                                }}
-                                            >Edit Privillage</button>
-                                        </td>
+                                        <div className="dropdown">
+                                            <button className="btn btn-danger" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+                                            </button>
+                                            <ul className="dropdown-menu">
+                                                <li>
+                                                    <button
+                                                        type='button'
+                                                        className="dropdown-item flex-acenter gap-2"
+                                                        onClick={(e) => {
+                                                            setPrivUser({
+                                                                id: user._id,
+                                                                username: user.username,
+                                                                email: user.email,
+                                                                privs: user.privillage
+                                                            });
+                                                            setEditPriv(true);
+                                                        }}
+                                                    >
+                                                        <i className="bi bi-pen"></i>
+                                                        Edit Privillage
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button
+                                                        type='button'
+                                                        className="dropdown-item flex-acenter gap-2"
+                                                        onClick={(e) => {
+                                                            setSubscrUser(true);
+                                                            setSubscrUserData(user)
+                                                        }}
+                                                    >
+                                                        <i class="bi bi-currency-rupee"></i>
+                                                        Add Subscription
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </tr>
                                 ))}
                             </tbody>
@@ -354,6 +515,7 @@ function Users() {
             )}
             {editPriv && <EditPrivillage privUser={privUser} close={closeEdit} refresh={getuserList} />}
             {addUser && <AddUser refresh={getuserList} close={closeUser} />}
+            {subscrUser && <AddSubscription user={subscrUserData} close={closeSubscr} />}
             <div className="position-absolute top-0 end-0 pt-4 pe-4">
                 <button
                     type='button'

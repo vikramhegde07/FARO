@@ -10,7 +10,13 @@ const SubsriptionSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Island',
         required: true
-    }
+    },
+    expiresIn: {
+        type: Date,
+        required: true
+    },
+}, {
+    timestamps: true
 });
 
 export const Subsription = mongoose.model('Subsription', SubsriptionSchema);

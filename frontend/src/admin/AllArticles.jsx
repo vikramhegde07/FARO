@@ -23,7 +23,17 @@ function AllArticles() {
                 setApproved(response.data.approvedArticles);
                 setApprovalPending(response.data.approvalPendingArticles);
                 setReviewPending(response.data.reviewPendingArticles);
-                setAllArticles(approved);
+                let all = [];
+                response.data.approvedArticles.forEach(article => {
+                    all.push(article);
+                });
+                response.data.approvalPendingArticles.forEach(article => {
+                    all.push(article);
+                });
+                response.data.reviewPendingArticles.forEach(article => {
+                    all.push(article);
+                });
+                setAllArticles(all);
             })
             .catch((error) => {
                 console.log(error.response);

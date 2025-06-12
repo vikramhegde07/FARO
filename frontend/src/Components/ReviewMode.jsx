@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLoading } from "../Context/LoadingContext";
+import axios from "axios";
+import API_BASE from "../API";
+import { toast } from "react-toastify";
 
 function ReviewMode({ article, refresh, close }) {
   const { showLoading, hideLoading } = useLoading();
@@ -180,8 +183,8 @@ function ReviewMode({ article, refresh, close }) {
                   >
                     <i
                       className={`bi ${activeCommentIndex === idx
-                          ? "bi-chat-left-fill"
-                          : "bi-chat-left"
+                        ? "bi-chat-left-fill"
+                        : "bi-chat-left"
                         }`}
                     ></i>
                     {activeCommentIndex === idx

@@ -36,12 +36,19 @@ router.get('/user', auth, async(req, res) => {
     try {
         const userId = req.userId;
 
-        const subscrData = await Subsription.findAll({ userId });
+        const now = new Date();
 
-        if (!subscrData)
-            return res.status(403).json({ error: "No Subscription Found!" });
+        // Fetch active and expired subscriptions
+        const subscriptions = await Subsription.find({ userId }).sort({ expiresIn: -1 });
 
-        return res.status(200).json(subscrData);
+        const active = subscriptions.filter(sub => sub.expiresIn > now);
+        const expired = subscriptions.filter(sub => sub.expiresIn <= now);
+
+        return res.status(200).json({
+            hasActive: active.length > 0,
+            active: active,
+            expired: expired
+        });
     } catch (err) {
         console.log('Server error : ' + err.message);
         res.status(500).json({ message: err.message });
@@ -56,9 +63,38 @@ router.post('/user/create', auth, async(req, res) => {
             return res.status(404).json({
                 message: 'Send minimun required fields'
             });
-        }
+        };
 
-        const newSub = new Subsription({ userId, islandId });
+        const now = new Date();
+        const oneMonthLater = new Date(now);
+        oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+
+
+        const newSub = new Subsription({ userId, islandId, expiresIn: oneMonthLater });
+        await newSub.save();
+
+        return res.status(201).json({ newSub });
+    } catch (err) {
+        console.log('Server error : ' + err.message);
+        res.status(500).json({ message: err.message });
+    }
+});
+
+router.post('/admin/create', auth, async(req, res) => {
+    const { islandId, userId } = req.body;
+    try {
+        if (!islandId) {
+            return res.status(404).json({
+                message: 'Send minimun required fields'
+            });
+        };
+
+        const now = new Date();
+        const oneMonthLater = new Date(now);
+        oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+
+
+        const newSub = new Subsription({ userId, islandId, expiresIn: oneMonthLater });
         await newSub.save();
 
         return res.status(201).json({ newSub });
