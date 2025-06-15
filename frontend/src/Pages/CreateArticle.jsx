@@ -15,7 +15,7 @@ const CreateArticle = () => {
     const [method, setMethod] = useState('');
     const [allIslands, setAllIslands] = useState([]);
 
-    const types = ['General', 'Reference Diagram', 'Cheatsheet', 'Architecture Diagram', 'Code Snippets']
+    const [types, setTypes] = useState([]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -43,11 +43,20 @@ const CreateArticle = () => {
             .get(`${API_BASE}/island`)
             .then((response) => {
                 setAllIslands(response.data);
+                console.log(response.data);
+
             })
             .catch((error) => {
                 console.log(error.response);
             });
     }
+
+    useEffect(() => {
+        if (island) {
+            let type = allIslands.find(island_ => island_._id === island);
+            setTypes(type.articleTypes);
+        }
+    }, [island]);
 
     useEffect(() => {
         getAllIslands();
@@ -99,7 +108,7 @@ const CreateArticle = () => {
                                         name="island"
                                         id="island"
                                         className="form-select"
-                                        onChange={(e) => { setIsland(e.target.value) }}
+                                        onChange={(e) => { setIsland(e.target.value); }}
                                         required
                                     >
                                         <option value={null}>Select Island</option>

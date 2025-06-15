@@ -33,7 +33,7 @@ import Privillage from './Pages/Privillage';
 import Review from './Pages/Review';
 
 //importing admin components
-import AdminIslandArticles from './admin/components/IslandArticles';
+import AdminIslandArticles from './admin/components/IslandData';
 import AdminArticle from './admin/components/Article';
 import AdminSidebar from './admin/components/Sidebar';
 import AdminAddEvent from './admin/components/AddEvent';

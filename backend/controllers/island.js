@@ -1,3 +1,4 @@
+import { Article } from '../models/articleModel.js';
 import { Island } from '../models/islandModel.js';
 import { Subsription } from '../models/subsriptionModel.js';
 
@@ -19,11 +20,23 @@ export const getAllIslands = async(req, res) => {
 export const getIslandWithId = async(req, res) => {
     const islandId = req.params.id;
     try {
-        const islandData = await Island.findByID(islandId);
+        const islandData = await Island.findById(islandId);
         if (!islandData)
             return res.status(400).json({ error: "No islands found!" });
 
-        return res.status(200).json(islandData);
+        const articles = await Article.find({ island: islandId });
+        if (articles.length === 0) {
+            return res.status(200).json({
+                message: "No Articles Found",
+                islandData
+            });
+        }
+
+        return res.status(200).json({
+            message: "Found island and articles",
+            islandData,
+            articles
+        });
     } catch (err) {
         console.log('Server error : ' + err.message);
         res.status(500).json({ error: err.message });
@@ -33,6 +46,7 @@ export const getIslandWithId = async(req, res) => {
 //method to create a new island
 export const createIsland = async(req, res) => {
     const { title } = req.body;
+    let { articleTypes } = req.body;
     try {
 
         if (!title) {
@@ -41,12 +55,14 @@ export const createIsland = async(req, res) => {
             });
         }
 
+        if (typeof articleTypes === 'string') articleTypes = JSON.parse(articleTypes);
+
         const island = await Island.find({ title: title });
 
         if (island.length > 0)
             return res.status(400).json({ error: 'Island already exists' });
 
-        const newIsland = new Island({ title });
+        const newIsland = new Island({ title, articleTypes });
 
         await newIsland.save();
 
