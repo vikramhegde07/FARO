@@ -1,6 +1,6 @@
 import express from 'express';
-import { Comment } from '../models/commentModel';
-import auth from '../middlewares/auth';
+import { Comment } from '../models/commentModel.js';
+import auth from '../middlewares/auth.js';
 
 const router = express.Router();
 
