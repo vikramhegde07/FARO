@@ -2,7 +2,7 @@ import React from 'react'
 
 function Article() {
     return (
-        <div className='admin-content px-2'>
+        <div className=''>
             article info
         </div>
     )

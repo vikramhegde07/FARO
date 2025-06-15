@@ -1,1 +1,0 @@
-import { Article } from '../models/articleModel.js';

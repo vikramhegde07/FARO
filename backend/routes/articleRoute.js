@@ -199,7 +199,7 @@ router.post('/create/pdf', auth, upload.single('pdf'), async(req, res) => {
     }
 });
 
-// Express endpoint
+// Upload image
 router.post('/upload', upload.single('image'), (req, res) => {
     const imagePath = `/uploads/${req.file.filename}`;
     return res.json({ url: imagePath });
@@ -279,8 +279,6 @@ router.put('/update/:id', upload.array('images'), async(req, res, next) => {
         const parsedAuthor = JSON.parse(author);
         const parsedRelatedLinks = JSON.parse(relatedLinks);
 
-        console.log(island);
-
         // Step 1: Track old and retained image URLs
         const oldImageUrls = article.content
             .filter(block => block.type === 'image')
@@ -353,8 +351,24 @@ router.delete('/articleId/:id', auth, async(req, res, next) => {
 // 🌍 Get Articles by Island
 router.get('/island/:islandId', async(req, res) => {
     try {
-        const articles = await Article.find({ island: req.params.islandId }).populate('author');
-        return res.status(200).json(articles);
+        const articles = await Article.find({ island: req.params.islandId, approval: true }).populate('author');
+
+        const freeArticles = [];
+        const paidArticles = [];
+
+        articles.forEach(article => {
+            if (article.tier === 'free') {
+                freeArticles.push(article);
+            } else {
+                paidArticles.push(article);
+            }
+        });
+
+        return res.status(200).json({
+            message: "Sent All the articles",
+            freeArticles,
+            paidArticles
+        });
     } catch (err) {
         return res.status(500).json({ error: err.message });
     }

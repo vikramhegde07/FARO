@@ -13,6 +13,7 @@ import subscriptionRoute from './routes/subscriptionRoute.js';
 import accessRoute from './routes/accessRoute.js';
 import reviewAssignmentRoute from './routes/reviewAssignmentRoute.js';
 import eventRegistryRoutes from './routes/eventRegistryRoutes.js';
+import commentRoutes from './routes/commentRoute.js';
 
 //configure dotenv
 dotenv.config();
@@ -57,6 +58,9 @@ app.use('/assignReview', reviewAssignmentRoute);
 
 //Route to manage reviews
 app.use('/review', articleReviewRoute);
+
+//Route to manage article comments
+app.use('/comment', commentRoutes);
 
 //Route to add review assignments
 app.use('/eventRegistry', eventRegistryRoutes);

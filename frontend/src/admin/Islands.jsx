@@ -141,6 +141,8 @@ function Islands() {
 
     const [allIslands, setAllIslands] = useState([]);
     const [newIsland, setNewIsland] = useState('');
+    const [newArticlesType, setNewArticlesType] = useState(['General']);
+    const [newValue, setNewValue] = useState('');
 
     const [editingData, setEditingData] = useState({
         title: null,
@@ -161,15 +163,21 @@ function Islands() {
 
     function handleAddIsland(e) {
         e.preventDefault();
+        let formData = {};
+        formData.title = newIsland;
+        formData.articleTypes = JSON.stringify(newArticlesType);
+        console.log(formData);
+
         axios
-            .post(`${API_BASE}/island/create`, { title: newIsland })
+            .post(`${API_BASE}/island/create`, formData)
             .then((response) => {
                 toast.success(response.data.message);
                 setNewIsland('');
+                setNewArticlesType(['General']);
                 getAllIslands();
             })
             .catch((err) => {
-                console.log("Error! Sorry could not add new island");
+                console.log(err.response);
             })
     }
 
@@ -255,6 +263,50 @@ function Islands() {
                                         required
                                     />
                                 </div>
+                                <div className="mb-3">
+                                    <label htmlFor="articleTypes" className="form-label">Article Types</label>
+                                    <input
+                                        type="text"
+                                        className="form-control  rounded-0"
+                                        value={newValue}
+                                        onChange={(e) => { setNewValue(e.target.value) }}
+                                    />
+                                    <div className="flex-jend mt-2">
+                                        <button
+                                            type='button'
+                                            className={`btn btn-success px-3 rounded-0 ${newValue === '' ? 'disabled' : ''}`}
+                                            onClick={() => {
+                                                setNewArticlesType([...newArticlesType, newValue]);
+                                                setNewValue('');
+                                            }}
+                                        >Add New Type</button>
+                                    </div>
+                                    <div className="mt-2">
+                                        {newArticlesType.length !== 0 && (
+                                            <div className='flex-acenter gap-2'>
+                                                {newArticlesType.map((type, index) => (
+                                                    <button
+                                                        type='button'
+                                                        key={index}
+                                                        className="btn btn-sm btn-outline-primary px-2 rounded-0 flex-acenter gap-2"
+                                                        onClick={() => {
+                                                            if (index !== 0) {
+                                                                const updated = newArticlesType.filter((_, i) => i !== index);
+                                                                setNewArticlesType(updated);
+                                                            }
+                                                        }}
+                                                    >
+                                                        {type}
+                                                        {index !== 0 && (
+                                                            <ion-icon name="close-outline"></ion-icon>
+                                                        )}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <hr />
                                 <div className="mb-3 flex-jend">
                                     <button type="submit" className="btn btn-danger px-4 rounded-0">Add Island</button>
                                 </div>
