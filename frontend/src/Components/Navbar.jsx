@@ -34,9 +34,6 @@ function Navbar({ logged }) {
                                 <Link className="nav-link text-white fs-5" to={'/islands'}>Islands</Link>
                             </li>
                             <li className="nav-item mx-2">
-                                <Link className="nav-link text-white fs-5" to={'/#services'}>Services</Link>
-                            </li>
-                            <li className="nav-item mx-2">
                                 <Link className="nav-link text-white fs-5" to={'/about'}>About</Link>
                             </li>
                             {!logged ? (

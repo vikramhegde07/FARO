@@ -125,7 +125,7 @@ function IslandData() {
         setEditingSample(null);
     }
 
-    const [articlePerPage, setArticlePerPage] = useState(4);
+    const [articlePerPage, setArticlePerPage] = useState(9);
     const [page, setPage] = useState(1);
     const [pagedArticles, setPagedArticles] = useState([]);
     const [totalPages, setTotalPages] = useState(0);

@@ -301,14 +301,24 @@ function ApproveModal({ article, close, refresh }) {
 }
 
 function ArticleList({ articles, list, refresh }) {
+  const articlePerPage = 15;
+  const [page, setPage] = useState(1);
+  const [pagedArticles, setPagedArticles] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
   const listTitles = {
     all: 'All',
     pending: 'Approval Pending',
     review: 'Review Pending',
     approved: 'All Approved'
   }
-
   const [showReviewsModal, setShowReviewsModal] = useState(false); // State to control modal visibility
+  const [action, setAction] = useState('');
+  const [modal, setModal] = useState(false);
+  const [modalArticle, setModalArticle] = useState({
+    id: '',
+    title: '',
+    island: ''
+  });
 
   const handleOpenReviewsModal = () => {
     setShowReviewsModal(true);
@@ -319,13 +329,6 @@ function ArticleList({ articles, list, refresh }) {
     closeModal();
   };
 
-  const [action, setAction] = useState('');
-  const [modal, setModal] = useState(false);
-  const [modalArticle, setModalArticle] = useState({
-    id: '',
-    title: '',
-    island: ''
-  });
   const closeModal = () => {
     setAction('');
     setModal(false);
@@ -336,7 +339,21 @@ function ArticleList({ articles, list, refresh }) {
     });
   }
 
-  useEffect(() => { }, [list]);
+  function paging() {
+    setTotalPages(Math.ceil(articles.length / articlePerPage));
+    const lastArticleIndex = articlePerPage * page;
+    const firstArticleIndex = lastArticleIndex - articlePerPage;
+    setPagedArticles(articles.slice(firstArticleIndex, lastArticleIndex));
+    console.log(articles);
+  }
+
+  useEffect(() => {
+    paging();
+  }, [page]);
+
+  useEffect(() => {
+    paging();
+  }, [articles]);
 
   if (articles.length === 0) return null;
 
@@ -354,9 +371,9 @@ function ArticleList({ articles, list, refresh }) {
           </tr>
         </thead>
         <tbody>
-          {articles.map((article, index) => (
-            <tr>
-              <th scope="row">{index + 1}</th>
+          {pagedArticles.map((article, index) => (
+            <tr key={article._id}>
+              <th scope="row">{((page * articlePerPage) - articlePerPage) + (index + 1)}</th>
               <td>{article.title}</td>
               <td>{article.island.title}</td>
               <td>{formatDateOrToday(article.createdAt)}</td>
@@ -367,7 +384,7 @@ function ArticleList({ articles, list, refresh }) {
                   </button>
                   <ul className="dropdown-menu">
                     {
-                      list === 'review' ? (
+                      list !== 'review' ? (
                         <>
                           <li>
                             <button
@@ -457,6 +474,66 @@ function ArticleList({ articles, list, refresh }) {
 
         </tbody>
       </table>
+
+      <div className="container mt-4">
+        <nav aria-label="Page navigation example">
+          <ul className="pagination">
+            {page !== 1 && (
+              <li className="page-item">
+                <button
+                  className="page-link"
+                  aria-label="Previous"
+                  onClick={() => {
+                    setPage(page - 1);
+                  }}
+                >
+                  <span aria-hidden="true">&laquo;</span>
+                </button>
+              </li>
+            )}
+            {page - 1 > 0 && (
+              <li className="page-item">
+                <button
+                  type='button'
+                  className="page-link"
+                  onClick={() => {
+                    setPage(page - 1);
+                  }}
+                >{page - 1}</button>
+              </li>
+            )}
+            <li className="page-item active">
+              <button className="page-link">{page}</button>
+            </li>
+            {page + 1 <= totalPages && (
+              <li className="page-item">
+                <button
+                  type='button'
+                  className="page-link"
+                  onClick={() => {
+                    setPage(page + 1);
+                  }}
+                >{page + 1}</button>
+              </li>
+            )}
+            {totalPages !== page && (
+              <li className="page-item">
+                <button
+                  type='button'
+                  className="page-link"
+                  aria-label="Next"
+                  onClick={() => {
+                    setPage(page + 1);
+                  }}
+                >
+                  <span aria-hidden="true">&raquo;</span>
+                </button>
+              </li>
+            )}
+          </ul>
+        </nav>
+      </div>
+
       {action === 'remove' && modal && <Modal article={modalArticle} close={closeModal} refresh={refresh} />}
       {action === 'assign' && modal && <AssignModal article={modalArticle} close={closeModal} />}
       {action === 'approve' && modal && <ApproveModal article={modalArticle} close={closeModal} refresh={refresh} />}

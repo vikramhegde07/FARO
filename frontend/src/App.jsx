@@ -105,7 +105,7 @@ function App() {
         <Route path='/account/privillage' element={<Privillage />} />
         <Route path='/island/:islandId' element={<Island logged={logged} />} />
         <Route path='/article/:id' element={<Article />} />
-        <Route path='/island/6800f6cdf56f8fccd8566741/samples' element={<Samples />} />
+        <Route path='/sample/:islandId' element={<Samples />} />
         <Route path='/events' element={<Event />} />
         <Route path='/review' element={<Review />} />
         <Route path='/event/:eventId' element={<EventDetails />} />

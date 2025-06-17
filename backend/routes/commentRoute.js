@@ -2,6 +2,9 @@ import express from 'express';
 import { Comment } from '../models/commentModel.js';
 import auth from '../middlewares/auth.js';
 
+import { Subsription } from '../models/subsriptionModel.js';
+import { Article } from '../models/articleModel.js';
+
 const router = express.Router();
 
 
@@ -28,7 +31,15 @@ router.get('/', async(req, res) => {
 router.get('/article/:articleId', async(req, res) => {
     const articleId = req.params.articleId;
     try {
-        const comments = await Comment.find({ articleId }).sort({ createdAt: -1 });
+        const comments = await Comment
+            .find({ articleId })
+            .populate({
+                path: 'userId',
+                model: 'User',
+                select: 'username email'
+            })
+            .sort({ createdAt: -1 });
+
         if (comments.length === 0)
             return res.status(403).json({
                 error: "No Comments found for the post"
@@ -73,5 +84,32 @@ router.post('/create', auth, async(req, res) => {
     }
 });
 
+//Route to get comment access for user 
+router.get('/checkAccess/:articleId', auth, async(req, res) => {
+    const userId = req.userId;
+    const articleId = req.params.articleId;
+    try {
+        const articleData = await Article.findById(articleId);
+        const islandId = articleData.island;
+
+        const now = new Date();
+        const activeSub = await Subsription.findOne({
+            userId,
+            islandId,
+            expiresIn: { $gt: now }
+        });
+        if (!activeSub)
+            return res.status(403).json({ error: "No Subscription Found!" });
+
+        const comments = await Comment.findAll({ userId: userId, articleId: articleId });
+        if (comments.length > 5)
+            return res.status(400).json({ message: "All used" });
+
+        return res.status(200).json({ message: 'Some Remaining', remaining: 5 - comments.length });
+    } catch (err) {
+        console.log('Server error : ' + err.message);
+        res.status(500).json({ message: err.message });
+    }
+});
 
 export default router;
