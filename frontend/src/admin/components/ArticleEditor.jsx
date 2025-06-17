@@ -5,6 +5,28 @@ import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom'; // Import useParams
 import ArticlePreviewModal from '../../Components/ArticlePreviewModal';
 
+function PDFError() {
+    const navigator = useNavigate();
+    return (
+        <div className="my-modal bg-blur">
+            <div className="bg-white container rounded-3 p-3" style={{ maxWidth: "680px" }}>
+                <div className="flex-center gap-3">
+                    <i className="bi bi-exclamation-diamond-fill text-danger fs-2"></i>
+                    <h3 className="text-danger fs-2">Error</h3>
+                </div>
+                <hr />
+                <p className="text-center fs-5">Sorry the requsted article is a pdf so editing is not available. you can remove the article and upload the new modifed article.</p>
+                <div className="flex-jcenter">
+                    <button
+                        type='button'
+                        className="btn btn-primary px-4 rounded-0"
+                        onClick={() => { navigator('/admin/articles') }}>Close</button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 const ArticleBuilder = ({ initialArticleData }) => { // Accept initialArticleData prop
     const [contentType, setContentType] = useState('heading');
     const [inputValue, setInputValue] = useState('');
@@ -18,14 +40,18 @@ const ArticleBuilder = ({ initialArticleData }) => { // Accept initialArticleDat
     const [relatedLinks, setRelatedLinks] = useState([]);
     const [fileUploads, setFileUploads] = useState({}); // Use an object to store files by block index
     const [editingIndex, setEditingIndex] = useState(null);
+    const [blockClasses, setBlockClasses] = useState('');
+    const [showPreviewModal, setShowPreviewModal] = useState(false);
+    const [existingImageUrls, setExistingImageUrls] = useState({}); // To store URLs of existing images
+
     const [title, setTitle] = useState('');
     const [island, setIsland] = useState('');
     const [author, setAuthor] = useState('');
     const [authorLink, setAuthorLink] = useState('');
     const [tier, setTier] = useState('paid');
-    const [blockClasses, setBlockClasses] = useState('');
-    const [showPreviewModal, setShowPreviewModal] = useState(false);
-    const [existingImageUrls, setExistingImageUrls] = useState({}); // To store URLs of existing images
+    const [infoEditing, setInfoEditing] = useState(false);
+
+    const [pdfError, setPdfError] = useState(false);
 
     const navigator = useNavigate();
     const { articleId } = useParams(); // Get articleId from URL for editing
@@ -43,6 +69,9 @@ const ArticleBuilder = ({ initialArticleData }) => { // Accept initialArticleDat
 
     useEffect(() => {
         if (initialArticleData) {
+            if (initialArticleData.content[0].type === 'pdf') {
+                setPdfError(true);
+            }
             // Populate state from initialArticleData when editing an existing article
             setTitle(initialArticleData.title);
             setIsland(initialArticleData.island);
@@ -397,416 +426,469 @@ const ArticleBuilder = ({ initialArticleData }) => { // Accept initialArticleDat
         }
     };
 
+    function handleInfoChange(e) {
+        e.preventDefault();
+    }
+
     return (
-        <div className="container mt-4">
-            <h2 className="text-center">{articleId ? 'Edit Article' : 'Article Builder'}</h2>
-            <div className="row mt-4">
-                <div className="col-md-6">
-                    <h4>Content Blocks</h4>
-                    <div className="mb-3">
-                        {articleStructure.map((item, index) => (
-                            <div key={index} className="border p-2 mb-2">
-                                <div className="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>{item.type.toUpperCase()}:</strong>
-                                        {item.type === 'image' ? (
-                                            <>
-                                                {existingImageUrls[index] ? (
-                                                    <div className="d-flex flex-column align-items-start">
-                                                        <img src={existingImageUrls[index]} alt="Article Content" style={{ maxWidth: '540px', height: 'auto', display: 'block', marginTop: '5px' }} />
-                                                        <button className="btn btn-sm btn-outline-danger mt-2" onClick={() => removeImageFile(index)}>Remove Current Image</button>
-                                                    </div>
-                                                ) : fileUploads[index] ? (
-                                                    <p>New image selected: {fileUploads[index].name}</p>
-                                                ) : (
-                                                    <p>Image block (no file selected yet or removed)</p>
-                                                )}
-                                            </>
-                                        ) : item.type === 'points' ? (
-                                            // Render based on listType
-                                            item.value.listType === 'ul' ? (
-                                                <ul>
-                                                    {item.value.items.map((point, i) => (
-                                                        <li key={i}>{point}</li>
-                                                    ))}
-                                                </ul>
-                                            ) : (
-                                                <ol>
-                                                    {item.value.items.map((point, i) => (
-                                                        <li key={i}>{point}</li>
-                                                    ))}
-                                                </ol>
-                                            )
-                                        ) : item.type === 'link' ? (
-                                            <p>
-                                                <a href={item.value.href} target="_blank" rel="noopener noreferrer">
-                                                    {item.value.text}
-                                                </a>
-                                            </p>
-                                        ) : item.type === 'table' ? (
-                                            <p>Table block ({item.value.length} rows)</p>
-                                        ) : (
-                                            <p>{item.value}</p>
-                                        )}
-                                        {item.classes && <small className="text-muted d-block mt-1">Classes: `{item.classes}`</small>}
-                                    </div>
-                                    <div className="d-flex flex-column align-items-end">
-                                        <div className="mb-2">
-                                            <button
-                                                className="btn btn-sm btn-dark me-2 rounded-0"
-                                                onClick={() => moveContent(index, 'up')}
-                                                disabled={index === 0 || editingIndex !== null}
-                                            >
-                                                <ion-icon name="arrow-up-outline" ></ion-icon>
-                                            </button>
-                                            <button
-                                                className="btn btn-sm btn-dark rounded-0"
-                                                onClick={() => moveContent(index, 'down')}
-                                                disabled={index === articleStructure.length - 1 || editingIndex !== null}
-                                            >
-                                                <ion-icon name="arrow-down-outline" ></ion-icon>
-                                            </button>
-                                        </div>
+        <>
+            <div className="container mt-4">
+                <h2 className="text-center">{articleId ? 'Edit Article' : 'Article Builder'}</h2>
+                <hr />
+                <div className="flex-jbetween col-md-6">
+                    <h3 className="fs-5 text-indigo fw-semibold">Article Information</h3>
+                    <button
+                        type='button'
+                        className={`btn rounded-0 px-3 ${infoEditing ? 'btn-danger' : 'btn-dark'}`}
+                        onClick={() => { setInfoEditing(!infoEditing) }}
+                    >
+                        {infoEditing ? 'Cancel' : 'Edit'}
+                    </button>
+                </div>
+                <hr className='col-md-6' />
+                <div className="mb-3 col-md-6">
+                    <label className="form-label">Article Title</label>
+                    <input
+                        type="text"
+                        className={`form-control`}
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        required
+                        disabled={infoEditing ? false : true}
+                    />
+                </div>
+                <div className="mb-3 col-md-6">
+                    <label className="form-label">Author Name</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        value={author}
+                        onChange={(e) => setAuthor(e.target.value)}
+                        required
+                        disabled={infoEditing ? false : true}
+                    />
+                </div>
+                <div className="mb-3 col-md-6">
+                    <label className="form-label">Author Profile Link</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        value={authorLink}
+                        placeholder='(if any)'
+                        onChange={(e) => setAuthorLink(e.target.value)}
+                        disabled={infoEditing ? false : true}
+                    />
+                </div>
+                <hr />
+                <div className="row mt-4">
+                    <div className="col-md-6">
+                        <h4>Content Blocks</h4>
+                        <div className="mb-3">
+                            {articleStructure.map((item, index) => (
+                                <div key={index} className="border p-2 mb-2">
+                                    <div className="d-flex justify-content-between align-items-center">
                                         <div>
-                                            <button type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" className="btn btn-sm btn-warning me-2 rounded-0" onClick={() => handleEdit(index)}>Edit</button>
-                                            <button className="btn btn-sm btn-danger rounded-0" onClick={() => handleDelete(index)}>Delete</button>
+                                            <strong>{item.type.toUpperCase()}:</strong>
+                                            {item.type === 'image' ? (
+                                                <>
+                                                    {existingImageUrls[index] ? (
+                                                        <div className="d-flex flex-column align-items-start">
+                                                            <img src={existingImageUrls[index]} alt="Article Content" style={{ maxWidth: '540px', height: 'auto', display: 'block', marginTop: '5px' }} />
+                                                            <button className="btn btn-sm btn-outline-danger mt-2" onClick={() => removeImageFile(index)}>Remove Current Image</button>
+                                                        </div>
+                                                    ) : fileUploads[index] ? (
+                                                        <p>New image selected: {fileUploads[index].name}</p>
+                                                    ) : (
+                                                        <p>Image block (no file selected yet or removed)</p>
+                                                    )}
+                                                </>
+                                            ) : item.type === 'points' ? (
+                                                // Render based on listType
+                                                item.value.listType === 'ul' ? (
+                                                    <ul>
+                                                        {item.value.items.map((point, i) => (
+                                                            <li key={i}>{point}</li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <ol>
+                                                        {item.value.items.map((point, i) => (
+                                                            <li key={i}>{point}</li>
+                                                        ))}
+                                                    </ol>
+                                                )
+                                            ) : item.type === 'link' ? (
+                                                <p>
+                                                    <a href={item.value.href} target="_blank" rel="noopener noreferrer">
+                                                        {item.value.text}
+                                                    </a>
+                                                </p>
+                                            ) : item.type === 'table' ? (
+                                                <p>Table block ({item.value.length} rows)</p>
+                                            ) : (
+                                                <p>{item.value}</p>
+                                            )}
+                                            {item.classes && <small className="text-muted d-block mt-1">Classes: `{item.classes}`</small>}
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <hr />
-                    <div className='position-fixed bg-light shadow-lg' style={{ right: '20px', bottom: '20px' }}>
-                        <div className='collapse p-4 overflow-y-scroll' id='collapse-1'>
-                            <div className='overflow-y-scroll' style={{ maxHeight: '80vh' }}>
-                                <div className="flex-jbetween flex-acenter">
-                                    <h2 className="fw-semibold fs-4 mb-0">Edit block</h2>
-                                    <button
-                                        type="button"
-                                        className="btn"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#collapse-1"
-                                        aria-expanded="false"
-                                        aria-controls="collapseExample"
-                                        onClick={() => { setEditingIndex(null) }}
-                                    >
-                                        <i className='bi bi-x fs-2'></i>
-                                    </button>
-                                </div>
-                                <hr />
-                                <div className="mb-3">
-                                    <label htmlFor="contentType" className="form-label">Select Content Type</label>
-                                    <select
-                                        className="form-select mb-2"
-                                        name='contentType'
-                                        id='contentType'
-                                        value={contentType}
-                                        onChange={(e) => {
-                                            setContentType(e.target.value);
-                                            setInputValue('');
-                                            setLinkText('');
-                                            setLinkHref('');
-                                            setListItems([]);
-                                            setTableRows([]);
-                                            setCurrentTableRow('');
-                                            setEditingIndex(null); // Clear editing when changing type
-                                            setBlockClasses(''); // Clear classes when changing type
-                                            setListType('ul'); // Reset list type when changing type
-                                        }}
-                                    >
-                                        <option value="heading">Heading</option>
-                                        <option value="subheading">Subheading</option>
-                                        <option value="paragraph">Paragraph</option>
-                                        <option value="points">Points (List)</option>
-                                        <option value="image">Image</option>
-                                        <option value="link">Link</option>
-                                        <option value="table">Table</option>
-                                    </select>
-                                </div>
-
-
-
-                                {contentType === 'image' ? (
-                                    <div className='mb-3'>
-                                        <label htmlFor="imgSelect" className='form-label'>Select Image</label>
-                                        {editingIndex !== null && existingImageUrls[editingIndex] && (
+                                        <div className="d-flex flex-column align-items-end">
                                             <div className="mb-2">
-                                                <p>Current Image:</p>
-                                                <img src={existingImageUrls[editingIndex]} alt="Current" style={{ maxWidth: '200px', height: 'auto', display: 'block' }} />
-                                                <button className="btn btn-sm btn-outline-danger mt-2" onClick={() => removeImageFile(editingIndex)}>Remove Current Image</button>
+                                                <button
+                                                    className="btn btn-sm btn-dark me-2 rounded-0"
+                                                    onClick={() => moveContent(index, 'up')}
+                                                    disabled={index === 0 || editingIndex !== null}
+                                                >
+                                                    <ion-icon name="arrow-up-outline" ></ion-icon>
+                                                </button>
+                                                <button
+                                                    className="btn btn-sm btn-dark rounded-0"
+                                                    onClick={() => moveContent(index, 'down')}
+                                                    disabled={index === articleStructure.length - 1 || editingIndex !== null}
+                                                >
+                                                    <ion-icon name="arrow-down-outline" ></ion-icon>
+                                                </button>
                                             </div>
-                                        )}
-                                        <input
-                                            type="file"
-                                            id='imgSelect'
-                                            name='imgSelect'
-                                            className="form-control mb-2"
-                                            onChange={(e) => setInputValue(e.target.files[0])}
-                                            accept="image/*"
-                                        />
-                                        <p className="text-danger">*Resize or crops images before uploading to avoid image overflows</p>
+                                            <div>
+                                                <button type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" className="btn btn-sm btn-warning me-2 rounded-0" onClick={() => handleEdit(index)}>Edit</button>
+                                                <button className="btn btn-sm btn-danger rounded-0" onClick={() => handleDelete(index)}>Delete</button>
+                                            </div>
+                                        </div>
                                     </div>
-                                ) : contentType === 'link' ? (
-                                    <>
-                                        <div className="mb-3">
-                                            <label htmlFor="linkText" className='form-label'>Text for the Link</label>
+                                </div>
+                            ))}
+                        </div>
+                        <hr />
+                        <div className='position-fixed bg-light shadow-lg' style={{ right: '20px', bottom: '20px' }}>
+                            <div className='collapse p-4 overflow-y-scroll' id='collapse-1'>
+                                <div className='overflow-y-scroll' style={{ maxHeight: '80vh' }}>
+                                    <div className="flex-jbetween flex-acenter">
+                                        <h2 className="fw-semibold fs-4 mb-0">Edit block</h2>
+                                        <button
+                                            type="button"
+                                            className="btn"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapse-1"
+                                            aria-expanded="false"
+                                            aria-controls="collapseExample"
+                                            onClick={() => { setEditingIndex(null) }}
+                                        >
+                                            <i className='bi bi-x fs-2'></i>
+                                        </button>
+                                    </div>
+                                    <hr />
+                                    <div className="mb-3">
+                                        <label htmlFor="contentType" className="form-label">Select Content Type</label>
+                                        <select
+                                            className="form-select mb-2"
+                                            name='contentType'
+                                            id='contentType'
+                                            value={contentType}
+                                            onChange={(e) => {
+                                                setContentType(e.target.value);
+                                                setInputValue('');
+                                                setLinkText('');
+                                                setLinkHref('');
+                                                setListItems([]);
+                                                setTableRows([]);
+                                                setCurrentTableRow('');
+                                                setEditingIndex(null); // Clear editing when changing type
+                                                setBlockClasses(''); // Clear classes when changing type
+                                                setListType('ul'); // Reset list type when changing type
+                                            }}
+                                        >
+                                            <option value="heading">Heading</option>
+                                            <option value="subheading">Subheading</option>
+                                            <option value="paragraph">Paragraph</option>
+                                            <option value="points">Points (List)</option>
+                                            <option value="image">Image</option>
+                                            <option value="link">Link</option>
+                                            <option value="table">Table</option>
+                                        </select>
+                                    </div>
+
+
+
+                                    {contentType === 'image' ? (
+                                        <div className='mb-3'>
+                                            <label htmlFor="imgSelect" className='form-label'>Select Image</label>
+                                            {editingIndex !== null && existingImageUrls[editingIndex] && (
+                                                <div className="mb-2">
+                                                    <p>Current Image:</p>
+                                                    <img src={existingImageUrls[editingIndex]} alt="Current" style={{ maxWidth: '200px', height: 'auto', display: 'block' }} />
+                                                    <button className="btn btn-sm btn-outline-danger mt-2" onClick={() => removeImageFile(editingIndex)}>Remove Current Image</button>
+                                                </div>
+                                            )}
+                                            <input
+                                                type="file"
+                                                id='imgSelect'
+                                                name='imgSelect'
+                                                className="form-control mb-2"
+                                                onChange={(e) => setInputValue(e.target.files[0])}
+                                                accept="image/*"
+                                            />
+                                            <p className="text-danger">*Resize or crops images before uploading to avoid image overflows</p>
+                                        </div>
+                                    ) : contentType === 'link' ? (
+                                        <>
+                                            <div className="mb-3">
+                                                <label htmlFor="linkText" className='form-label'>Text for the Link</label>
+                                                <input
+                                                    type="text"
+                                                    name='linkText'
+                                                    id='linkText'
+                                                    className="form-control mb-2"
+                                                    placeholder="Link Text"
+                                                    value={linkText}
+                                                    onChange={(e) => setLinkText(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="linkURL" className='form-label'>Address (URL) for the link</label>
+                                                <input
+                                                    type="text"
+                                                    name='linkURL'
+                                                    id='linkURL'
+                                                    className="form-control mb-2"
+                                                    placeholder="Link Address (URL)"
+                                                    value={linkHref}
+                                                    onChange={(e) => setLinkHref(e.target.value)}
+                                                />
+                                            </div>
+                                        </>
+                                    ) : contentType === 'points' ? (
+                                        <>
+                                            <div className="mb-3"> {/* New select for list type */}
+                                                <label htmlFor="listType" className="form-label">List Type</label>
+                                                <select
+                                                    className="form-select mb-2"
+                                                    name='listType'
+                                                    id='listType'
+                                                    value={listType}
+                                                    onChange={(e) => setListType(e.target.value)}
+                                                >
+                                                    <option value="ul">Unordered List (Bullets)</option>
+                                                    <option value="ol">Ordered List (Numbers)</option>
+                                                </select>
+                                            </div>
                                             <input
                                                 type="text"
-                                                name='linkText'
-                                                id='linkText'
+                                                name='listItemInput'
+                                                id='listItemInput'
                                                 className="form-control mb-2"
-                                                placeholder="Link Text"
-                                                value={linkText}
-                                                onChange={(e) => setLinkText(e.target.value)}
+                                                placeholder="Enter list item"
+                                                value={inputValue}
+                                                onChange={(e) => setInputValue(e.target.value)}
+                                                onKeyPress={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        e.preventDefault();
+                                                        addListItem();
+                                                    }
+                                                }}
                                             />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="linkURL" className='form-label'>Address (URL) for the link</label>
+                                            <button className="btn btn-secondary mb-2" onClick={addListItem} disabled={!inputValue.trim()}>Add List Item</button>
+                                            {listItems.length > 0 && (
+                                                // Render based on listType
+                                                listType === 'ul' ? (
+                                                    <ul className="list-group mb-2">
+                                                        {listItems.map((item, idx) => (
+                                                            <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
+                                                                {item}
+                                                                <button className="btn btn-sm btn-outline-danger" onClick={() => setListItems(listItems.filter((_, i) => i !== idx))}>x</button>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <ol className="list-group mb-2">
+                                                        {listItems.map((item, idx) => (
+                                                            <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
+                                                                {item}
+                                                                <button className="btn btn-sm btn-outline-danger" onClick={() => setListItems(listItems.filter((_, i) => i !== idx))}>x</button>
+                                                            </li>
+                                                        ))}
+                                                    </ol>
+                                                )
+                                            )}
+                                        </>
+                                    ) : contentType === 'table' ? (
+                                        <>
                                             <input
                                                 type="text"
-                                                name='linkURL'
-                                                id='linkURL'
+                                                name='tableRowInput'
+                                                id='tableRowInput'
                                                 className="form-control mb-2"
-                                                placeholder="Link Address (URL)"
-                                                value={linkHref}
-                                                onChange={(e) => setLinkHref(e.target.value)}
+                                                placeholder="Enter row (comma-separated values, e.g., cell1,cell2)"
+                                                value={currentTableRow}
+                                                onChange={(e) => setCurrentTableRow(e.target.value)}
+                                                onKeyPress={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        e.preventDefault();
+                                                        addTableRow();
+                                                    }
+                                                }}
                                             />
-                                        </div>
-                                    </>
-                                ) : contentType === 'points' ? (
-                                    <>
-                                        <div className="mb-3"> {/* New select for list type */}
-                                            <label htmlFor="listType" className="form-label">List Type</label>
-                                            <select
-                                                className="form-select mb-2"
-                                                name='listType'
-                                                id='listType'
-                                                value={listType}
-                                                onChange={(e) => setListType(e.target.value)}
-                                            >
-                                                <option value="ul">Unordered List (Bullets)</option>
-                                                <option value="ol">Ordered List (Numbers)</option>
-                                            </select>
-                                        </div>
-                                        <input
-                                            type="text"
-                                            name='listItemInput'
-                                            id='listItemInput'
+                                            <button className="btn btn-secondary mb-2" onClick={addTableRow} disabled={!currentTableRow.trim()}>Add Table Row</button>
+                                            {tableRows.length > 0 && (
+                                                <table className="table table-bordered mb-2">
+                                                    <thead>
+                                                        <tr>
+                                                            {
+                                                                Array.from({ length: Math.max(...tableRows.map(row => row.length), 0) }).map((_, i) => (
+                                                                    <th key={i}>Column {i + 1}</th>
+                                                                ))}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {tableRows.map((row, rowIndex) => (
+                                                            <tr key={rowIndex}>
+                                                                {row.map((cell, cellIndex) => (
+                                                                    <td key={cellIndex}>{cell}</td>
+                                                                ))}
+                                                                {
+                                                                    row.length < Math.max(...tableRows.map(r => r.length), 0) &&
+                                                                    Array.from({ length: Math.max(...tableRows.map(r => r.length), 0) - row.length }).map((_, i) => (
+                                                                        <td key={`empty-${rowIndex}-${i}`}></td>
+                                                                    ))
+                                                                }
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <textarea
                                             className="form-control mb-2"
-                                            placeholder="Enter list item"
+                                            name='textInput'
+                                            id='textInput'
+                                            placeholder={`Enter ${contentType}`}
                                             value={inputValue}
                                             onChange={(e) => setInputValue(e.target.value)}
-                                            onKeyPress={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    e.preventDefault();
-                                                    addListItem();
-                                                }
-                                            }}
-                                        />
-                                        <button className="btn btn-secondary mb-2" onClick={addListItem} disabled={!inputValue.trim()}>Add List Item</button>
-                                        {listItems.length > 0 && (
-                                            // Render based on listType
-                                            listType === 'ul' ? (
-                                                <ul className="list-group mb-2">
-                                                    {listItems.map((item, idx) => (
-                                                        <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
-                                                            {item}
-                                                            <button className="btn btn-sm btn-outline-danger" onClick={() => setListItems(listItems.filter((_, i) => i !== idx))}>x</button>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            ) : (
-                                                <ol className="list-group mb-2">
-                                                    {listItems.map((item, idx) => (
-                                                        <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
-                                                            {item}
-                                                            <button className="btn btn-sm btn-outline-danger" onClick={() => setListItems(listItems.filter((_, i) => i !== idx))}>x</button>
-                                                        </li>
-                                                    ))}
-                                                </ol>
-                                            )
-                                        )}
-                                    </>
-                                ) : contentType === 'table' ? (
-                                    <>
-                                        <input
-                                            type="text"
-                                            name='tableRowInput'
-                                            id='tableRowInput'
-                                            className="form-control mb-2"
-                                            placeholder="Enter row (comma-separated values, e.g., cell1,cell2)"
-                                            value={currentTableRow}
-                                            onChange={(e) => setCurrentTableRow(e.target.value)}
-                                            onKeyPress={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    e.preventDefault();
-                                                    addTableRow();
-                                                }
-                                            }}
-                                        />
-                                        <button className="btn btn-secondary mb-2" onClick={addTableRow} disabled={!currentTableRow.trim()}>Add Table Row</button>
-                                        {tableRows.length > 0 && (
-                                            <table className="table table-bordered mb-2">
-                                                <thead>
-                                                    <tr>
-                                                        {
-                                                            Array.from({ length: Math.max(...tableRows.map(row => row.length), 0) }).map((_, i) => (
-                                                                <th key={i}>Column {i + 1}</th>
-                                                            ))}
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {tableRows.map((row, rowIndex) => (
-                                                        <tr key={rowIndex}>
-                                                            {row.map((cell, cellIndex) => (
-                                                                <td key={cellIndex}>{cell}</td>
-                                                            ))}
-                                                            {
-                                                                row.length < Math.max(...tableRows.map(r => r.length), 0) &&
-                                                                Array.from({ length: Math.max(...tableRows.map(r => r.length), 0) - row.length }).map((_, i) => (
-                                                                    <td key={`empty-${rowIndex}-${i}`}></td>
-                                                                ))
-                                                            }
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        )}
-                                    </>
-                                ) : (
-                                    <textarea
-                                        className="form-control mb-2"
-                                        name='textInput'
-                                        id='textInput'
-                                        placeholder={`Enter ${contentType}`}
-                                        value={inputValue}
-                                        onChange={(e) => setInputValue(e.target.value)}
-                                        rows={contentType === 'paragraph' ? 5 : 1}
-                                    ></textarea>
-                                )}
-
-                                <div className="mb-3">
-                                    <label htmlFor="blockClasses" className="form-label">Apply Effects</label>
-                                    <div className="d-flex flex-wrap gap-2 mb-2">
-                                        {availableClasses.map((cls, idx) => (
-                                            <button
-                                                key={idx}
-                                                type="button"
-                                                className={`btn btn-sm  ${blockClasses.includes(cls.class) ? 'btn-success' : 'btn-outline-success'}`}
-                                                onClick={() => handleAddClass(cls.class)}
-                                            >
-                                                {cls.name}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    {blockClasses && (
-                                        <div className="mb-2">
-                                            <strong>Applied Classes:</strong>
-                                            <div className="d-flex flex-wrap gap-2 mt-1">
-                                                {blockClasses.split(' ').map((cls, idx) => (
-                                                    cls && (
-                                                        <span key={idx} className="badge bg-primary d-flex align-items-center">
-                                                            {cls}
-                                                            <button
-                                                                type="button"
-                                                                className="btn-close btn-close-white ms-1"
-                                                                aria-label="Remove"
-                                                                onClick={() => handleRemoveClass(cls)}
-                                                            ></button>
-                                                        </span>
-                                                    )
-                                                ))}
-                                            </div>
-                                        </div>
+                                            rows={contentType === 'paragraph' ? 5 : 1}
+                                        ></textarea>
                                     )}
-                                </div>
 
-                                <div className="d-flex justify-content-end gap-2">
-                                    <button
-                                        type="button"
-                                        className="btn btn-dark rounded-0 px-3"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#collapse-1"
-                                        aria-expanded="false"
-                                        aria-controls="collapseExample"
-                                        onClick={() => { setEditingIndex(null) }}
-                                    >
-                                        close
-                                    </button>
-                                    <button className="btn btn-primary rounded-0 px-4" onClick={handleAddContent} disabled={
-                                        (contentType === 'link' && (!linkText.trim() || !linkHref.trim())) ||
-                                        (contentType === 'points' && listItems.length === 0 && !inputValue.trim()) ||
-                                        (contentType === 'table' && tableRows.length === 0 && !currentTableRow.trim()) ||
-                                        ((contentType !== 'points' && contentType !== 'link' && contentType !== 'table' && contentType !== 'image') && !inputValue.trim()) ||
-                                        (contentType === 'image' && editingIndex === null && !inputValue) // For new image, require inputValue (file)
-                                    }>
-                                        {editingIndex !== null ? 'Update Block' : 'Add to Article'}
-                                    </button>
+                                    <div className="mb-3">
+                                        <label htmlFor="blockClasses" className="form-label">Apply Effects</label>
+                                        <div className="d-flex flex-wrap gap-2 mb-2">
+                                            {availableClasses.map((cls, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    type="button"
+                                                    className={`btn btn-sm  ${blockClasses.includes(cls.class) ? 'btn-success' : 'btn-outline-success'}`}
+                                                    onClick={() => handleAddClass(cls.class)}
+                                                >
+                                                    {cls.name}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        {blockClasses && (
+                                            <div className="mb-2">
+                                                <strong>Applied Classes:</strong>
+                                                <div className="d-flex flex-wrap gap-2 mt-1">
+                                                    {blockClasses.split(' ').map((cls, idx) => (
+                                                        cls && (
+                                                            <span key={idx} className="badge bg-primary d-flex align-items-center">
+                                                                {cls}
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn-close btn-close-white ms-1"
+                                                                    aria-label="Remove"
+                                                                    onClick={() => handleRemoveClass(cls)}
+                                                                ></button>
+                                                            </span>
+                                                        )
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="d-flex justify-content-end gap-2">
+                                        <button
+                                            type="button"
+                                            className="btn btn-dark rounded-0 px-3"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapse-1"
+                                            aria-expanded="false"
+                                            aria-controls="collapseExample"
+                                            onClick={() => { setEditingIndex(null) }}
+                                        >
+                                            close
+                                        </button>
+                                        <button className="btn btn-primary rounded-0 px-4" onClick={handleAddContent} disabled={
+                                            (contentType === 'link' && (!linkText.trim() || !linkHref.trim())) ||
+                                            (contentType === 'points' && listItems.length === 0 && !inputValue.trim()) ||
+                                            (contentType === 'table' && tableRows.length === 0 && !currentTableRow.trim()) ||
+                                            ((contentType !== 'points' && contentType !== 'link' && contentType !== 'table' && contentType !== 'image') && !inputValue.trim()) ||
+                                            (contentType === 'image' && editingIndex === null && !inputValue) // For new image, require inputValue (file)
+                                        }>
+                                            {editingIndex !== null ? 'Update Block' : 'Add to Article'}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <hr />
+
+                        <h5>Related Links</h5>
+                        <div className="mb-3">
+                            <input type="text" className="form-control mb-2" placeholder="Link Text" value={linkText} onChange={(e) => setLinkText(e.target.value)} />
+                            <input type="text" className="form-control mb-2" placeholder="Link URL" value={linkHref} onChange={(e) => setLinkHref(e.target.value)} />
+                            <button className="btn btn-dark rounded-0 px-4" onClick={addRelatedLink} disabled={!linkText.trim() || !linkHref.trim()}>Add Related Link</button>
+                        </div>
+                        <ul>
+                            {relatedLinks.map((link, idx) => (
+                                <li key={idx} className="d-flex justify-content-between align-items-center">
+                                    <a href={link.linkAddr} target="_blank" rel="noreferrer">{link.linkText}</a>
+                                    <button className="btn btn-sm btn-outline-danger rounded-0" onClick={() => handleRemoveRelatedLink(idx)}>x</button>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
 
-                    <hr />
-
-                    <h5>Related Links</h5>
-                    <div className="mb-3">
-                        <input type="text" className="form-control mb-2" placeholder="Link Text" value={linkText} onChange={(e) => setLinkText(e.target.value)} />
-                        <input type="text" className="form-control mb-2" placeholder="Link URL" value={linkHref} onChange={(e) => setLinkHref(e.target.value)} />
-                        <button className="btn btn-dark rounded-0 px-4" onClick={addRelatedLink} disabled={!linkText.trim() || !linkHref.trim()}>Add Related Link</button>
+                    <div className="col-md-6">
+                        <h4>Current Article Progress</h4>
+                        <p className="text-muted">This section just shows the block types. Use the 'Show Preview' button for the full rendering.</p>
+                        <div className="border p-3">
+                            {articleStructure.length === 0 ? (
+                                <p className="text-center text-muted">Start adding content blocks to see them here.</p>
+                            ) : (
+                                articleStructure.map((item, index) => (
+                                    <div key={index} className="p-1 mb-1 bg-light border-bottom">
+                                        <strong>{item.type.toUpperCase()} Block</strong>
+                                        {item.classes && <span className="ms-2 badge bg-info">Classes: {item.classes}</span>}
+                                        {item.type === 'paragraph' || item.type === 'heading' || item.type === 'subheading' ? (
+                                            <span className="ms-2 text-muted text-truncate d-inline-block" style={{ maxWidth: 'calc(100% - 150px)' }}>{item.value}</span>
+                                        ) : null}
+                                        {item.type === 'points' && item.value.listType && <span className="ms-2 badge bg-info">List Type: {item.value.listType}</span>} {/* Display list type in progress */}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                        <div className="position-fixed top-0 end-0 ps-5 pb-5 mt-3">
+                            <button className="btn btn-primary rounded-0 px-4" onClick={() => setShowPreviewModal(true)}>Show Full Article Preview</button>
+                        </div>
                     </div>
-                    <ul>
-                        {relatedLinks.map((link, idx) => (
-                            <li key={idx} className="d-flex justify-content-between align-items-center">
-                                <a href={link.linkAddr} target="_blank" rel="noreferrer">{link.linkText}</a>
-                                <button className="btn btn-sm btn-outline-danger rounded-0" onClick={() => handleRemoveRelatedLink(idx)}>x</button>
-                            </li>
-                        ))}
-                    </ul>
                 </div>
 
-                <div className="col-md-6">
-                    <h4>Current Article Progress</h4>
-                    <p className="text-muted">This section just shows the block types. Use the 'Show Preview' button for the full rendering.</p>
-                    <div className="border p-3">
-                        {articleStructure.length === 0 ? (
-                            <p className="text-center text-muted">Start adding content blocks to see them here.</p>
-                        ) : (
-                            articleStructure.map((item, index) => (
-                                <div key={index} className="p-1 mb-1 bg-light border-bottom">
-                                    <strong>{item.type.toUpperCase()} Block</strong>
-                                    {item.classes && <span className="ms-2 badge bg-info">Classes: {item.classes}</span>}
-                                    {item.type === 'paragraph' || item.type === 'heading' || item.type === 'subheading' ? (
-                                        <span className="ms-2 text-muted text-truncate d-inline-block" style={{ maxWidth: 'calc(100% - 150px)' }}>{item.value}</span>
-                                    ) : null}
-                                    {item.type === 'points' && item.value.listType && <span className="ms-2 badge bg-info">List Type: {item.value.listType}</span>} {/* Display list type in progress */}
-                                </div>
-                            ))
-                        )}
-                    </div>
-                    <div className="position-fixed top-0 end-0 ps-5 pb-5 mt-3">
-                        <button className="btn btn-primary rounded-0 px-4" onClick={() => setShowPreviewModal(true)}>Show Full Article Preview</button>
-                    </div>
+                <hr />
+
+                <div className="d-flex justify-content-center gap-3 p-3">
+                    <button className="btn btn-danger px-4 rounded-0" onClick={() => navigator('/account')}>Cancel</button>
+                    <button className="btn btn-success px-4 rounded-0" onClick={handleSubmitArticle}>{articleId ? 'Update Article' : 'Publish Article'}</button>
                 </div>
+
+                <ArticlePreviewModal
+                    show={showPreviewModal}
+                    onClose={() => setShowPreviewModal(false)}
+                    articleStructure={articleStructure}
+                    fileUploads={fileUploads}
+                    relatedLinks={relatedLinks}
+                    existingImageUrls={existingImageUrls} // Pass existing image URLs to preview
+                />
             </div>
-
-            <hr />
-
-            <div className="d-flex justify-content-center gap-3 p-3">
-                <button className="btn btn-danger px-4 rounded-0" onClick={() => navigator('/account')}>Cancel</button>
-                <button className="btn btn-success px-4 rounded-0" onClick={handleSubmitArticle}>{articleId ? 'Update Article' : 'Publish Article'}</button>
-            </div>
-
-            <ArticlePreviewModal
-                show={showPreviewModal}
-                onClose={() => setShowPreviewModal(false)}
-                articleStructure={articleStructure}
-                fileUploads={fileUploads}
-                relatedLinks={relatedLinks}
-                existingImageUrls={existingImageUrls} // Pass existing image URLs to preview
-            />
-        </div>
+            {pdfError && <PDFError />}
+        </>
     );
 };
 

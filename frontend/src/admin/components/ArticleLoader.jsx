@@ -30,7 +30,7 @@ const ArticleLoader = () => {
     if (error) return <div className="alert alert-danger mt-5">{error}</div>;
 
     return (
-        <div className="admin-content">
+        <div>
             <ArticleEditor
                 initialArticleData={articleData}
                 onChange={(updatedArticle) => setArticleData(updatedArticle)}

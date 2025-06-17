@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import API_BASE from '../API';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay } from 'swiper/modules';
+import { Autoplay, Parallax, Pagination, Navigation } from 'swiper/modules';
+
 
 function Island({ logged }) {
     const [articlesFree, setArticlesFree] = useState([]);
@@ -66,7 +67,8 @@ function Island({ logged }) {
                 });
     }
 
-    function showResults() {
+    function showResults(e) {
+        e.preventDefault();
         if (searchKey.trim() === '') {
             setSearch(false);
         } else {
@@ -127,22 +129,25 @@ function Island({ logged }) {
                     :
                     <h2 className="text-center fw-semibold mt-3">Articles of Island</h2>
                 }
-                <div className="d-flex flex-md-row flex-sm-column gap-2" style={{ width: "fit-content" }}>
-                    <input
-                        type="text"
-                        className="form-control rounded-0"
-                        name='search'
-                        id='search'
-                        value={searchKey}
-                        onChange={(e) => { setSearchKey(e.target.value) }}
-                        placeholder='Search Article'
-                    />
-                    <button
-                        type='button'
-                        onClick={showResults}
-                        className="btn btn-primary px-3 rounded-0"
-                    >Search</button>
-                </div>
+                <form onSubmit={showResults}>
+                    <div className="d-flex flex-md-row flex-sm-column gap-2" style={{ width: "fit-content" }}>
+                        <input
+                            type="text"
+                            className="form-control rounded-0"
+                            name='search'
+                            id='search'
+                            value={searchKey}
+                            onChange={(e) => { setSearchKey(e.target.value) }}
+                            placeholder='Search Article'
+                        />
+                        <button
+                            type='submit'
+                            className="btn btn-primary px-3 rounded-0"
+                        >
+                            Search
+                        </button>
+                    </div>
+                </form>
 
             </div>
             <hr />
@@ -395,75 +400,67 @@ function Island({ logged }) {
                                             setSearchResults([]);
                                         }}
                                     >Back</button>
-
                                 </div>
                             )}
-
                         </div>
                     )}
+                </div>
 
-                    {islandId === '6800f6cdf56f8fccd8566741' && (
-                        <div className="container-fluid px-lg-5 px-3 mt-5" id='services'>
-                            <div className="row flex-center">
-                                <div className="col-md-5">
-                                    <h2 className="text-center fw-bold mb-3 ">
-                                        What You'll Find on
-                                        <p className='d-inline mb-0'> F</p>
-                                        <p className='text-danger d-inline mb-0'>A</p>
-                                        <p className='d-inline mb-0'>R</p>
-                                        <p className='text-danger d-inline mb-0'>O</p>
-                                    </h2>
-                                    <p className="text-center text-muted mb-3">Explore the Blueprint of Modern Knowledge.</p>
-                                    <p className='fs-18'>FARO is your gateway to structured, reliable, and expertly curated content — from architectural blueprints and engineering methodologies to practical code snippets and reference diagrams. Whether you're a student, professional, or curious learner, FARO helps you navigate complex topics with clarity, depth, and precision.</p>
-                                    <div className='d-flex'>
-                                        <Link to={'/island/6800f6cdf56f8fccd8566741/samples'} className='btn btn-danger flex-acenter px-4 rounded-0 gap-2'>
-                                            <ion-icon name="eye-outline"></ion-icon>
-                                            View Samples
-                                        </Link>
-                                    </div>
-                                </div>
-                                <div className="col-md-7 irregular-shape">
-                                    <Swiper
-                                        spaceBetween={30}
-                                        loop={true}
-                                        centeredSlides={true}
-                                        autoplay={{
-                                            delay: 4000,
-                                            disableOnInteraction: false,
-                                        }}
-                                        modules={[Autoplay]}
-                                        className="mySwiper"
-                                    >
-                                        <SwiperSlide>
-                                            <div className="position-relative">
-                                                <img src="/assets/img/service.png" alt="" className="img-fluid" width={960} height={720} />
-                                                <div className="position-absolute top-0 pt-4 left-0 w-100 h-100 bg-gradient-trans-black d-flex align-items-end justify-content-center">
-                                                    <h1 className="text-white mt-5 fw-bold">Reference Diagrams</h1>
-                                                </div>
-                                            </div>
-                                        </SwiperSlide>
-                                        <SwiperSlide>
-                                            <div className="position-relative">
-                                                <img src="/assets/img/service-2.jpg" alt="" className="img-fluid" width={960} height={720} />
-                                                <div className="position-absolute top-0 pt-4 left-0 w-100 h-100 bg-gradient-trans-black d-flex align-items-end justify-content-center">
-                                                    <h1 className="text-white mt-5 fw-bold">Architectural Diagrams</h1>
-                                                </div>
-                                            </div>
-                                        </SwiperSlide>
-                                        <SwiperSlide>
-                                            <div className="position-relative">
-                                                <img src="/assets/img/service-3.jpg" alt="" className="img-fluid" width={960} height={720} />
-                                                <div className="position-absolute top-0 pt-4 left-0 w-100 h-100 bg-gradient-trans-black d-flex align-items-end justify-content-center">
-                                                    <h1 className="text-white mt-5 fw-bold">Code Snippets</h1>
-                                                </div>
-                                            </div>
-                                        </SwiperSlide>
-                                    </Swiper>
-                                </div>
+                <div className="container-fluid px-lg-5 px-3 mt-5" id='services'>
+                    <div className="row flex-center">
+                        <div className="col-md-5">
+                            <h2 className="text-center fw-bold mb-3 ">
+                                What You'll Find on
+                                <p className='d-inline mb-0'> F</p>
+                                <p className='text-danger d-inline mb-0'>A</p>
+                                <p className='d-inline mb-0'>R</p>
+                                <p className='text-danger d-inline mb-0'>O</p>
+                            </h2>
+                            <p className="text-center text-muted mb-3">Explore the Blueprint of Modern Knowledge.</p>
+                            <p className='fs-18'>FARO is your gateway to structured, reliable, and expertly curated content — from architectural blueprints and engineering methodologies to practical code snippets and reference diagrams. Whether you're a student, professional, or curious learner, FARO helps you navigate complex topics with clarity, depth, and precision.</p>
+                            <div className='flex-jcenter'>
+                                <Link to={`/sample/${islandId}`} className='btn btn-danger flex-acenter px-4 rounded-0 gap-2'>
+                                    <ion-icon name="eye-outline"></ion-icon>
+                                    View Samples
+                                </Link>
                             </div>
                         </div>
-                    )}
-
+                        <div className="col-md-5 irregular-shape">
+                            <Swiper
+                                spaceBetween={30}
+                                loop={true}
+                                centeredSlides={true}
+                                autoplay={{
+                                    delay: 4000,
+                                    disableOnInteraction: false,
+                                }}
+                                modules={[Autoplay]}
+                                className="mySwiper"
+                            >
+                                <SwiperSlide>
+                                    <div className="position-relative">
+                                        <img src="/assets/img/service.png" alt="" className="img-fluid" />
+                                        <div className="position-absolute top-0 pt-4 left-0 w-100 h-100 bg-gradient-trans-black d-flex align-items-end justify-content-center">
+                                        </div>
+                                    </div>
+                                </SwiperSlide>
+                                <SwiperSlide>
+                                    <div className="position-relative">
+                                        <img src="/assets/img/service-2.jpg" alt="" className="img-fluid" />
+                                        <div className="position-absolute top-0 pt-4 left-0 w-100 h-100 bg-gradient-trans-black d-flex align-items-end justify-content-center">
+                                        </div>
+                                    </div>
+                                </SwiperSlide>
+                                <SwiperSlide>
+                                    <div className="position-relative">
+                                        <img src="/assets/img/service-3.jpg" alt="" className="img-fluid" />
+                                        <div className="position-absolute top-0 pt-4 left-0 w-100 h-100 bg-gradient-trans-black d-flex align-items-end justify-content-center">
+                                        </div>
+                                    </div>
+                                </SwiperSlide>
+                            </Swiper>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
