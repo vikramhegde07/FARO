@@ -179,30 +179,27 @@ function Article() {
                                 )}
                             </div>
                         ))}
-
-                        {article.relatedLinks.length > 0 && (
-                            <>
-                                <hr />
-                                <div className='bg-light p-3'>
-                                    <h2 className="fw-semibold mb-3">Related Links</h2>
-                                    <ul>
-                                        {article.relatedLinks.map((link, index) => (
-                                            <li key={index}>
-                                                <a href={link.linkAddr} target='_blank' rel="noopener noreferrer">
-                                                    {link.linkText}
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </>
-                        )}
                     </div>
 
                     {/* Right Column (optional use) */}
                     <div className="vr d-md-block d-none m-0 g-0 border-black border"></div>
                     <hr className='d-md-none d-block my-3' />
                     <div className="col-3 flex-acenter flex-column">
+                        {article.relatedLinks.length > 0 && (
+                            <div className='p-3 w-100'>
+                                <h2 className="fw-semibold mb-3 fs-4">Related Links</h2>
+                                <hr />
+                                {article.relatedLinks.map((link, index) => (
+
+                                    <a href={link.linkAddr} key={index} target='_blank' rel="noopener noreferrer">
+                                        {link.linkText}
+                                    </a>
+
+                                ))}
+                            </div>
+                        )}
+                        <hr />
+
                         {allComments.length === 0 && (
                             <h3 className="text-center fs-4 fst-italic fw-semibold">No Comments yet!</h3>
                         )}
