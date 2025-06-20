@@ -31,6 +31,7 @@ import Samples from './Pages/Samples';
 import Profile from './Pages/Profile';
 import Privillage from './Pages/Privillage';
 import Review from './Pages/Review';
+import Pricing from './Pages/Pricing';
 
 //importing admin components
 import AdminIslandArticles from './admin/components/IslandData';
@@ -108,6 +109,7 @@ function App() {
         <Route path='/sample/:islandId' element={<Samples />} />
         <Route path='/events' element={<Event />} />
         <Route path='/review' element={<Review />} />
+        <Route path='/pricing' element={<Pricing />} />
         <Route path='/event/:eventId' element={<EventDetails />} />
 
         {/* routes for author */}

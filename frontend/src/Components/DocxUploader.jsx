@@ -17,6 +17,21 @@ const DocxUploader = () => {
     const [authorLink, setAuthorLink] = useState('');
     const { showLoading, hideLoading } = useLoading();
 
+    const [linkText, setLinkText] = useState('');
+    const [linkHref, setLinkHref] = useState('');
+    const [relatedLinks, setRelatedLinks] = useState([]);
+
+
+    const addRelatedLink = () => {
+        if (linkText.trim() && linkHref.trim()) {
+            setRelatedLinks([...relatedLinks, { linkText: linkText.trim(), linkAddr: linkHref.trim() }]);
+            setLinkText('');
+            setLinkHref('');
+        } else {
+            toast.error('Please provide both link text and URL for related link.');
+        }
+    }
+
     const navigator = useNavigate();
 
     const htmlToBlocks = async (html) => {
@@ -240,12 +255,33 @@ const DocxUploader = () => {
 
     return (
         <>
-            <div className="container p-5 flex-center">
-                <div className="col-md-6">
-                    <h3>Upload DOCX and Parse</h3>
-                    <input type="file" accept=".docx" className="form-control mb-3" onChange={handleFileUpload} />
+            <div className="container p-5">
+                <div className="row gap-3">
+
+                    <div className="col-md-6">
+                        <h3>Upload DOCX and Parse</h3>
+                        <input type="file" accept=".docx" className="form-control mb-3" onChange={handleFileUpload} />
+                    </div>
+                    <div className='col-md-4 '>
+                        <h5>Related Links</h5>
+                        <div className="mb-3">
+                            <input type="text" className="form-control mb-2" placeholder="Link Text" value={linkText} onChange={(e) => setLinkText(e.target.value)} />
+                            <input type="text" className="form-control mb-2" placeholder="Link URL" value={linkHref} onChange={(e) => setLinkHref(e.target.value)} />
+                            <button className="btn btn-dark rounded-0 px-4" onClick={addRelatedLink} disabled={!linkText.trim() || !linkHref.trim()}>Add Related Link</button>
+                        </div>
+
+                        {relatedLinks.map((link, idx) => (
+                            <div className='flex-acenter justify-content-between gap-3 bg-light p-3'>
+                                <a href={link.linkAddr} key={idx} target="_blank" rel="noreferrer">{link.linkText}</a>
+                                <button className="btn btn-sm btn-outline-danger rounded-0" onClick={() => setRelatedLinks(relatedLinks.filter((_, i) => i !== idx))}>
+                                    <ion-icon name="close-outline"></ion-icon>
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
+
             <div className="container my-4">
                 <h4>Preview:</h4>
                 <div className="border p-3" dangerouslySetInnerHTML={{ __html: parsedHtml }}></div>

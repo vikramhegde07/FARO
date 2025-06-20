@@ -36,6 +36,9 @@ function Navbar({ logged }) {
                             <li className="nav-item mx-2">
                                 <Link className="nav-link text-white fs-5" to={'/about'}>About</Link>
                             </li>
+                            <li className="nav-item mx-2">
+                                <Link className="nav-link text-white fs-5" to={'/pricing'}>Pricing</Link>
+                            </li>
                             {!logged ? (
                                 <li className="nav-item mx-2">
                                     <Link className="btn btn-danger px-4 rounded-0" to={'/login'}>Login</Link>

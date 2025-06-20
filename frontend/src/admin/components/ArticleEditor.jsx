@@ -874,7 +874,7 @@ const ArticleBuilder = ({ initialArticleData }) => { // Accept initialArticleDat
                 <hr />
 
                 <div className="d-flex justify-content-center gap-3 p-3">
-                    <button className="btn btn-danger px-4 rounded-0" onClick={() => navigator('/account')}>Cancel</button>
+                    <button className="btn btn-danger px-4 rounded-0" onClick={() => navigator('/admin')}>Cancel</button>
                     <button className="btn btn-success px-4 rounded-0" onClick={handleSubmitArticle}>{articleId ? 'Update Article' : 'Publish Article'}</button>
                 </div>
 

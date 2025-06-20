@@ -374,7 +374,11 @@ function ArticleList({ articles, list, refresh }) {
           {pagedArticles.map((article, index) => (
             <tr key={article._id}>
               <th scope="row">{((page * articlePerPage) - articlePerPage) + (index + 1)}</th>
-              <td>{article.title}</td>
+              <td>
+                <Link to={`/admin/article/${article._id}`} className='text-black text-decoration-none'>
+                  {article.title}
+                </Link>
+              </td>
               <td>{article.island.title}</td>
               <td>{formatDateOrToday(article.createdAt)}</td>
               <td>

@@ -599,14 +599,16 @@ const ArticleBuilder = () => {
                         <input type="text" className="form-control mb-2" placeholder="Link URL" value={linkHref} onChange={(e) => setLinkHref(e.target.value)} />
                         <button className="btn btn-dark rounded-0 px-4" onClick={addRelatedLink} disabled={!linkText.trim() || !linkHref.trim()}>Add Related Link</button>
                     </div>
-                    <ul>
-                        {relatedLinks.map((link, idx) => (
-                            <li key={idx} className="d-flex justify-content-between align-items-center">
-                                <a href={link.linkAddr} target="_blank" rel="noreferrer">{link.linkText}</a>
-                                <button className="btn btn-sm btn-outline-danger rounded-0" onClick={() => setRelatedLinks(relatedLinks.filter((_, i) => i !== idx))}>x</button>
-                            </li>
-                        ))}
-                    </ul>
+
+                    {relatedLinks.map((link, idx) => (
+                        <div className='flex-acenter justify-content-between gap-3 bg-light p-3'>
+                            <a href={link.linkAddr} key={idx} target="_blank" rel="noreferrer">{link.linkText}</a>
+                            <button className="btn btn-sm btn-outline-danger rounded-0" onClick={() => setRelatedLinks(relatedLinks.filter((_, i) => i !== idx))}>
+                                <ion-icon name="close-outline"></ion-icon>
+                            </button>
+                        </div>
+                    ))}
+
                 </div>
 
                 <div className="col-md-6">
