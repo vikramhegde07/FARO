@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import API_BASE from '../../API';
 import { toast } from 'react-toastify';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { formatDateOrToday } from '../../utils/dateFormatter';
 import EditSample from './EditSample';
 
@@ -116,6 +116,8 @@ function IslandData() {
     const [samples, setSamples] = useState([]);
     const [articles, setArticles] = useState([]);
     const [editDetailsMode, setEditDetailsMode] = useState(false);
+
+    const navigator = useNavigate();
 
     const [editingSample, setEditingSample] = useState(null);
     const [editSampleMode, setEditSampleMode] = useState(false);
@@ -290,7 +292,7 @@ function IslandData() {
                                     <h3 className="fs-5 text-indigo fw-semibold">{article.title}</h3>
                                     <i
                                         className="bi bi-pencil-square cursor-pointer fs-5"
-                                        onClick={() => { }}
+                                        onClick={() => { navigator(`/admin/edit/${article._id}`) }}
                                     ></i>
                                 </div>
                                 <p className="fs-6 text-muted fst-italic">Published On: {formatDateOrToday(article.createdAt)}</p>

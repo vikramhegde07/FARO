@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // useNavigate was imported but not used, so removed for conciseness
+import { useNavigate, useParams } from 'react-router-dom'; // useNavigate was imported but not used, so removed for conciseness
 import API_BASE from '../../API';
 import { useLoading } from '../../Context/LoadingContext';
 import PdfLoader from '../../Components/PdfLoader';
@@ -11,6 +11,8 @@ function Article() {
     const [article, setArticle] = useState(null);
     const { showLoading, hideLoading } = useLoading();
     const { id } = useParams();
+
+    const navigator = useNavigate();
 
     const [showArticle, setShowArticle] = useState(false);
 
@@ -121,7 +123,7 @@ function Article() {
                                 <button
                                     type='button'
                                     className="btn btn-primary"
-                                    onClick={() => { }}
+                                    onClick={() => { navigator(`/admin/edit/${article._id}`) }}
                                 >
                                     <i className="bi bi-pencil-square"></i>
                                 </button>

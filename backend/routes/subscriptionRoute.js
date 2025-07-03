@@ -39,7 +39,14 @@ router.get('/user', auth, async(req, res) => {
         const now = new Date();
 
         // Fetch active and expired subscriptions
-        const subscriptions = await Subsription.find({ userId }).sort({ expiresIn: -1 });
+        const subscriptions = await Subsription
+            .find({ userId })
+            .populate({
+                path: "islandId",
+                model: "Island",
+                select: "title"
+            })
+            .sort({ expiresIn: -1 });
 
         const active = subscriptions.filter(sub => sub.expiresIn > now);
         const expired = subscriptions.filter(sub => sub.expiresIn <= now);

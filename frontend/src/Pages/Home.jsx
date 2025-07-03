@@ -84,9 +84,9 @@ function Home({ logged }) {
                             <div className="flex-jcenter flex-column p-4 w-fit">
                                 <h1 className='fw-semibold fs-large text-white' data-aos="fade-right" data-aos-duration="800">Hello,</h1>
                                 <h1 className='fw-semibold fs-large text-white' data-aos="fade-right" data-aos-duration="800" data-aos-delay="500">WE ARE</h1>
-                                <h1 className='fw-normal fs-large text-secondary' data-aos="fade-right" data-aos-duration="800" data-aos-delay="800">FARO</h1>
+                                <h1 className='fw-normal fs-large text-secondary' data-aos="fade-right" data-aos-duration="800" data-aos-delay="800">FAROPORT</h1>
                             </div>
-                            <p className='text-white-50 fw-semibold fs-4' data-aos="fade-up" data-aos-duration="800" data-aos-delay="1300">At FARO, we excel in knowledge services. We provide authentic professional content for multiple domains in multiple languages and media. We bring the knowledge workers across the world to a common forum enriching content and consumers collaboratively.</p>
+                            <p className='text-white-50 fw-semibold fs-4' data-aos="fade-up" data-aos-duration="800" data-aos-delay="1300">At FAROPORT, we excel in knowledge services. We provide authentic professional content for multiple domains in multiple languages and media. We bring the knowledge workers across the world to a common forum enriching content and consumers collaboratively.</p>
                         </div>
                         <div className="col-md-4 flex-center flex-column gap-2">
                             {events.length === 0 ? '' : (
@@ -103,7 +103,7 @@ function Home({ logged }) {
                                     {events.map((event) => (
                                         <div className="container overflow-y-scroll" style={{ maxHeight: "350px" }} key={event._id}>
                                             <div className="card text-bg-secondary mb-3">
-                                                <div className="card-header">{formatDateOrToday(event.createdAt)}</div>
+                                                {/* <div className="card-header">{formatDateOrToday(event.createdAt)}</div> */}
                                                 <div className="card-body">
                                                     <h5 className="card-title">{event.title}</h5>
                                                     <Link to={`/event/${event._id}`} className="btn btn-dark px-4 rounded-0">See Details</Link>
@@ -121,7 +121,7 @@ function Home({ logged }) {
 
             <div className="container-fluid">
                 <div className="container py-5">
-                    <h1 className="text-center fw-bold fs-2">Why FARO?</h1>
+                    <h1 className="text-center fw-bold fs-2">Why FAROPORT?</h1>
                     <p className="text-center text-muted mb-5">Everything you need to learn, share, and grow in one platform.</p>
                     <div className="flex-jcenter gap-5 flex-column flex-md-row">
                         <div className="card py-4 hover-shadow-colored col-md-4">
@@ -136,7 +136,7 @@ function Home({ logged }) {
                         <div className="card py-4 hover-shadow-colored col-md-4">
                             <div className="card-body">
                                 <h5 className="card-title flex-center gap-2">✍️ Contribute</h5>
-                                <p className="card-text text-center">Write and share your knowledge. FARO empowers experts and learners alike.</p>
+                                <p className="card-text text-center">Write and share your knowledge. FAROPORT empowers experts and learners alike.</p>
                                 <div className="flex-center">
                                     <Link to={`${logged ? '/account' : '/login'}`} className='btn btn-danger mt-3 px-4 rounded-0'>Get Started</Link>
                                 </div>

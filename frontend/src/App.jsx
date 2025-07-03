@@ -20,8 +20,6 @@ import UploadPdf from './Components/UploadPdf';
 import Home from './Pages/Home';
 import Island from './Pages/Island';
 import Login from './Pages/Login';
-import About from './Pages/About';
-import Account from './Pages/Account';
 import Islands from './Pages/Islands';
 import Article from './Pages/Article';
 import CreateArticle from './Pages/CreateArticle';
@@ -51,6 +49,7 @@ import AdminEvents from './admin/Events';
 import AdminAllArticles from './admin/AllArticles';
 import AdminEventDetails from './admin/EventDetails';
 import AdminReviews from './admin/Reviews';
+import Subscription from './Pages/Subscription';
 
 
 
@@ -92,7 +91,7 @@ function App() {
 
   return (
     <>
-      {!isAdmin && !hideNavAndFooter && <Navbar logged={logged} />}
+      {!isAdmin && !hideNavAndFooter && <Navbar logged={logged} refresh={checkUserLogin} />}
       {isAdmin && <AdminSidebar refresh={checkUserLogin} />}
 
       {/* user routes */}
@@ -100,10 +99,9 @@ function App() {
         <Route path='/' element={<Home logged={logged} />} />
         <Route path='/login' element={<Login refresh={checkUserLogin} />} />
         <Route path='/islands' element={<Islands />} />
-        <Route path='/about' element={<About />} />
-        <Route path='/account' element={<Account refresh={checkUserLogin} />} />
         <Route path='/account/profile' element={<Profile />} />
         <Route path='/account/privillage' element={<Privillage />} />
+        <Route path='/account/subscriptions' element={<Subscription />} />
         <Route path='/island/:islandId' element={<Island logged={logged} />} />
         <Route path='/article/:id' element={<Article />} />
         <Route path='/sample/:islandId' element={<Samples />} />
